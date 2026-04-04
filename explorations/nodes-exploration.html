@@ -1,0 +1,1597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dreamcacher — Node Material Explorations</title>
+<style>
+  /* ============================================================
+     DREAMCACHER NODE MATERIAL EXPLORATIONS
+     8 divergent visual treatments for user message nodes (~40px r)
+     Canvas: observatory dark, warm-black substrate
+     ============================================================ */
+
+  @import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+  *, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    /* Elevation stack */
+    --e0: #080706;
+    --e1: #0C0B09;
+    --e2: #13120F;
+    --e3: #1A1816;
+    --e4: #1E1C19;
+    --e5: #252320;
+    --e6: #2C2A26;
+    --e7: #3D3A35;
+
+    /* Text hierarchy */
+    --t-primary:   #E1E1E1;
+    --t-secondary: #C8C8C8;
+    --t-tertiary:  #A8A8A8;
+    --t-subtle:    #808080;
+    --t-ghost:     #606060;
+    --t-dim:       #404040;
+
+    /* Accent */
+    --accent:      #DD0000;
+    --gold:        #FFCC00;
+    --gold-deep:   #D4A800;
+    --gold-dim:    #8B7200;
+    --amber:       #D4A574;
+    --ember:       #FF6B00;
+    --ember-deep:  #CC5500;
+  }
+
+  html {
+    background: var(--e0);
+    color: var(--t-primary);
+  }
+
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(
+        ellipse 80% 80% at 50% 30%,
+        rgba(19, 18, 15, 0) 0%,
+        rgba(8, 7, 6, 0.5) 70%,
+        rgba(8, 7, 6, 0.95) 100%
+      ),
+      var(--e1);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    padding: 48px 32px 80px;
+    overflow-x: hidden;
+  }
+
+  /* ---- Title Card ---- */
+  .title-card {
+    text-align: center;
+    margin-bottom: 64px;
+    position: relative;
+  }
+
+  .title-card::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 480px;
+    height: 120px;
+    background: radial-gradient(ellipse, rgba(212, 168, 0, 0.03) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .title-card h1 {
+    font-family: 'Inconsolata', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--t-ghost);
+    margin-bottom: 12px;
+  }
+
+  .title-card h2 {
+    font-family: 'Inter', sans-serif;
+    font-size: 28px;
+    font-weight: 300;
+    letter-spacing: -0.5px;
+    color: var(--t-primary);
+    margin-bottom: 8px;
+  }
+
+  .title-card p {
+    font-family: 'Inconsolata', monospace;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: var(--t-dim);
+    text-transform: uppercase;
+  }
+
+  .divider {
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--e7), transparent);
+    margin: 16px auto;
+  }
+
+  /* ---- Exploration Grid ---- */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(680px, 1fr));
+    gap: 48px;
+    max-width: 1520px;
+    margin: 0 auto;
+  }
+
+  /* ---- Exploration Card ---- */
+  .exploration {
+    background: linear-gradient(
+      180deg,
+      rgba(26, 24, 22, 0.5) 0%,
+      rgba(19, 18, 15, 0.35) 100%
+    );
+    border: 1px solid rgba(44, 42, 38, 0.35);
+    border-top-color: rgba(61, 58, 53, 0.3);
+    border-radius: 16px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .exploration::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 100% 100% at 50% 0%, rgba(61, 58, 53, 0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .exploration-header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .exploration-number {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: var(--gold-dim);
+    background: rgba(139, 114, 0, 0.1);
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: 1px solid rgba(139, 114, 0, 0.15);
+  }
+
+  .exploration-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: -0.3px;
+    color: var(--t-primary);
+  }
+
+  .exploration-desc {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--t-subtle);
+    margin-bottom: 24px;
+    max-width: 560px;
+  }
+
+  .specimens {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: flex-end;
+  }
+
+  .specimen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .specimen-label {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--t-dim);
+  }
+
+  .specimen svg {
+    display: block;
+  }
+
+  /* ---- SVG Animations ---- */
+
+  @keyframes orbit-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes orbit-reverse {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+  }
+
+  @keyframes glow-pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+  }
+
+  @keyframes glow-pulse-subtle {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 0.35; }
+  }
+
+  @keyframes ember-pulse {
+    0%, 100% {
+      opacity: 0.6;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.08);
+    }
+  }
+
+  @keyframes ember-drift {
+    0% {
+      transform: translateY(0) scale(1);
+      opacity: 0.6;
+    }
+    60% {
+      opacity: 0.3;
+    }
+    100% {
+      transform: translateY(-28px) scale(0.3);
+      opacity: 0;
+    }
+  }
+
+  @keyframes particle-float {
+    0%, 100% {
+      transform: translateY(0);
+      opacity: 0.4;
+    }
+    50% {
+      transform: translateY(-3px);
+      opacity: 0.7;
+    }
+  }
+
+  @keyframes breath {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.06;
+    }
+    50% {
+      transform: scale(1.15);
+      opacity: 0.12;
+    }
+  }
+
+  @keyframes breath-ring {
+    0%, 100% {
+      r: 52;
+      opacity: 0.08;
+    }
+    50% {
+      r: 56;
+      opacity: 0.15;
+    }
+  }
+
+  @keyframes sigil-reveal {
+    0%, 100% { opacity: 0.04; }
+    50% { opacity: 0.12; }
+  }
+
+  @keyframes shimmer {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  @keyframes facet-shift {
+    0%, 100% { opacity: 0.06; }
+    50% { opacity: 0.14; }
+  }
+
+  @keyframes trace-flow {
+    from { stroke-dashoffset: 0; }
+    to { stroke-dashoffset: -40; }
+  }
+
+  @keyframes trace-flow-selected {
+    from { stroke-dashoffset: 0; }
+    to { stroke-dashoffset: -20; }
+  }
+
+  @keyframes reticle-scan {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 0.35; }
+  }
+
+  @keyframes weathered-glow {
+    0%, 100% { opacity: 0.1; }
+    40% { opacity: 0.25; }
+    60% { opacity: 0.18; }
+  }
+
+  @keyframes seam-pulse {
+    0%, 100% { stroke-opacity: 0.08; }
+    50% { stroke-opacity: 0.22; }
+  }
+
+  @keyframes crystal-refract {
+    0%, 100% { opacity: 0.05; }
+    33% { opacity: 0.12; }
+    66% { opacity: 0.08; }
+  }
+
+  @keyframes obs-ring-pulse-1 {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.35; }
+  }
+
+  @keyframes obs-ring-pulse-2 {
+    0%, 100% { opacity: 0.12; }
+    50% { opacity: 0.25; }
+  }
+
+  @keyframes obs-ring-pulse-3 {
+    0%, 100% { opacity: 0.06; }
+    50% { opacity: 0.15; }
+  }
+
+  @keyframes select-breathe {
+    0%, 100% { r: 50; opacity: 0.12; }
+    50% { r: 54; opacity: 0.2; }
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 64px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(44, 42, 38, 0.2);
+  }
+
+  .footer p {
+    font-family: 'Inconsolata', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--t-dim);
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     TITLE CARD
+     ============================================================ -->
+<div class="title-card">
+  <h1>Dreamcacher</h1>
+  <div class="divider"></div>
+  <h2>Node Material Explorations</h2>
+  <p>8 divergent treatments &mdash; rest / hover / selected</p>
+</div>
+
+<!-- ============================================================
+     EXPLORATION GRID
+     ============================================================ -->
+<div class="grid">
+
+  <!-- ============================================================
+       01. GEMSTONE
+       ============================================================ -->
+  <div class="exploration">
+    <div class="exploration-header">
+      <span class="exploration-number">01</span>
+      <span class="exploration-name">Gemstone</span>
+    </div>
+    <p class="exploration-desc">
+      Faceted appearance with overlapping gradient planes creating visible "cut" faces.
+      Light catches on crystalline edges. An inner fire radiates from the core through a warm radial glow.
+      Think garnet held to candlelight.
+    </p>
+    <div class="specimens">
+      <!-- REST -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <!-- Base shadow -->
+            <filter id="gem-shadow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur1"/>
+              <feOffset dx="0" dy="2" result="offset1"/>
+              <feFlood flood-color="#000000" flood-opacity="0.6" result="color1"/>
+              <feComposite in="color1" in2="offset1" operator="in" result="shadow1"/>
+              <feGaussianBlur in="SourceAlpha" stdDeviation="10" result="blur2"/>
+              <feFlood flood-color="#080706" flood-opacity="0.8" result="color2"/>
+              <feComposite in="color2" in2="blur2" operator="in" result="shadow2"/>
+              <feMerge>
+                <feMergeNode in="shadow2"/>
+                <feMergeNode in="shadow1"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <!-- Fill gradient — convex, top-lit -->
+            <radialGradient id="gem-fill" cx="45%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="#2C2A26"/>
+              <stop offset="55%" stop-color="#1E1C19"/>
+              <stop offset="100%" stop-color="#13120F"/>
+            </radialGradient>
+            <!-- Specular highlight -->
+            <radialGradient id="gem-spec" cx="38%" cy="28%" r="50%">
+              <stop offset="0%" stop-color="#E1E1E1" stop-opacity="0.12"/>
+              <stop offset="45%" stop-color="#E1E1E1" stop-opacity="0.03"/>
+              <stop offset="100%" stop-color="#E1E1E1" stop-opacity="0"/>
+            </radialGradient>
+            <!-- Facet planes -->
+            <linearGradient id="gem-facet-1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#3D3A35" stop-opacity="0.12"/>
+              <stop offset="50%" stop-color="#3D3A35" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="gem-facet-2" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#252320" stop-opacity="0.08"/>
+              <stop offset="50%" stop-color="#252320" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="gem-facet-3" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" stop-color="#3D3A35" stop-opacity="0.06"/>
+              <stop offset="60%" stop-color="#1A1816" stop-opacity="0"/>
+            </linearGradient>
+            <!-- Inner fire -->
+            <radialGradient id="gem-fire" cx="50%" cy="55%" r="40%">
+              <stop offset="0%" stop-color="#D4A800" stop-opacity="0.08"/>
+              <stop offset="60%" stop-color="#8B7200" stop-opacity="0.03"/>
+              <stop offset="100%" stop-color="#8B7200" stop-opacity="0"/>
+            </radialGradient>
+            <!-- Core dot gradient -->
+            <radialGradient id="gem-core" cx="45%" cy="40%">
+              <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#C8C8C8" stop-opacity="0.6"/>
+            </radialGradient>
+          </defs>
+          <g filter="url(#gem-shadow)">
+            <!-- Base fill -->
+            <circle cx="100" cy="100" r="40" fill="url(#gem-fill)"/>
+            <!-- Facet planes — overlapping gradient masks create "cuts" -->
+            <circle cx="100" cy="100" r="40" fill="url(#gem-facet-1)"/>
+            <circle cx="100" cy="100" r="40" fill="url(#gem-facet-2)"/>
+            <circle cx="100" cy="100" r="40" fill="url(#gem-facet-3)"/>
+            <!-- Inner fire glow -->
+            <circle cx="100" cy="100" r="36" fill="url(#gem-fire)"/>
+            <!-- Specular -->
+            <circle cx="100" cy="100" r="34" fill="url(#gem-spec)"/>
+            <!-- Rim light — bottom-right arc -->
+            <circle cx="101" cy="102" r="41" fill="none" stroke="#3D3A35" stroke-width="0.8" stroke-opacity="0.3" stroke-dasharray="60 200"/>
+            <!-- Edge stroke -->
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#2C2A26" stroke-width="1.2"/>
+            <!-- Core dot shadow -->
+            <circle cx="100" cy="101" r="4" fill="#000000" fill-opacity="0.15"/>
+            <!-- Core dot -->
+            <circle cx="100" cy="100" r="3.5" fill="url(#gem-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Rest</span>
+      </div>
+
+      <!-- HOVER -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <filter id="gem-hover-shadow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur1"/>
+              <feOffset dx="0" dy="3" result="offset1"/>
+              <feFlood flood-color="#000000" flood-opacity="0.7" result="color1"/>
+              <feComposite in="color1" in2="offset1" operator="in" result="shadow1"/>
+              <feGaussianBlur in="SourceAlpha" stdDeviation="14" result="blur2"/>
+              <feFlood flood-color="#080706" flood-opacity="0.85" result="color2"/>
+              <feComposite in="color2" in2="blur2" operator="in" result="shadow2"/>
+              <feMerge>
+                <feMergeNode in="shadow2"/>
+                <feMergeNode in="shadow1"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <radialGradient id="gem-hover-fill" cx="45%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="#33302A"/>
+              <stop offset="55%" stop-color="#252320"/>
+              <stop offset="100%" stop-color="#1A1816"/>
+            </radialGradient>
+            <radialGradient id="gem-hover-spec" cx="38%" cy="28%" r="50%">
+              <stop offset="0%" stop-color="#E1E1E1" stop-opacity="0.22"/>
+              <stop offset="45%" stop-color="#E1E1E1" stop-opacity="0.06"/>
+              <stop offset="100%" stop-color="#E1E1E1" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="gem-hover-fire" cx="50%" cy="55%" r="45%">
+              <stop offset="0%" stop-color="#D4A800" stop-opacity="0.14"/>
+              <stop offset="50%" stop-color="#FFCC00" stop-opacity="0.06"/>
+              <stop offset="100%" stop-color="#8B7200" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <g filter="url(#gem-hover-shadow)" transform="translate(100,100) scale(1.05) translate(-100,-100)">
+            <circle cx="100" cy="100" r="40" fill="url(#gem-hover-fill)"/>
+            <circle cx="100" cy="100" r="40" fill="url(#gem-facet-1)"/>
+            <circle cx="100" cy="100" r="40" fill="url(#gem-facet-2)"/>
+            <circle cx="100" cy="100" r="40" fill="url(#gem-facet-3)"/>
+            <circle cx="100" cy="100" r="36" fill="url(#gem-hover-fire)"/>
+            <circle cx="100" cy="100" r="34" fill="url(#gem-hover-spec)"/>
+            <!-- Intensified facet shimmer -->
+            <circle cx="100" cy="100" r="40" fill="url(#gem-facet-1)" opacity="0.5" style="animation: facet-shift 3s ease-in-out infinite"/>
+            <circle cx="101" cy="102" r="41" fill="none" stroke="#3D3A35" stroke-width="1" stroke-opacity="0.5" stroke-dasharray="60 200"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#3D3A35" stroke-width="1.4"/>
+            <circle cx="100" cy="101" r="4" fill="#000000" fill-opacity="0.15"/>
+            <circle cx="100" cy="100" r="3.5" fill="url(#gem-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Hover</span>
+      </div>
+
+      <!-- SELECTED -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <filter id="gem-sel-glow" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="8" result="blur1"/>
+              <feFlood flood-color="#DD0000" flood-opacity="0.15" result="color1"/>
+              <feComposite in="color1" in2="blur1" operator="in" result="glow"/>
+              <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur2"/>
+              <feFlood flood-color="#000000" flood-opacity="0.7" result="color2"/>
+              <feComposite in="color2" in2="blur2" operator="in" result="shadow"/>
+              <feMerge>
+                <feMergeNode in="glow"/>
+                <feMergeNode in="shadow"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <radialGradient id="gem-sel-aura" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#DD0000" stop-opacity="0.08"/>
+              <stop offset="100%" stop-color="#DD0000" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <!-- Selection aura -->
+          <circle cx="100" cy="100" r="62" fill="url(#gem-sel-aura)"/>
+          <!-- Selection ring - solid -->
+          <circle cx="100" cy="100" r="48" fill="none" stroke="#DD0000" stroke-width="1.5" stroke-opacity="0.7"/>
+          <!-- Outer breath ring -->
+          <circle cx="100" cy="100" r="52" fill="none" stroke="#DD0000" stroke-width="0.5" stroke-opacity="0.12" style="animation: select-breathe 3s ease-in-out infinite"/>
+          <g filter="url(#gem-sel-glow)" transform="translate(100,100) scale(1.05) translate(-100,-100)">
+            <circle cx="100" cy="100" r="40" fill="url(#gem-hover-fill)"/>
+            <circle cx="100" cy="100" r="40" fill="url(#gem-facet-1)"/>
+            <circle cx="100" cy="100" r="40" fill="url(#gem-facet-2)"/>
+            <circle cx="100" cy="100" r="40" fill="url(#gem-facet-3)"/>
+            <circle cx="100" cy="100" r="36" fill="url(#gem-hover-fire)"/>
+            <circle cx="100" cy="100" r="34" fill="url(#gem-hover-spec)"/>
+            <circle cx="100" cy="100" r="40" fill="url(#gem-facet-1)" opacity="0.6" style="animation: facet-shift 2.5s ease-in-out infinite"/>
+            <circle cx="101" cy="102" r="41" fill="none" stroke="#3D3A35" stroke-width="1" stroke-opacity="0.5" stroke-dasharray="60 200"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#3D3A35" stroke-width="1.6"/>
+            <circle cx="100" cy="101" r="4" fill="#000000" fill-opacity="0.15"/>
+            <circle cx="100" cy="100" r="3.5" fill="url(#gem-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Selected</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       02. RETICLE
+       ============================================================ -->
+  <div class="exploration">
+    <div class="exploration-header">
+      <span class="exploration-number">02</span>
+      <span class="exploration-name">Reticle</span>
+    </div>
+    <p class="exploration-desc">
+      Concentric precision rings like a targeting HUD. Hairline circles at specific radii with
+      technical markings at cardinal points. VKTRKRFT-grade military precision rendered in warm
+      observatory tones. Quiet authority.
+    </p>
+    <div class="specimens">
+      <!-- REST -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <filter id="ret-shadow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+              <feOffset dy="2"/>
+              <feFlood flood-color="#000" flood-opacity="0.55"/>
+              <feComposite in2="offsetBlur" operator="in"/>
+              <feMerge>
+                <feMergeNode/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <radialGradient id="ret-fill" cx="48%" cy="38%" r="60%">
+              <stop offset="0%" stop-color="#2C2A26"/>
+              <stop offset="50%" stop-color="#1E1C19"/>
+              <stop offset="100%" stop-color="#13120F"/>
+            </radialGradient>
+            <radialGradient id="ret-spec" cx="42%" cy="32%" r="45%">
+              <stop offset="0%" stop-color="#E1E1E1" stop-opacity="0.10"/>
+              <stop offset="50%" stop-color="#E1E1E1" stop-opacity="0.02"/>
+              <stop offset="100%" stop-color="#E1E1E1" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <!-- Precision rings -->
+          <circle cx="100" cy="100" r="56" fill="none" stroke="#3D3A35" stroke-width="0.3" stroke-opacity="0.2"/>
+          <circle cx="100" cy="100" r="50" fill="none" stroke="#3D3A35" stroke-width="0.4" stroke-opacity="0.15"/>
+          <circle cx="100" cy="100" r="66" fill="none" stroke="#2C2A26" stroke-width="0.3" stroke-opacity="0.1"/>
+          <!-- Cardinal tick marks -->
+          <line x1="100" y1="43" x2="100" y2="38" stroke="#606060" stroke-width="0.5" stroke-opacity="0.3"/>
+          <line x1="100" y1="157" x2="100" y2="162" stroke="#606060" stroke-width="0.5" stroke-opacity="0.3"/>
+          <line x1="43" y1="100" x2="38" y2="100" stroke="#606060" stroke-width="0.5" stroke-opacity="0.3"/>
+          <line x1="157" y1="100" x2="162" y2="100" stroke="#606060" stroke-width="0.5" stroke-opacity="0.3"/>
+          <!-- Intermediate ticks (45deg) -->
+          <line x1="140.3" y1="59.7" x2="143.8" y2="56.2" stroke="#404040" stroke-width="0.4" stroke-opacity="0.2"/>
+          <line x1="59.7" y1="140.3" x2="56.2" y2="143.8" stroke="#404040" stroke-width="0.4" stroke-opacity="0.2"/>
+          <line x1="140.3" y1="140.3" x2="143.8" y2="143.8" stroke="#404040" stroke-width="0.4" stroke-opacity="0.2"/>
+          <line x1="59.7" y1="59.7" x2="56.2" y2="56.2" stroke="#404040" stroke-width="0.4" stroke-opacity="0.2"/>
+          <!-- Node body -->
+          <g filter="url(#ret-shadow)">
+            <circle cx="100" cy="100" r="40" fill="url(#ret-fill)"/>
+            <circle cx="100" cy="100" r="34" fill="url(#ret-spec)"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#3D3A35" stroke-width="1.2"/>
+            <!-- Inner precision ring -->
+            <circle cx="100" cy="100" r="28" fill="none" stroke="#404040" stroke-width="0.4" stroke-opacity="0.25" stroke-dasharray="2 4"/>
+            <!-- Core -->
+            <circle cx="100" cy="101" r="3.5" fill="#000" fill-opacity="0.12"/>
+            <circle cx="100" cy="100" r="3" fill="url(#gem-core)"/>
+            <!-- Crosshair micro lines inside -->
+            <line x1="96" y1="100" x2="92" y2="100" stroke="#606060" stroke-width="0.4" stroke-opacity="0.2"/>
+            <line x1="104" y1="100" x2="108" y2="100" stroke="#606060" stroke-width="0.4" stroke-opacity="0.2"/>
+            <line x1="100" y1="96" x2="100" y2="92" stroke="#606060" stroke-width="0.4" stroke-opacity="0.2"/>
+            <line x1="100" y1="104" x2="100" y2="108" stroke="#606060" stroke-width="0.4" stroke-opacity="0.2"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Rest</span>
+      </div>
+
+      <!-- HOVER -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <filter id="ret-hover-shadow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="6"/>
+              <feOffset dy="3"/>
+              <feFlood flood-color="#000" flood-opacity="0.65"/>
+              <feComposite in2="offsetBlur" operator="in"/>
+              <feMerge>
+                <feMergeNode/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <!-- Outer rings - animated scan -->
+          <circle cx="100" cy="100" r="56" fill="none" stroke="#606060" stroke-width="0.4" stroke-opacity="0.3" style="animation: reticle-scan 2s ease-in-out infinite"/>
+          <circle cx="100" cy="100" r="50" fill="none" stroke="#606060" stroke-width="0.5" stroke-opacity="0.25" style="animation: reticle-scan 2s ease-in-out infinite 0.3s"/>
+          <circle cx="100" cy="100" r="66" fill="none" stroke="#3D3A35" stroke-width="0.3" stroke-opacity="0.2"/>
+          <!-- Rotating scan arc -->
+          <circle cx="100" cy="100" r="62" fill="none" stroke="#808080" stroke-width="0.5" stroke-opacity="0.2" stroke-dasharray="20 170" style="animation: orbit-slow 6s linear infinite"/>
+          <!-- Cardinal ticks - brighter -->
+          <line x1="100" y1="43" x2="100" y2="36" stroke="#808080" stroke-width="0.6" stroke-opacity="0.5"/>
+          <line x1="100" y1="157" x2="100" y2="164" stroke="#808080" stroke-width="0.6" stroke-opacity="0.5"/>
+          <line x1="43" y1="100" x2="36" y2="100" stroke="#808080" stroke-width="0.6" stroke-opacity="0.5"/>
+          <line x1="157" y1="100" x2="164" y2="100" stroke="#808080" stroke-width="0.6" stroke-opacity="0.5"/>
+          <line x1="140.3" y1="59.7" x2="143.8" y2="56.2" stroke="#606060" stroke-width="0.5" stroke-opacity="0.35"/>
+          <line x1="59.7" y1="140.3" x2="56.2" y2="143.8" stroke="#606060" stroke-width="0.5" stroke-opacity="0.35"/>
+          <line x1="140.3" y1="140.3" x2="143.8" y2="143.8" stroke="#606060" stroke-width="0.5" stroke-opacity="0.35"/>
+          <line x1="59.7" y1="59.7" x2="56.2" y2="56.2" stroke="#606060" stroke-width="0.5" stroke-opacity="0.35"/>
+          <!-- Node body — lifted -->
+          <g filter="url(#ret-hover-shadow)" transform="translate(100,100) scale(1.05) translate(-100,-100)">
+            <circle cx="100" cy="100" r="40" fill="url(#ret-fill)"/>
+            <circle cx="100" cy="100" r="34" fill="url(#ret-spec)"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#606060" stroke-width="1.4"/>
+            <circle cx="100" cy="100" r="28" fill="none" stroke="#606060" stroke-width="0.5" stroke-opacity="0.35" stroke-dasharray="2 4"/>
+            <circle cx="100" cy="101" r="3.5" fill="#000" fill-opacity="0.12"/>
+            <circle cx="100" cy="100" r="3" fill="url(#gem-core)"/>
+            <line x1="96" y1="100" x2="92" y2="100" stroke="#808080" stroke-width="0.5" stroke-opacity="0.35"/>
+            <line x1="104" y1="100" x2="108" y2="100" stroke="#808080" stroke-width="0.5" stroke-opacity="0.35"/>
+            <line x1="100" y1="96" x2="100" y2="92" stroke="#808080" stroke-width="0.5" stroke-opacity="0.35"/>
+            <line x1="100" y1="104" x2="100" y2="108" stroke="#808080" stroke-width="0.5" stroke-opacity="0.35"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Hover</span>
+      </div>
+
+      <!-- SELECTED -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <radialGradient id="ret-sel-aura" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#DD0000" stop-opacity="0.06"/>
+              <stop offset="100%" stop-color="#DD0000" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="68" fill="url(#ret-sel-aura)"/>
+          <!-- Rings lock on — all brighten -->
+          <circle cx="100" cy="100" r="56" fill="none" stroke="#DD0000" stroke-width="0.4" stroke-opacity="0.2"/>
+          <circle cx="100" cy="100" r="50" fill="none" stroke="#DD0000" stroke-width="0.5" stroke-opacity="0.15"/>
+          <circle cx="100" cy="100" r="48" fill="none" stroke="#DD0000" stroke-width="1.5" stroke-opacity="0.6"/>
+          <!-- Locked scan arc -->
+          <circle cx="100" cy="100" r="62" fill="none" stroke="#DD0000" stroke-width="0.6" stroke-opacity="0.25" stroke-dasharray="20 170" style="animation: orbit-slow 4s linear infinite"/>
+          <!-- Cardinal ticks turn red -->
+          <line x1="100" y1="43" x2="100" y2="36" stroke="#DD0000" stroke-width="0.6" stroke-opacity="0.5"/>
+          <line x1="100" y1="157" x2="100" y2="164" stroke="#DD0000" stroke-width="0.6" stroke-opacity="0.5"/>
+          <line x1="43" y1="100" x2="36" y2="100" stroke="#DD0000" stroke-width="0.6" stroke-opacity="0.5"/>
+          <line x1="157" y1="100" x2="164" y2="100" stroke="#DD0000" stroke-width="0.6" stroke-opacity="0.5"/>
+          <!-- Node body -->
+          <g filter="url(#ret-hover-shadow)" transform="translate(100,100) scale(1.05) translate(-100,-100)">
+            <circle cx="100" cy="100" r="40" fill="url(#ret-fill)"/>
+            <circle cx="100" cy="100" r="34" fill="url(#ret-spec)"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#808080" stroke-width="1.6"/>
+            <circle cx="100" cy="100" r="28" fill="none" stroke="#606060" stroke-width="0.5" stroke-opacity="0.35" stroke-dasharray="2 4"/>
+            <circle cx="100" cy="101" r="3.5" fill="#000" fill-opacity="0.12"/>
+            <circle cx="100" cy="100" r="3" fill="url(#gem-core)"/>
+            <line x1="96" y1="100" x2="92" y2="100" stroke="#808080" stroke-width="0.5" stroke-opacity="0.35"/>
+            <line x1="104" y1="100" x2="108" y2="100" stroke="#808080" stroke-width="0.5" stroke-opacity="0.35"/>
+            <line x1="100" y1="96" x2="100" y2="92" stroke="#808080" stroke-width="0.5" stroke-opacity="0.35"/>
+            <line x1="100" y1="104" x2="100" y2="108" stroke="#808080" stroke-width="0.5" stroke-opacity="0.35"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Selected</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       03. CIRCUIT RELIC
+       ============================================================ -->
+  <div class="exploration">
+    <div class="exploration-header">
+      <span class="exploration-number">03</span>
+      <span class="exploration-name">Circuit Relic</span>
+    </div>
+    <p class="exploration-desc">
+      Fine PCB traces extend outward from the node like gold circuitry etched on dark substrate.
+      Solder points as micro-dots at trace endpoints. The feeling of a recovered processor
+      from a civilization that built in gold.
+    </p>
+    <div class="specimens">
+      <!-- REST -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <radialGradient id="cir-fill" cx="45%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="#2C2A26"/>
+              <stop offset="55%" stop-color="#1E1C19"/>
+              <stop offset="100%" stop-color="#13120F"/>
+            </radialGradient>
+            <radialGradient id="cir-spec" cx="40%" cy="30%" r="45%">
+              <stop offset="0%" stop-color="#E1E1E1" stop-opacity="0.09"/>
+              <stop offset="50%" stop-color="#E1E1E1" stop-opacity="0.02"/>
+              <stop offset="100%" stop-color="#E1E1E1" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <!-- Circuit traces — gold on dark substrate -->
+          <!-- Right trace -->
+          <path d="M140,100 L155,100 L155,85 L170,85" fill="none" stroke="#8B7200" stroke-width="0.8" stroke-opacity="0.25"/>
+          <circle cx="170" cy="85" r="1.5" fill="#D4A800" fill-opacity="0.3"/>
+          <!-- Right trace lower -->
+          <path d="M140,108 L160,108 L160,120" fill="none" stroke="#8B7200" stroke-width="0.6" stroke-opacity="0.2"/>
+          <circle cx="160" cy="120" r="1.2" fill="#D4A800" fill-opacity="0.25"/>
+          <!-- Left trace -->
+          <path d="M60,100 L45,100 L45,115 L30,115" fill="none" stroke="#8B7200" stroke-width="0.8" stroke-opacity="0.25"/>
+          <circle cx="30" cy="115" r="1.5" fill="#D4A800" fill-opacity="0.3"/>
+          <!-- Top trace -->
+          <path d="M100,60 L100,45 L115,45 L115,30" fill="none" stroke="#8B7200" stroke-width="0.7" stroke-opacity="0.22"/>
+          <circle cx="115" cy="30" r="1.3" fill="#D4A800" fill-opacity="0.28"/>
+          <!-- Bottom trace -->
+          <path d="M92,140 L92,155 L80,155" fill="none" stroke="#8B7200" stroke-width="0.6" stroke-opacity="0.2"/>
+          <circle cx="80" cy="155" r="1.2" fill="#D4A800" fill-opacity="0.25"/>
+          <!-- Diagonal trace -->
+          <path d="M128,72 L142,58 L158,58" fill="none" stroke="#8B7200" stroke-width="0.5" stroke-opacity="0.18"/>
+          <circle cx="158" cy="58" r="1" fill="#D4A800" fill-opacity="0.22"/>
+          <!-- Node body -->
+          <g filter="url(#gem-shadow)">
+            <circle cx="100" cy="100" r="40" fill="url(#cir-fill)"/>
+            <circle cx="100" cy="100" r="34" fill="url(#cir-spec)"/>
+            <!-- Via holes — tiny gold dots on the node edge -->
+            <circle cx="140" cy="100" r="1.8" fill="#D4A800" fill-opacity="0.35"/>
+            <circle cx="60" cy="100" r="1.8" fill="#D4A800" fill-opacity="0.35"/>
+            <circle cx="100" cy="60" r="1.8" fill="#D4A800" fill-opacity="0.35"/>
+            <circle cx="92" cy="140" r="1.5" fill="#D4A800" fill-opacity="0.3"/>
+            <circle cx="128" cy="72" r="1.5" fill="#D4A800" fill-opacity="0.3"/>
+            <circle cx="140" cy="108" r="1.5" fill="#D4A800" fill-opacity="0.3"/>
+            <!-- Edge stroke — gold tinted -->
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#3D3A35" stroke-width="1.2"/>
+            <!-- Core -->
+            <circle cx="100" cy="101" r="4" fill="#000" fill-opacity="0.12"/>
+            <circle cx="100" cy="100" r="3.5" fill="url(#gem-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Rest</span>
+      </div>
+
+      <!-- HOVER -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <filter id="cir-glow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+              <feMerge>
+                <feMergeNode in="blur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <!-- Traces — energized, gold glows -->
+          <g filter="url(#cir-glow)">
+            <path d="M140,100 L155,100 L155,85 L170,85" fill="none" stroke="#D4A800" stroke-width="0.8" stroke-opacity="0.5" stroke-dasharray="4 3" style="animation: trace-flow 1.5s linear infinite"/>
+            <circle cx="170" cy="85" r="2" fill="#FFCC00" fill-opacity="0.5" style="animation: glow-pulse-subtle 2s ease-in-out infinite"/>
+            <path d="M140,108 L160,108 L160,120" fill="none" stroke="#D4A800" stroke-width="0.6" stroke-opacity="0.4" stroke-dasharray="4 3" style="animation: trace-flow 1.5s linear infinite 0.3s"/>
+            <circle cx="160" cy="120" r="1.5" fill="#FFCC00" fill-opacity="0.4"/>
+            <path d="M60,100 L45,100 L45,115 L30,115" fill="none" stroke="#D4A800" stroke-width="0.8" stroke-opacity="0.5" stroke-dasharray="4 3" style="animation: trace-flow 1.5s linear infinite 0.6s"/>
+            <circle cx="30" cy="115" r="2" fill="#FFCC00" fill-opacity="0.5" style="animation: glow-pulse-subtle 2s ease-in-out infinite 0.5s"/>
+            <path d="M100,60 L100,45 L115,45 L115,30" fill="none" stroke="#D4A800" stroke-width="0.7" stroke-opacity="0.45" stroke-dasharray="4 3" style="animation: trace-flow 1.5s linear infinite 0.9s"/>
+            <circle cx="115" cy="30" r="1.8" fill="#FFCC00" fill-opacity="0.45"/>
+            <path d="M92,140 L92,155 L80,155" fill="none" stroke="#D4A800" stroke-width="0.6" stroke-opacity="0.4" stroke-dasharray="4 3" style="animation: trace-flow 1.5s linear infinite 1.2s"/>
+            <circle cx="80" cy="155" r="1.5" fill="#FFCC00" fill-opacity="0.4"/>
+            <path d="M128,72 L142,58 L158,58" fill="none" stroke="#D4A800" stroke-width="0.5" stroke-opacity="0.35" stroke-dasharray="4 3" style="animation: trace-flow 1.5s linear infinite 0.4s"/>
+            <circle cx="158" cy="58" r="1.3" fill="#FFCC00" fill-opacity="0.35"/>
+          </g>
+          <!-- Node body — lifted -->
+          <g filter="url(#gem-hover-shadow)" transform="translate(100,100) scale(1.05) translate(-100,-100)">
+            <circle cx="100" cy="100" r="40" fill="url(#cir-fill)"/>
+            <circle cx="100" cy="100" r="34" fill="url(#cir-spec)"/>
+            <circle cx="140" cy="100" r="2" fill="#FFCC00" fill-opacity="0.5"/>
+            <circle cx="60" cy="100" r="2" fill="#FFCC00" fill-opacity="0.5"/>
+            <circle cx="100" cy="60" r="2" fill="#FFCC00" fill-opacity="0.5"/>
+            <circle cx="92" cy="140" r="1.8" fill="#FFCC00" fill-opacity="0.45"/>
+            <circle cx="128" cy="72" r="1.8" fill="#FFCC00" fill-opacity="0.45"/>
+            <circle cx="140" cy="108" r="1.8" fill="#FFCC00" fill-opacity="0.45"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#D4A800" stroke-width="1.4" stroke-opacity="0.5"/>
+            <circle cx="100" cy="101" r="4" fill="#000" fill-opacity="0.12"/>
+            <circle cx="100" cy="100" r="3.5" fill="url(#gem-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Hover</span>
+      </div>
+
+      <!-- SELECTED -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <radialGradient id="cir-sel-aura" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#DD0000" stop-opacity="0.06"/>
+              <stop offset="100%" stop-color="#DD0000" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="65" fill="url(#cir-sel-aura)"/>
+          <circle cx="100" cy="100" r="48" fill="none" stroke="#DD0000" stroke-width="1.5" stroke-opacity="0.6"/>
+          <circle cx="100" cy="100" r="52" fill="none" stroke="#DD0000" stroke-width="0.5" stroke-opacity="0.1" style="animation: select-breathe 3s ease-in-out infinite"/>
+          <!-- Traces — still energized in selected -->
+          <g filter="url(#cir-glow)">
+            <path d="M140,100 L155,100 L155,85 L170,85" fill="none" stroke="#D4A800" stroke-width="0.8" stroke-opacity="0.4" stroke-dasharray="4 3" style="animation: trace-flow 1.5s linear infinite"/>
+            <circle cx="170" cy="85" r="2" fill="#FFCC00" fill-opacity="0.4"/>
+            <path d="M60,100 L45,100 L45,115 L30,115" fill="none" stroke="#D4A800" stroke-width="0.8" stroke-opacity="0.4" stroke-dasharray="4 3" style="animation: trace-flow 1.5s linear infinite 0.6s"/>
+            <circle cx="30" cy="115" r="2" fill="#FFCC00" fill-opacity="0.4"/>
+            <path d="M100,60 L100,45 L115,45 L115,30" fill="none" stroke="#D4A800" stroke-width="0.7" stroke-opacity="0.35" stroke-dasharray="4 3" style="animation: trace-flow 1.5s linear infinite 0.9s"/>
+            <circle cx="115" cy="30" r="1.8" fill="#FFCC00" fill-opacity="0.35"/>
+          </g>
+          <!-- Node body -->
+          <g filter="url(#gem-hover-shadow)" transform="translate(100,100) scale(1.05) translate(-100,-100)">
+            <circle cx="100" cy="100" r="40" fill="url(#cir-fill)"/>
+            <circle cx="100" cy="100" r="34" fill="url(#cir-spec)"/>
+            <circle cx="140" cy="100" r="2" fill="#FFCC00" fill-opacity="0.45"/>
+            <circle cx="60" cy="100" r="2" fill="#FFCC00" fill-opacity="0.45"/>
+            <circle cx="100" cy="60" r="2" fill="#FFCC00" fill-opacity="0.45"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#808080" stroke-width="1.6"/>
+            <circle cx="100" cy="101" r="4" fill="#000" fill-opacity="0.12"/>
+            <circle cx="100" cy="100" r="3.5" fill="url(#gem-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Selected</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       04. EMBER CORE
+       ============================================================ -->
+  <div class="exploration">
+    <div class="exploration-header">
+      <span class="exploration-number">04</span>
+      <span class="exploration-name">Ember Core</span>
+    </div>
+    <p class="exploration-desc">
+      Inner warmth that breathes. A gradient core shifts between amber and deep orange like a
+      coal bed. Soft radial glow bleeds outward. Particles drift upward like sparks from a forge.
+      The node is alive with contained heat.
+    </p>
+    <div class="specimens">
+      <!-- REST -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <radialGradient id="emb-fill" cx="48%" cy="42%" r="60%">
+              <stop offset="0%" stop-color="#2C2A26"/>
+              <stop offset="50%" stop-color="#1E1C19"/>
+              <stop offset="100%" stop-color="#13120F"/>
+            </radialGradient>
+            <radialGradient id="emb-heat" cx="50%" cy="55%" r="45%">
+              <stop offset="0%" stop-color="#FF6B00" stop-opacity="0.08"/>
+              <stop offset="40%" stop-color="#D4A800" stop-opacity="0.04"/>
+              <stop offset="100%" stop-color="#8B7200" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="emb-glow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FF6B00" stop-opacity="0.04"/>
+              <stop offset="60%" stop-color="#CC5500" stop-opacity="0.02"/>
+              <stop offset="100%" stop-color="#CC5500" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="emb-core" cx="45%" cy="40%">
+              <stop offset="0%" stop-color="#FFF8F0" stop-opacity="1"/>
+              <stop offset="60%" stop-color="#FFCC00" stop-opacity="0.8"/>
+              <stop offset="100%" stop-color="#D4A800" stop-opacity="0.5"/>
+            </radialGradient>
+          </defs>
+          <!-- Ambient heat glow -->
+          <circle cx="100" cy="100" r="65" fill="url(#emb-glow)" style="animation: breath 4s ease-in-out infinite"/>
+          <!-- Node body -->
+          <g filter="url(#gem-shadow)">
+            <circle cx="100" cy="100" r="40" fill="url(#emb-fill)"/>
+            <circle cx="100" cy="100" r="38" fill="url(#emb-heat)" style="animation: ember-pulse 3s ease-in-out infinite"/>
+            <circle cx="100" cy="100" r="34" fill="url(#gem-spec)"/>
+            <!-- Warm rim -->
+            <circle cx="101" cy="102" r="41" fill="none" stroke="#3D3A35" stroke-width="0.8" stroke-opacity="0.3" stroke-dasharray="50 200"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#2C2A26" stroke-width="1.2"/>
+            <!-- Core — warm -->
+            <circle cx="100" cy="101" r="4.5" fill="#000" fill-opacity="0.15"/>
+            <circle cx="100" cy="100" r="4" fill="url(#emb-core)"/>
+          </g>
+          <!-- Ember particles at rest — very subtle -->
+          <circle cx="88" cy="72" r="0.8" fill="#D4A800" fill-opacity="0.2" style="animation: ember-drift 4s ease-out infinite"/>
+          <circle cx="112" cy="68" r="0.6" fill="#FFCC00" fill-opacity="0.15" style="animation: ember-drift 5s ease-out infinite 1.5s"/>
+          <circle cx="95" cy="75" r="0.7" fill="#D4A800" fill-opacity="0.18" style="animation: ember-drift 4.5s ease-out infinite 3s"/>
+        </svg>
+        <span class="specimen-label">Rest</span>
+      </div>
+
+      <!-- HOVER -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <radialGradient id="emb-hover-heat" cx="50%" cy="52%" r="50%">
+              <stop offset="0%" stop-color="#FF6B00" stop-opacity="0.16"/>
+              <stop offset="35%" stop-color="#FFCC00" stop-opacity="0.08"/>
+              <stop offset="100%" stop-color="#8B7200" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="emb-hover-glow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FF6B00" stop-opacity="0.08"/>
+              <stop offset="50%" stop-color="#CC5500" stop-opacity="0.04"/>
+              <stop offset="100%" stop-color="#CC5500" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="emb-hover-spec" cx="38%" cy="28%" r="50%">
+              <stop offset="0%" stop-color="#FFF8F0" stop-opacity="0.18"/>
+              <stop offset="40%" stop-color="#E1E1E1" stop-opacity="0.05"/>
+              <stop offset="100%" stop-color="#E1E1E1" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <!-- Heat bloom -->
+          <circle cx="100" cy="100" r="72" fill="url(#emb-hover-glow)" style="animation: breath 3s ease-in-out infinite"/>
+          <!-- More particles on hover -->
+          <circle cx="85" cy="65" r="1" fill="#FFCC00" fill-opacity="0.35" style="animation: ember-drift 3s ease-out infinite"/>
+          <circle cx="108" cy="60" r="0.8" fill="#FF6B00" fill-opacity="0.3" style="animation: ember-drift 3.5s ease-out infinite 0.5s"/>
+          <circle cx="96" cy="68" r="0.9" fill="#D4A800" fill-opacity="0.28" style="animation: ember-drift 4s ease-out infinite 1s"/>
+          <circle cx="115" cy="72" r="0.7" fill="#FFCC00" fill-opacity="0.25" style="animation: ember-drift 3.2s ease-out infinite 1.5s"/>
+          <circle cx="90" cy="70" r="0.6" fill="#FF6B00" fill-opacity="0.22" style="animation: ember-drift 4.5s ease-out infinite 2s"/>
+          <circle cx="103" cy="64" r="0.8" fill="#D4A800" fill-opacity="0.3" style="animation: ember-drift 3.8s ease-out infinite 2.5s"/>
+          <!-- Node body — lifted, warmer -->
+          <g filter="url(#gem-hover-shadow)" transform="translate(100,100) scale(1.05) translate(-100,-100)">
+            <circle cx="100" cy="100" r="40" fill="url(#emb-fill)"/>
+            <circle cx="100" cy="100" r="38" fill="url(#emb-hover-heat)" style="animation: ember-pulse 2.5s ease-in-out infinite"/>
+            <circle cx="100" cy="100" r="34" fill="url(#emb-hover-spec)"/>
+            <circle cx="101" cy="102" r="41" fill="none" stroke="#3D3A35" stroke-width="1" stroke-opacity="0.4" stroke-dasharray="50 200"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#3D3A35" stroke-width="1.4"/>
+            <circle cx="100" cy="101" r="5" fill="#000" fill-opacity="0.15"/>
+            <circle cx="100" cy="100" r="4.5" fill="url(#emb-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Hover</span>
+      </div>
+
+      <!-- SELECTED -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <radialGradient id="emb-sel-aura" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#DD0000" stop-opacity="0.08"/>
+              <stop offset="50%" stop-color="#DD0000" stop-opacity="0.03"/>
+              <stop offset="100%" stop-color="#DD0000" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="70" fill="url(#emb-sel-aura)"/>
+          <circle cx="100" cy="100" r="68" fill="url(#emb-hover-glow)" style="animation: breath 3s ease-in-out infinite"/>
+          <circle cx="100" cy="100" r="48" fill="none" stroke="#DD0000" stroke-width="1.5" stroke-opacity="0.6"/>
+          <circle cx="100" cy="100" r="52" fill="none" stroke="#DD0000" stroke-width="0.5" stroke-opacity="0.1" style="animation: select-breathe 3s ease-in-out infinite"/>
+          <!-- Particles -->
+          <circle cx="85" cy="65" r="1" fill="#FFCC00" fill-opacity="0.3" style="animation: ember-drift 3s ease-out infinite"/>
+          <circle cx="108" cy="60" r="0.8" fill="#FF6B00" fill-opacity="0.25" style="animation: ember-drift 3.5s ease-out infinite 0.5s"/>
+          <circle cx="96" cy="68" r="0.9" fill="#D4A800" fill-opacity="0.22" style="animation: ember-drift 4s ease-out infinite 1s"/>
+          <circle cx="115" cy="72" r="0.7" fill="#FFCC00" fill-opacity="0.2" style="animation: ember-drift 3.2s ease-out infinite 1.5s"/>
+          <!-- Node body -->
+          <g filter="url(#gem-hover-shadow)" transform="translate(100,100) scale(1.05) translate(-100,-100)">
+            <circle cx="100" cy="100" r="40" fill="url(#emb-fill)"/>
+            <circle cx="100" cy="100" r="38" fill="url(#emb-hover-heat)" style="animation: ember-pulse 2.5s ease-in-out infinite"/>
+            <circle cx="100" cy="100" r="34" fill="url(#emb-hover-spec)"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#3D3A35" stroke-width="1.6"/>
+            <circle cx="100" cy="101" r="5" fill="#000" fill-opacity="0.15"/>
+            <circle cx="100" cy="100" r="4.5" fill="url(#emb-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Selected</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       05. OBSERVATORY
+       ============================================================ -->
+  <div class="exploration">
+    <div class="exploration-header">
+      <span class="exploration-number">05</span>
+      <span class="exploration-name">Observatory</span>
+    </div>
+    <p class="exploration-desc">
+      Nested transparent rings of decreasing opacity, like aperture rings in a telescope.
+      Clean, scientific, measured. The precision of an instrument built to observe phenomena
+      at impossible scales. Quiet confidence in every concentric arc.
+    </p>
+    <div class="specimens">
+      <!-- REST -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <radialGradient id="obs-fill" cx="48%" cy="38%" r="60%">
+              <stop offset="0%" stop-color="#252320"/>
+              <stop offset="50%" stop-color="#1E1C19"/>
+              <stop offset="100%" stop-color="#13120F"/>
+            </radialGradient>
+          </defs>
+          <!-- Aperture rings — decreasing opacity outward -->
+          <circle cx="100" cy="100" r="48" fill="none" stroke="#3D3A35" stroke-width="1.0" stroke-opacity="0.2"/>
+          <circle cx="100" cy="100" r="56" fill="none" stroke="#3D3A35" stroke-width="0.8" stroke-opacity="0.12"/>
+          <circle cx="100" cy="100" r="64" fill="none" stroke="#3D3A35" stroke-width="0.6" stroke-opacity="0.06"/>
+          <circle cx="100" cy="100" r="72" fill="none" stroke="#2C2A26" stroke-width="0.4" stroke-opacity="0.04"/>
+          <!-- Node body -->
+          <g filter="url(#gem-shadow)">
+            <circle cx="100" cy="100" r="40" fill="url(#obs-fill)"/>
+            <circle cx="100" cy="100" r="34" fill="url(#ret-spec)"/>
+            <!-- Lens element ring -->
+            <circle cx="100" cy="100" r="24" fill="none" stroke="#404040" stroke-width="0.3" stroke-opacity="0.2"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#3D3A35" stroke-width="1.5"/>
+            <circle cx="100" cy="101" r="3.5" fill="#000" fill-opacity="0.12"/>
+            <circle cx="100" cy="100" r="3" fill="url(#gem-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Rest</span>
+      </div>
+
+      <!-- HOVER -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <!-- Aperture rings — animate on hover -->
+          <circle cx="100" cy="100" r="48" fill="none" stroke="#606060" stroke-width="1.0" stroke-opacity="0.3" style="animation: obs-ring-pulse-1 2.5s ease-in-out infinite"/>
+          <circle cx="100" cy="100" r="56" fill="none" stroke="#606060" stroke-width="0.8" stroke-opacity="0.2" style="animation: obs-ring-pulse-2 2.5s ease-in-out infinite 0.4s"/>
+          <circle cx="100" cy="100" r="64" fill="none" stroke="#606060" stroke-width="0.6" stroke-opacity="0.12" style="animation: obs-ring-pulse-3 2.5s ease-in-out infinite 0.8s"/>
+          <circle cx="100" cy="100" r="72" fill="none" stroke="#3D3A35" stroke-width="0.4" stroke-opacity="0.08"/>
+          <!-- Focus indicator — rotating partial arc -->
+          <circle cx="100" cy="100" r="52" fill="none" stroke="#808080" stroke-width="0.5" stroke-opacity="0.25" stroke-dasharray="12 78" style="animation: orbit-slow 8s linear infinite"/>
+          <!-- Node body — lifted -->
+          <g filter="url(#gem-hover-shadow)" transform="translate(100,100) scale(1.05) translate(-100,-100)">
+            <circle cx="100" cy="100" r="40" fill="url(#obs-fill)"/>
+            <circle cx="100" cy="100" r="34" fill="url(#gem-hover-spec)"/>
+            <circle cx="100" cy="100" r="24" fill="none" stroke="#606060" stroke-width="0.4" stroke-opacity="0.3"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#606060" stroke-width="1.5"/>
+            <circle cx="100" cy="101" r="3.5" fill="#000" fill-opacity="0.12"/>
+            <circle cx="100" cy="100" r="3" fill="url(#gem-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Hover</span>
+      </div>
+
+      <!-- SELECTED -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <radialGradient id="obs-sel-aura" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#DD0000" stop-opacity="0.05"/>
+              <stop offset="100%" stop-color="#DD0000" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="78" fill="url(#obs-sel-aura)"/>
+          <!-- Rings shift to red influence -->
+          <circle cx="100" cy="100" r="48" fill="none" stroke="#DD0000" stroke-width="1.0" stroke-opacity="0.25"/>
+          <circle cx="100" cy="100" r="56" fill="none" stroke="#DD0000" stroke-width="0.8" stroke-opacity="0.15"/>
+          <circle cx="100" cy="100" r="64" fill="none" stroke="#DD0000" stroke-width="0.6" stroke-opacity="0.08"/>
+          <circle cx="100" cy="100" r="72" fill="none" stroke="#DD0000" stroke-width="0.4" stroke-opacity="0.04"/>
+          <!-- Breathing outer ring -->
+          <circle cx="100" cy="100" r="52" fill="none" stroke="#DD0000" stroke-width="0.5" stroke-opacity="0.12" style="animation: select-breathe 3s ease-in-out infinite"/>
+          <!-- Node body -->
+          <g filter="url(#gem-hover-shadow)" transform="translate(100,100) scale(1.05) translate(-100,-100)">
+            <circle cx="100" cy="100" r="40" fill="url(#obs-fill)"/>
+            <circle cx="100" cy="100" r="34" fill="url(#gem-hover-spec)"/>
+            <circle cx="100" cy="100" r="24" fill="none" stroke="#606060" stroke-width="0.4" stroke-opacity="0.3"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#808080" stroke-width="1.6"/>
+            <circle cx="100" cy="101" r="3.5" fill="#000" fill-opacity="0.12"/>
+            <circle cx="100" cy="100" r="3" fill="url(#gem-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Selected</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       06. SIGIL
+       ============================================================ -->
+  <div class="exploration">
+    <div class="exploration-header">
+      <span class="exploration-number">06</span>
+      <span class="exploration-name">Sigil</span>
+    </div>
+    <p class="exploration-desc">
+      A fine geometric pattern inscribed on the node surface -- subliminal at distance, revealed on hover.
+      Part magic circle, part technical schematic. The language of a system that encodes meaning
+      in geometry. Occult precision.
+    </p>
+    <div class="specimens">
+      <!-- REST -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <clipPath id="sigil-clip">
+              <circle cx="100" cy="100" r="39"/>
+            </clipPath>
+          </defs>
+          <!-- Node body -->
+          <g filter="url(#gem-shadow)">
+            <circle cx="100" cy="100" r="40" fill="url(#gem-fill)"/>
+            <!-- Sigil pattern — barely visible at rest -->
+            <g clip-path="url(#sigil-clip)" opacity="0.04">
+              <!-- Inner hexagon -->
+              <polygon points="100,78 119,89 119,111 100,122 81,111 81,89" fill="none" stroke="#E1E1E1" stroke-width="0.6"/>
+              <!-- Rotated inner triangle -->
+              <polygon points="100,82 116,109 84,109" fill="none" stroke="#E1E1E1" stroke-width="0.5"/>
+              <polygon points="100,118 84,91 116,91" fill="none" stroke="#E1E1E1" stroke-width="0.5"/>
+              <!-- Radial lines from center -->
+              <line x1="100" y1="100" x2="100" y2="70" stroke="#E1E1E1" stroke-width="0.3"/>
+              <line x1="100" y1="100" x2="126" y2="85" stroke="#E1E1E1" stroke-width="0.3"/>
+              <line x1="100" y1="100" x2="126" y2="115" stroke="#E1E1E1" stroke-width="0.3"/>
+              <line x1="100" y1="100" x2="100" y2="130" stroke="#E1E1E1" stroke-width="0.3"/>
+              <line x1="100" y1="100" x2="74" y2="115" stroke="#E1E1E1" stroke-width="0.3"/>
+              <line x1="100" y1="100" x2="74" y2="85" stroke="#E1E1E1" stroke-width="0.3"/>
+              <!-- Outer circle inscribed -->
+              <circle cx="100" cy="100" r="32" fill="none" stroke="#E1E1E1" stroke-width="0.4"/>
+              <!-- Micro dots at vertices -->
+              <circle cx="100" cy="78" r="1" fill="#E1E1E1"/>
+              <circle cx="119" cy="89" r="1" fill="#E1E1E1"/>
+              <circle cx="119" cy="111" r="1" fill="#E1E1E1"/>
+              <circle cx="100" cy="122" r="1" fill="#E1E1E1"/>
+              <circle cx="81" cy="111" r="1" fill="#E1E1E1"/>
+              <circle cx="81" cy="89" r="1" fill="#E1E1E1"/>
+            </g>
+            <circle cx="100" cy="100" r="34" fill="url(#gem-spec)"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#2C2A26" stroke-width="1.2"/>
+            <circle cx="100" cy="101" r="3.5" fill="#000" fill-opacity="0.12"/>
+            <circle cx="100" cy="100" r="3" fill="url(#gem-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Rest</span>
+      </div>
+
+      <!-- HOVER -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <clipPath id="sigil-clip-h">
+              <circle cx="100" cy="100" r="41"/>
+            </clipPath>
+          </defs>
+          <!-- Outer sigil fragments extend beyond node -->
+          <g opacity="0.08">
+            <circle cx="100" cy="100" r="50" fill="none" stroke="#808080" stroke-width="0.3" stroke-dasharray="3 8"/>
+            <line x1="100" y1="48" x2="100" y2="42" stroke="#808080" stroke-width="0.4"/>
+            <line x1="100" y1="152" x2="100" y2="158" stroke="#808080" stroke-width="0.4"/>
+            <line x1="48" y1="100" x2="42" y2="100" stroke="#808080" stroke-width="0.4"/>
+            <line x1="152" y1="100" x2="158" y2="100" stroke="#808080" stroke-width="0.4"/>
+          </g>
+          <!-- Node body — sigil revealed -->
+          <g filter="url(#gem-hover-shadow)" transform="translate(100,100) scale(1.05) translate(-100,-100)">
+            <circle cx="100" cy="100" r="40" fill="url(#gem-hover-fill)"/>
+            <g clip-path="url(#sigil-clip-h)" opacity="0.12" style="animation: sigil-reveal 4s ease-in-out infinite">
+              <polygon points="100,78 119,89 119,111 100,122 81,111 81,89" fill="none" stroke="#E1E1E1" stroke-width="0.6"/>
+              <polygon points="100,82 116,109 84,109" fill="none" stroke="#E1E1E1" stroke-width="0.5"/>
+              <polygon points="100,118 84,91 116,91" fill="none" stroke="#E1E1E1" stroke-width="0.5"/>
+              <line x1="100" y1="100" x2="100" y2="70" stroke="#E1E1E1" stroke-width="0.3"/>
+              <line x1="100" y1="100" x2="126" y2="85" stroke="#E1E1E1" stroke-width="0.3"/>
+              <line x1="100" y1="100" x2="126" y2="115" stroke="#E1E1E1" stroke-width="0.3"/>
+              <line x1="100" y1="100" x2="100" y2="130" stroke="#E1E1E1" stroke-width="0.3"/>
+              <line x1="100" y1="100" x2="74" y2="115" stroke="#E1E1E1" stroke-width="0.3"/>
+              <line x1="100" y1="100" x2="74" y2="85" stroke="#E1E1E1" stroke-width="0.3"/>
+              <circle cx="100" cy="100" r="32" fill="none" stroke="#E1E1E1" stroke-width="0.4"/>
+              <circle cx="100" cy="78" r="1.2" fill="#C8C8C8"/>
+              <circle cx="119" cy="89" r="1.2" fill="#C8C8C8"/>
+              <circle cx="119" cy="111" r="1.2" fill="#C8C8C8"/>
+              <circle cx="100" cy="122" r="1.2" fill="#C8C8C8"/>
+              <circle cx="81" cy="111" r="1.2" fill="#C8C8C8"/>
+              <circle cx="81" cy="89" r="1.2" fill="#C8C8C8"/>
+            </g>
+            <!-- Slow rotation of pattern -->
+            <g clip-path="url(#sigil-clip-h)" opacity="0.06" style="animation: orbit-slow 30s linear infinite">
+              <polygon points="100,80 118,90 118,110 100,120 82,110 82,90" fill="none" stroke="#A8A8A8" stroke-width="0.3" stroke-dasharray="2 3"/>
+            </g>
+            <circle cx="100" cy="100" r="34" fill="url(#gem-hover-spec)"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#3D3A35" stroke-width="1.4"/>
+            <circle cx="100" cy="101" r="3.5" fill="#000" fill-opacity="0.12"/>
+            <circle cx="100" cy="100" r="3" fill="url(#gem-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Hover</span>
+      </div>
+
+      <!-- SELECTED -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <radialGradient id="sig-sel-aura" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#DD0000" stop-opacity="0.06"/>
+              <stop offset="100%" stop-color="#DD0000" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="65" fill="url(#sig-sel-aura)"/>
+          <circle cx="100" cy="100" r="48" fill="none" stroke="#DD0000" stroke-width="1.5" stroke-opacity="0.6"/>
+          <circle cx="100" cy="100" r="52" fill="none" stroke="#DD0000" stroke-width="0.5" stroke-opacity="0.1" style="animation: select-breathe 3s ease-in-out infinite"/>
+          <!-- Outer sigil fragments in red -->
+          <g opacity="0.1">
+            <circle cx="100" cy="100" r="55" fill="none" stroke="#DD0000" stroke-width="0.3" stroke-dasharray="3 8"/>
+          </g>
+          <g filter="url(#gem-hover-shadow)" transform="translate(100,100) scale(1.05) translate(-100,-100)">
+            <circle cx="100" cy="100" r="40" fill="url(#gem-hover-fill)"/>
+            <g clip-path="url(#sigil-clip-h)" opacity="0.15">
+              <polygon points="100,78 119,89 119,111 100,122 81,111 81,89" fill="none" stroke="#E1E1E1" stroke-width="0.6"/>
+              <polygon points="100,82 116,109 84,109" fill="none" stroke="#E1E1E1" stroke-width="0.5"/>
+              <polygon points="100,118 84,91 116,91" fill="none" stroke="#E1E1E1" stroke-width="0.5"/>
+              <line x1="100" y1="100" x2="100" y2="70" stroke="#E1E1E1" stroke-width="0.3"/>
+              <line x1="100" y1="100" x2="126" y2="85" stroke="#E1E1E1" stroke-width="0.3"/>
+              <line x1="100" y1="100" x2="126" y2="115" stroke="#E1E1E1" stroke-width="0.3"/>
+              <line x1="100" y1="100" x2="100" y2="130" stroke="#E1E1E1" stroke-width="0.3"/>
+              <line x1="100" y1="100" x2="74" y2="115" stroke="#E1E1E1" stroke-width="0.3"/>
+              <line x1="100" y1="100" x2="74" y2="85" stroke="#E1E1E1" stroke-width="0.3"/>
+              <circle cx="100" cy="100" r="32" fill="none" stroke="#E1E1E1" stroke-width="0.4"/>
+              <circle cx="100" cy="78" r="1.2" fill="#C8C8C8"/>
+              <circle cx="119" cy="89" r="1.2" fill="#C8C8C8"/>
+              <circle cx="119" cy="111" r="1.2" fill="#C8C8C8"/>
+              <circle cx="100" cy="122" r="1.2" fill="#C8C8C8"/>
+              <circle cx="81" cy="111" r="1.2" fill="#C8C8C8"/>
+              <circle cx="81" cy="89" r="1.2" fill="#C8C8C8"/>
+            </g>
+            <circle cx="100" cy="100" r="34" fill="url(#gem-hover-spec)"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#808080" stroke-width="1.6"/>
+            <circle cx="100" cy="101" r="3.5" fill="#000" fill-opacity="0.12"/>
+            <circle cx="100" cy="100" r="3" fill="url(#gem-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Selected</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       07. CRYSTALLINE
+       ============================================================ -->
+  <div class="exploration">
+    <div class="exploration-header">
+      <span class="exploration-number">07</span>
+      <span class="exploration-name">Crystalline</span>
+    </div>
+    <p class="exploration-desc">
+      Sharp geometric facets with crisp edges. Light refracts at angles through a transparent medium.
+      More angular than round with a clear luminous core. Cut diamond rendered as dark matter --
+      the geometry of compressed intelligence.
+    </p>
+    <div class="specimens">
+      <!-- REST -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <linearGradient id="cry-face-1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#252320"/>
+              <stop offset="100%" stop-color="#13120F"/>
+            </linearGradient>
+            <linearGradient id="cry-face-2" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#2C2A26"/>
+              <stop offset="100%" stop-color="#1A1816"/>
+            </linearGradient>
+            <linearGradient id="cry-face-3" x1="50%" y1="0%" x2="50%" y2="100%">
+              <stop offset="0%" stop-color="#1E1C19"/>
+              <stop offset="100%" stop-color="#0C0B09"/>
+            </linearGradient>
+            <filter id="cry-shadow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blur"/>
+              <feOffset dx="0" dy="3" result="offset"/>
+              <feFlood flood-color="#000" flood-opacity="0.6"/>
+              <feComposite in2="offset" operator="in" result="shadow"/>
+              <feMerge>
+                <feMergeNode in="shadow"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <radialGradient id="cry-core" cx="45%" cy="38%">
+              <stop offset="0%" stop-color="#FFFFFF" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#A8A8A8" stop-opacity="0.5"/>
+            </radialGradient>
+          </defs>
+          <g filter="url(#cry-shadow)">
+            <!-- Octagonal crystal body — 8 facets -->
+            <polygon points="100,58 133,72 142,100 133,128 100,142 67,128 58,100 67,72"
+              fill="url(#cry-face-3)"/>
+            <!-- Facet divisions — crisp edges -->
+            <polygon points="100,58 133,72 100,100" fill="url(#cry-face-1)" opacity="0.4"/>
+            <polygon points="133,72 142,100 100,100" fill="url(#cry-face-2)" opacity="0.3"/>
+            <polygon points="142,100 133,128 100,100" fill="url(#cry-face-1)" opacity="0.2"/>
+            <polygon points="133,128 100,142 100,100" fill="url(#cry-face-3)" opacity="0.35"/>
+            <polygon points="100,58 67,72 100,100" fill="url(#cry-face-2)" opacity="0.5"/>
+            <polygon points="67,72 58,100 100,100" fill="url(#cry-face-1)" opacity="0.25"/>
+            <!-- Edge highlight — top-left light catch -->
+            <line x1="100" y1="58" x2="133" y2="72" stroke="#3D3A35" stroke-width="1" stroke-opacity="0.5"/>
+            <line x1="67" y1="72" x2="100" y2="58" stroke="#3D3A35" stroke-width="0.8" stroke-opacity="0.35"/>
+            <!-- All edges -->
+            <polygon points="100,58 133,72 142,100 133,128 100,142 67,128 58,100 67,72"
+              fill="none" stroke="#2C2A26" stroke-width="1" stroke-linejoin="miter"/>
+            <!-- Refraction line -->
+            <line x1="100" y1="58" x2="100" y2="142" stroke="#3D3A35" stroke-width="0.3" stroke-opacity="0.15"/>
+            <line x1="58" y1="100" x2="142" y2="100" stroke="#3D3A35" stroke-width="0.3" stroke-opacity="0.1"/>
+            <!-- Crystal core -->
+            <circle cx="100" cy="101" r="4" fill="#000" fill-opacity="0.12"/>
+            <circle cx="100" cy="100" r="3.5" fill="url(#cry-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Rest</span>
+      </div>
+
+      <!-- HOVER -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <radialGradient id="cry-refract" cx="35%" cy="30%" r="60%">
+              <stop offset="0%" stop-color="#E1E1E1" stop-opacity="0.08"/>
+              <stop offset="100%" stop-color="#E1E1E1" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <!-- Refraction light rays extending outward -->
+          <line x1="100" y1="55" x2="100" y2="40" stroke="#606060" stroke-width="0.4" stroke-opacity="0.15" style="animation: crystal-refract 3s ease-in-out infinite"/>
+          <line x1="136" y1="70" x2="148" y2="60" stroke="#606060" stroke-width="0.3" stroke-opacity="0.1" style="animation: crystal-refract 3s ease-in-out infinite 0.5s"/>
+          <line x1="64" y1="70" x2="52" y2="60" stroke="#606060" stroke-width="0.3" stroke-opacity="0.1" style="animation: crystal-refract 3s ease-in-out infinite 1s"/>
+          <g filter="url(#cry-shadow)" transform="translate(100,100) scale(1.05) translate(-100,-100)">
+            <polygon points="100,58 133,72 142,100 133,128 100,142 67,128 58,100 67,72"
+              fill="url(#cry-face-3)"/>
+            <polygon points="100,58 133,72 100,100" fill="url(#cry-face-1)" opacity="0.5"/>
+            <polygon points="133,72 142,100 100,100" fill="url(#cry-face-2)" opacity="0.4"/>
+            <polygon points="142,100 133,128 100,100" fill="url(#cry-face-1)" opacity="0.25"/>
+            <polygon points="133,128 100,142 100,100" fill="url(#cry-face-3)" opacity="0.4"/>
+            <polygon points="100,58 67,72 100,100" fill="url(#cry-face-2)" opacity="0.6"/>
+            <polygon points="67,72 58,100 100,100" fill="url(#cry-face-1)" opacity="0.3"/>
+            <!-- Refraction overlay -->
+            <polygon points="100,58 133,72 142,100 133,128 100,142 67,128 58,100 67,72"
+              fill="url(#cry-refract)"/>
+            <!-- Intensified edges -->
+            <line x1="100" y1="58" x2="133" y2="72" stroke="#606060" stroke-width="1.2" stroke-opacity="0.5"/>
+            <line x1="67" y1="72" x2="100" y2="58" stroke="#606060" stroke-width="1" stroke-opacity="0.4"/>
+            <polygon points="100,58 133,72 142,100 133,128 100,142 67,128 58,100 67,72"
+              fill="none" stroke="#3D3A35" stroke-width="1.2" stroke-linejoin="miter"/>
+            <line x1="100" y1="58" x2="100" y2="142" stroke="#3D3A35" stroke-width="0.3" stroke-opacity="0.2"/>
+            <line x1="58" y1="100" x2="142" y2="100" stroke="#3D3A35" stroke-width="0.3" stroke-opacity="0.15"/>
+            <circle cx="100" cy="101" r="4" fill="#000" fill-opacity="0.12"/>
+            <circle cx="100" cy="100" r="3.5" fill="url(#cry-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Hover</span>
+      </div>
+
+      <!-- SELECTED -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <radialGradient id="cry-sel-aura" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#DD0000" stop-opacity="0.06"/>
+              <stop offset="100%" stop-color="#DD0000" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="68" fill="url(#cry-sel-aura)"/>
+          <!-- Selection polygon — mirrors the crystal shape -->
+          <polygon points="100,48 139,65 150,100 139,135 100,152 61,135 50,100 61,65"
+            fill="none" stroke="#DD0000" stroke-width="1.5" stroke-opacity="0.5" stroke-linejoin="miter"/>
+          <!-- Breathing outer -->
+          <polygon points="100,44 142,62 154,100 142,138 100,156 58,138 46,100 58,62"
+            fill="none" stroke="#DD0000" stroke-width="0.5" stroke-opacity="0.08" stroke-linejoin="miter" style="animation: breath 3s ease-in-out infinite"/>
+          <g filter="url(#cry-shadow)" transform="translate(100,100) scale(1.05) translate(-100,-100)">
+            <polygon points="100,58 133,72 142,100 133,128 100,142 67,128 58,100 67,72"
+              fill="url(#cry-face-3)"/>
+            <polygon points="100,58 133,72 100,100" fill="url(#cry-face-1)" opacity="0.5"/>
+            <polygon points="133,72 142,100 100,100" fill="url(#cry-face-2)" opacity="0.4"/>
+            <polygon points="142,100 133,128 100,100" fill="url(#cry-face-1)" opacity="0.25"/>
+            <polygon points="133,128 100,142 100,100" fill="url(#cry-face-3)" opacity="0.4"/>
+            <polygon points="100,58 67,72 100,100" fill="url(#cry-face-2)" opacity="0.6"/>
+            <polygon points="67,72 58,100 100,100" fill="url(#cry-face-1)" opacity="0.3"/>
+            <polygon points="100,58 133,72 142,100 133,128 100,142 67,128 58,100 67,72"
+              fill="url(#cry-refract)"/>
+            <line x1="100" y1="58" x2="133" y2="72" stroke="#606060" stroke-width="1.2" stroke-opacity="0.5"/>
+            <line x1="67" y1="72" x2="100" y2="58" stroke="#606060" stroke-width="1" stroke-opacity="0.4"/>
+            <polygon points="100,58 133,72 142,100 133,128 100,142 67,128 58,100 67,72"
+              fill="none" stroke="#3D3A35" stroke-width="1.2" stroke-linejoin="miter"/>
+            <circle cx="100" cy="101" r="4" fill="#000" fill-opacity="0.12"/>
+            <circle cx="100" cy="100" r="3.5" fill="url(#cry-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Selected</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       08. ANCIENT TECH
+       ============================================================ -->
+  <div class="exploration">
+    <div class="exploration-header">
+      <span class="exploration-number">08</span>
+      <span class="exploration-name">Ancient Tech</span>
+    </div>
+    <p class="exploration-desc">
+      Weathered, warm patina. A recovered artifact from an advanced civilization -- oxidized gold
+      accents over dark alloy substrate. Faint light bleeds from internal seams as if the device
+      still holds power after millennia. Wabi-sabi meets xenotech.
+    </p>
+    <div class="specimens">
+      <!-- REST -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <radialGradient id="anc-fill" cx="48%" cy="40%" r="65%">
+              <stop offset="0%" stop-color="#33302A"/>
+              <stop offset="50%" stop-color="#221F1A"/>
+              <stop offset="100%" stop-color="#161411"/>
+            </radialGradient>
+            <radialGradient id="anc-patina" cx="60%" cy="35%" r="50%">
+              <stop offset="0%" stop-color="#8B7200" stop-opacity="0.06"/>
+              <stop offset="100%" stop-color="#8B7200" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="anc-core" cx="45%" cy="40%">
+              <stop offset="0%" stop-color="#FFF8F0" stop-opacity="1"/>
+              <stop offset="100%" stop-color="#D4C4B0" stop-opacity="0.6"/>
+            </radialGradient>
+            <filter id="anc-shadow" x="-40%" y="-40%" width="180%" height="180%">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blur"/>
+              <feOffset dx="0" dy="2" result="offset"/>
+              <feFlood flood-color="#000" flood-opacity="0.65"/>
+              <feComposite in2="offset" operator="in" result="shadow"/>
+              <feMerge>
+                <feMergeNode in="shadow"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <g filter="url(#anc-shadow)">
+            <!-- Base body — warm shifted -->
+            <circle cx="100" cy="100" r="40" fill="url(#anc-fill)"/>
+            <!-- Patina wash -->
+            <circle cx="100" cy="100" r="38" fill="url(#anc-patina)"/>
+            <!-- Internal seam lines — the device has segments -->
+            <path d="M72,80 Q100,76 128,80" fill="none" stroke="#8B7200" stroke-width="0.5" stroke-opacity="0.1" style="animation: seam-pulse 5s ease-in-out infinite"/>
+            <path d="M68,105 Q100,108 132,105" fill="none" stroke="#8B7200" stroke-width="0.5" stroke-opacity="0.08" style="animation: seam-pulse 5s ease-in-out infinite 1.5s"/>
+            <path d="M80,65 L80,135" fill="none" stroke="#8B7200" stroke-width="0.3" stroke-opacity="0.06"/>
+            <path d="M120,65 L120,135" fill="none" stroke="#8B7200" stroke-width="0.3" stroke-opacity="0.06"/>
+            <!-- Oxidized gold edge — irregular, worn -->
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#8B7200" stroke-width="1.2" stroke-opacity="0.2"/>
+            <!-- Wear marks — slightly brighter patches on edge -->
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#D4A800" stroke-width="0.8" stroke-opacity="0.08" stroke-dasharray="8 25 5 30 12 20"/>
+            <!-- Specular — dimmer, more diffuse -->
+            <circle cx="100" cy="100" r="32" fill="url(#gem-spec)" opacity="0.6"/>
+            <!-- Core — warm white -->
+            <circle cx="100" cy="101" r="4" fill="#000" fill-opacity="0.12"/>
+            <circle cx="100" cy="100" r="3.5" fill="url(#anc-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Rest</span>
+      </div>
+
+      <!-- HOVER -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <radialGradient id="anc-hover-leak" cx="35%" cy="30%" r="50%">
+              <stop offset="0%" stop-color="#D4A574" stop-opacity="0.06"/>
+              <stop offset="100%" stop-color="#D4A574" stop-opacity="0"/>
+            </radialGradient>
+            <radialGradient id="anc-hover-glow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#D4A800" stop-opacity="0.04"/>
+              <stop offset="100%" stop-color="#D4A800" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <!-- Faint warm glow — the device awakens -->
+          <circle cx="100" cy="100" r="60" fill="url(#anc-hover-glow)" style="animation: weathered-glow 4s ease-in-out infinite"/>
+          <g filter="url(#gem-hover-shadow)" transform="translate(100,100) scale(1.05) translate(-100,-100)">
+            <circle cx="100" cy="100" r="40" fill="url(#anc-fill)"/>
+            <circle cx="100" cy="100" r="38" fill="url(#anc-patina)"/>
+            <!-- Light leak — cinematic amber -->
+            <circle cx="100" cy="100" r="38" fill="url(#anc-hover-leak)"/>
+            <!-- Seams glow brighter -->
+            <path d="M72,80 Q100,76 128,80" fill="none" stroke="#D4A800" stroke-width="0.6" stroke-opacity="0.2" style="animation: seam-pulse 3s ease-in-out infinite"/>
+            <path d="M68,105 Q100,108 132,105" fill="none" stroke="#D4A800" stroke-width="0.6" stroke-opacity="0.18" style="animation: seam-pulse 3s ease-in-out infinite 1s"/>
+            <path d="M80,65 L80,135" fill="none" stroke="#D4A800" stroke-width="0.4" stroke-opacity="0.12" style="animation: seam-pulse 3s ease-in-out infinite 0.5s"/>
+            <path d="M120,65 L120,135" fill="none" stroke="#D4A800" stroke-width="0.4" stroke-opacity="0.12" style="animation: seam-pulse 3s ease-in-out infinite 2s"/>
+            <!-- Edge -->
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#D4A800" stroke-width="1.2" stroke-opacity="0.3"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#FFCC00" stroke-width="0.6" stroke-opacity="0.08" stroke-dasharray="8 25 5 30 12 20"/>
+            <circle cx="100" cy="100" r="32" fill="url(#gem-hover-spec)" opacity="0.7"/>
+            <circle cx="100" cy="101" r="4.5" fill="#000" fill-opacity="0.12"/>
+            <circle cx="100" cy="100" r="4" fill="url(#anc-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Hover</span>
+      </div>
+
+      <!-- SELECTED -->
+      <div class="specimen">
+        <svg width="200" height="200" viewBox="0 0 200 200">
+          <defs>
+            <radialGradient id="anc-sel-aura" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#DD0000" stop-opacity="0.06"/>
+              <stop offset="60%" stop-color="#DD0000" stop-opacity="0.02"/>
+              <stop offset="100%" stop-color="#DD0000" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="68" fill="url(#anc-sel-aura)"/>
+          <!-- Warm glow persists -->
+          <circle cx="100" cy="100" r="58" fill="url(#anc-hover-glow)" style="animation: weathered-glow 4s ease-in-out infinite"/>
+          <!-- Selection ring -->
+          <circle cx="100" cy="100" r="48" fill="none" stroke="#DD0000" stroke-width="1.5" stroke-opacity="0.6"/>
+          <circle cx="100" cy="100" r="52" fill="none" stroke="#DD0000" stroke-width="0.5" stroke-opacity="0.1" style="animation: select-breathe 3s ease-in-out infinite"/>
+          <g filter="url(#gem-hover-shadow)" transform="translate(100,100) scale(1.05) translate(-100,-100)">
+            <circle cx="100" cy="100" r="40" fill="url(#anc-fill)"/>
+            <circle cx="100" cy="100" r="38" fill="url(#anc-patina)"/>
+            <circle cx="100" cy="100" r="38" fill="url(#anc-hover-leak)"/>
+            <path d="M72,80 Q100,76 128,80" fill="none" stroke="#D4A800" stroke-width="0.6" stroke-opacity="0.18" style="animation: seam-pulse 3s ease-in-out infinite"/>
+            <path d="M68,105 Q100,108 132,105" fill="none" stroke="#D4A800" stroke-width="0.6" stroke-opacity="0.15" style="animation: seam-pulse 3s ease-in-out infinite 1s"/>
+            <path d="M80,65 L80,135" fill="none" stroke="#D4A800" stroke-width="0.4" stroke-opacity="0.1" style="animation: seam-pulse 3s ease-in-out infinite 0.5s"/>
+            <path d="M120,65 L120,135" fill="none" stroke="#D4A800" stroke-width="0.4" stroke-opacity="0.1" style="animation: seam-pulse 3s ease-in-out infinite 2s"/>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#D4A800" stroke-width="1.4" stroke-opacity="0.3"/>
+            <circle cx="100" cy="100" r="32" fill="url(#gem-hover-spec)" opacity="0.7"/>
+            <circle cx="100" cy="101" r="4.5" fill="#000" fill-opacity="0.12"/>
+            <circle cx="100" cy="100" r="4" fill="url(#anc-core)"/>
+          </g>
+        </svg>
+        <span class="specimen-label">Selected</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<div class="footer">
+  <p>Dreamcacher &mdash; Node Material Studies &mdash; Bumba Design System</p>
+</div>
+
+</body>
+</html>

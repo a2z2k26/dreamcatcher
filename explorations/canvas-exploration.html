@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dreamcacher Canvas Explorations</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: #2C2A26 #080706;
+  }
+
+  body {
+    background: #080706;
+    color: #C8C8C8;
+    font-family: 'Inconsolata', monospace;
+    overflow-x: hidden;
+  }
+
+  .exploration {
+    position: relative;
+    width: 100vw;
+    height: 60vh;
+    min-height: 480px;
+    overflow: hidden;
+  }
+
+  .exploration-label {
+    position: absolute;
+    top: 20px;
+    left: 24px;
+    z-index: 10;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #606060;
+    line-height: 12px;
+  }
+
+  .exploration-label .name {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #A8A8A8;
+    margin-top: 4px;
+  }
+
+  .exploration-label .desc {
+    display: block;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0;
+    text-transform: none;
+    color: #606060;
+    margin-top: 2px;
+    max-width: 320px;
+    line-height: 16px;
+  }
+
+  .canvas-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: #1A1816;
+  }
+
+  /* ---- Animations ---- */
+
+  @keyframes orbit-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes orbit-reverse {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+  }
+
+  @keyframes breathe {
+    0%, 100% { opacity: 0.06; r: 38; }
+    50% { opacity: 0.12; r: 44; }
+  }
+
+  @keyframes breathe-glow {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 0.35; }
+  }
+
+  @keyframes drift-x {
+    0% { transform: translateX(0) translateY(0); }
+    25% { transform: translateX(12px) translateY(-8px); }
+    50% { transform: translateX(6px) translateY(4px); }
+    75% { transform: translateX(-8px) translateY(-3px); }
+    100% { transform: translateX(0) translateY(0); }
+  }
+
+  @keyframes drift-y {
+    0% { transform: translateX(0) translateY(0); }
+    33% { transform: translateX(-6px) translateY(10px); }
+    66% { transform: translateX(8px) translateY(-5px); }
+    100% { transform: translateX(0) translateY(0); }
+  }
+
+  @keyframes pulse-edge {
+    0%, 100% { stroke-opacity: 0.25; }
+    50% { stroke-opacity: 0.5; }
+  }
+
+  @keyframes ripple-expand {
+    0% { r: 60; opacity: 0.06; }
+    100% { r: 280; opacity: 0; }
+  }
+
+  @keyframes dash-flow {
+    from { stroke-dashoffset: 0; }
+    to { stroke-dashoffset: -40; }
+  }
+
+  @keyframes dash-flow-reverse {
+    from { stroke-dashoffset: 0; }
+    to { stroke-dashoffset: 40; }
+  }
+
+  @keyframes particle-float {
+    0% { transform: translate(0, 0); opacity: 0.15; }
+    20% { opacity: 0.25; }
+    40% { transform: translate(20px, -30px); opacity: 0.1; }
+    60% { transform: translate(-15px, -50px); opacity: 0.2; }
+    80% { transform: translate(10px, -20px); opacity: 0.08; }
+    100% { transform: translate(0, 0); opacity: 0.15; }
+  }
+
+  @keyframes bloom-pulse {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.45; }
+  }
+
+  @keyframes energy-flow {
+    0% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: -60; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ====================================================================
+     SHARED SVG FILTERS
+     ==================================================================== -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <!-- Soft glow for node auras -->
+    <filter id="glow-soft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Wider glow for bloom effects -->
+    <filter id="glow-bloom" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="16" result="blur2"/>
+      <feMerge>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Edge glow -->
+    <filter id="glow-edge" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Plasma edge glow -->
+    <filter id="glow-plasma" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur1"/>
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur2"/>
+      <feMerge>
+        <feMergeNode in="blur1"/>
+        <feMergeNode in="blur2"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Film grain via feTurbulence -->
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="4" stitchTiles="stitch" result="noise"/>
+      <feColorMatrix type="saturate" values="0" in="noise" result="mono"/>
+      <feBlend in="SourceGraphic" in2="mono" mode="multiply" result="blend"/>
+      <feComponentTransfer in="blend">
+        <feFuncA type="linear" slope="1"/>
+      </feComponentTransfer>
+    </filter>
+
+    <!-- Subtle noise overlay -->
+    <filter id="noise-overlay" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" seed="2" stitchTiles="stitch" result="noise"/>
+      <feColorMatrix type="saturate" values="0" in="noise" result="mono"/>
+      <feComponentTransfer in="mono" result="faint">
+        <feFuncA type="linear" slope="0.04" intercept="0"/>
+      </feComponentTransfer>
+      <feBlend in="SourceGraphic" in2="faint" mode="screen"/>
+    </filter>
+  </defs>
+</svg>
+
+
+<!-- ====================================================================
+     EXPLORATION 1: PETRI DISH
+     Biological specimen under observation
+     ==================================================================== -->
+<section class="exploration" id="petri-dish">
+  <div class="exploration-label">
+    Exploration 01
+    <span class="name">"Petri Dish"</span>
+    <span class="desc">Biological specimen under observation. Radial vignette, micro-dot grid, concentric ripples, warm amber auras.</span>
+  </div>
+
+  <svg class="canvas-svg" viewBox="0 0 1440 600" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <!-- Radial vignette: lighter center, darker edges -->
+      <radialGradient id="petri-vignette" cx="50%" cy="50%" r="55%">
+        <stop offset="0%" stop-color="#13120F"/>
+        <stop offset="40%" stop-color="#0C0B09"/>
+        <stop offset="100%" stop-color="#080706"/>
+      </radialGradient>
+
+      <!-- Amber node gradient -->
+      <radialGradient id="petri-node-fill" cx="35%" cy="30%">
+        <stop offset="0%" stop-color="#3D3A35"/>
+        <stop offset="50%" stop-color="#1E1C19"/>
+        <stop offset="100%" stop-color="#13120F"/>
+      </radialGradient>
+
+      <!-- Amber aura gradient -->
+      <radialGradient id="petri-aura">
+        <stop offset="0%" stop-color="#FFCC00" stop-opacity="0.12"/>
+        <stop offset="40%" stop-color="#D4A800" stop-opacity="0.06"/>
+        <stop offset="100%" stop-color="#D4A800" stop-opacity="0"/>
+      </radialGradient>
+
+      <!-- Small aura for smaller nodes -->
+      <radialGradient id="petri-aura-sm">
+        <stop offset="0%" stop-color="#FFCC00" stop-opacity="0.08"/>
+        <stop offset="50%" stop-color="#D4A800" stop-opacity="0.03"/>
+        <stop offset="100%" stop-color="#D4A800" stop-opacity="0"/>
+      </radialGradient>
+
+      <!-- Dot pattern for micro grid -->
+      <pattern id="petri-dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+        <circle cx="10" cy="10" r="0.6" fill="#252320"/>
+      </pattern>
+    </defs>
+
+    <!-- Background -->
+    <rect width="1440" height="600" fill="url(#petri-vignette)"/>
+
+    <!-- Micro-dot grid -->
+    <rect width="1440" height="600" fill="url(#petri-dots)" opacity="0.8"/>
+
+    <!-- Concentric ripples from center -->
+    <circle cx="720" cy="300" r="80" fill="none" stroke="#1A1816" stroke-width="0.5" opacity="0.4">
+      <animate attributeName="r" values="80;280" dur="8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4;0" dur="8s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="720" cy="300" r="80" fill="none" stroke="#1A1816" stroke-width="0.5" opacity="0.4">
+      <animate attributeName="r" values="80;280" dur="8s" begin="2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4;0" dur="8s" begin="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="720" cy="300" r="80" fill="none" stroke="#1A1816" stroke-width="0.5" opacity="0.4">
+      <animate attributeName="r" values="80;280" dur="8s" begin="4s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.4;0" dur="8s" begin="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="720" cy="300" r="80" fill="none" stroke="#1A1816" stroke-width="0.5" opacity="0.3">
+      <animate attributeName="r" values="80;280" dur="8s" begin="6s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.3;0" dur="8s" begin="6s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- Static faint rings for depth -->
+    <circle cx="720" cy="300" r="160" fill="none" stroke="#1A1816" stroke-width="0.3" opacity="0.15"/>
+    <circle cx="720" cy="300" r="240" fill="none" stroke="#1A1816" stroke-width="0.3" opacity="0.1"/>
+    <circle cx="720" cy="300" r="320" fill="none" stroke="#1A1816" stroke-width="0.3" opacity="0.06"/>
+
+    <!-- Edges: faint gold glow connections -->
+    <g filter="url(#glow-edge)">
+      <line x1="480" y1="220" x2="620" y2="280" stroke="#D4A800" stroke-width="1" opacity="0.2" style="animation: pulse-edge 6s ease-in-out infinite"/>
+      <line x1="620" y1="280" x2="720" y2="320" stroke="#D4A800" stroke-width="1" opacity="0.18" style="animation: pulse-edge 7s ease-in-out infinite 1s"/>
+      <line x1="720" y1="320" x2="860" y2="260" stroke="#D4A800" stroke-width="1" opacity="0.22" style="animation: pulse-edge 5s ease-in-out infinite 0.5s"/>
+      <line x1="860" y1="260" x2="980" y2="340" stroke="#D4A800" stroke-width="1" opacity="0.16" style="animation: pulse-edge 8s ease-in-out infinite 2s"/>
+      <line x1="620" y1="280" x2="550" y2="390" stroke="#D4A800" stroke-width="1" opacity="0.2" style="animation: pulse-edge 6s ease-in-out infinite 1.5s"/>
+      <line x1="720" y1="320" x2="780" y2="430" stroke="#D4A800" stroke-width="1" opacity="0.15" style="animation: pulse-edge 7s ease-in-out infinite 3s"/>
+      <line x1="340" y1="310" x2="480" y2="220" stroke="#D4A800" stroke-width="1" opacity="0.18" style="animation: pulse-edge 6s ease-in-out infinite 0.8s"/>
+    </g>
+
+    <!-- Node: Amber aura bleeds -->
+    <!-- Node 1 - large -->
+    <circle cx="720" cy="320" r="52" fill="url(#petri-aura)" style="animation: breathe 6s ease-in-out infinite"/>
+    <circle cx="720" cy="320" r="26" fill="url(#petri-node-fill)" stroke="#2C2A26" stroke-width="1"/>
+    <circle cx="716" cy="314" r="5" fill="#3D3A35" opacity="0.5"/>
+    <circle cx="720" cy="320" r="3" fill="#E1E1E1" opacity="0.7"/>
+
+    <!-- Node 2 -->
+    <circle cx="620" cy="280" r="44" fill="url(#petri-aura)" style="animation: breathe 7s ease-in-out infinite 1s"/>
+    <circle cx="620" cy="280" r="22" fill="url(#petri-node-fill)" stroke="#2C2A26" stroke-width="1"/>
+    <circle cx="617" cy="275" r="4" fill="#3D3A35" opacity="0.5"/>
+    <circle cx="620" cy="280" r="2.5" fill="#E1E1E1" opacity="0.7"/>
+
+    <!-- Node 3 -->
+    <circle cx="860" cy="260" r="48" fill="url(#petri-aura)" style="animation: breathe 8s ease-in-out infinite 0.5s"/>
+    <circle cx="860" cy="260" r="24" fill="url(#petri-node-fill)" stroke="#2C2A26" stroke-width="1"/>
+    <circle cx="856" cy="254" r="4.5" fill="#3D3A35" opacity="0.5"/>
+    <circle cx="860" cy="260" r="3" fill="#E1E1E1" opacity="0.7"/>
+
+    <!-- Node 4 - small -->
+    <circle cx="480" cy="220" r="36" fill="url(#petri-aura-sm)" style="animation: breathe 5s ease-in-out infinite 2s"/>
+    <circle cx="480" cy="220" r="20" fill="url(#petri-node-fill)" stroke="#252320" stroke-width="1"/>
+    <circle cx="480" cy="220" r="2" fill="#C8C8C8" opacity="0.6"/>
+
+    <!-- Node 5 -->
+    <circle cx="980" cy="340" r="38" fill="url(#petri-aura-sm)" style="animation: breathe 6s ease-in-out infinite 3s"/>
+    <circle cx="980" cy="340" r="20" fill="url(#petri-node-fill)" stroke="#252320" stroke-width="1"/>
+    <circle cx="980" cy="340" r="2" fill="#C8C8C8" opacity="0.6"/>
+
+    <!-- Node 6 -->
+    <circle cx="550" cy="390" r="40" fill="url(#petri-aura-sm)" style="animation: breathe 7s ease-in-out infinite 1.5s"/>
+    <circle cx="550" cy="390" r="22" fill="url(#petri-node-fill)" stroke="#2C2A26" stroke-width="1"/>
+    <circle cx="547" cy="385" r="4" fill="#3D3A35" opacity="0.4"/>
+    <circle cx="550" cy="390" r="2.5" fill="#E1E1E1" opacity="0.6"/>
+
+    <!-- Node 7 -->
+    <circle cx="780" cy="430" r="34" fill="url(#petri-aura-sm)" style="animation: breathe 9s ease-in-out infinite 2.5s"/>
+    <circle cx="780" cy="430" r="18" fill="url(#petri-node-fill)" stroke="#252320" stroke-width="1"/>
+    <circle cx="780" cy="430" r="2" fill="#C8C8C8" opacity="0.5"/>
+
+    <!-- Node 8 -->
+    <circle cx="340" cy="310" r="36" fill="url(#petri-aura-sm)" style="animation: breathe 6s ease-in-out infinite 4s"/>
+    <circle cx="340" cy="310" r="20" fill="url(#petri-node-fill)" stroke="#252320" stroke-width="1"/>
+    <circle cx="340" cy="310" r="2" fill="#C8C8C8" opacity="0.55"/>
+
+    <!-- Node 9 - far right, dim -->
+    <circle cx="1120" cy="280" r="30" fill="url(#petri-aura-sm)" style="animation: breathe 10s ease-in-out infinite 5s"/>
+    <circle cx="1120" cy="280" r="16" fill="url(#petri-node-fill)" stroke="#252320" stroke-width="0.8" opacity="0.7"/>
+    <circle cx="1120" cy="280" r="1.5" fill="#A8A8A8" opacity="0.4"/>
+
+    <!-- Node 10 - far left, dim -->
+    <circle cx="200" cy="400" r="28" fill="url(#petri-aura-sm)" style="animation: breathe 11s ease-in-out infinite 3s"/>
+    <circle cx="200" cy="400" r="15" fill="url(#petri-node-fill)" stroke="#252320" stroke-width="0.8" opacity="0.6"/>
+    <circle cx="200" cy="400" r="1.5" fill="#A8A8A8" opacity="0.35"/>
+  </svg>
+</section>
+
+<div class="divider"></div>
+
+<!-- ====================================================================
+     EXPLORATION 2: STAR CHART
+     Navigating a constellation map
+     ==================================================================== -->
+<section class="exploration" id="star-chart">
+  <div class="exploration-label">
+    Exploration 02
+    <span class="name">"Star Chart"</span>
+    <span class="desc">Navigating a constellation map. Noise texture, scattered micro-stars, precise cartographic edges, depth fog.</span>
+  </div>
+
+  <svg class="canvas-svg" viewBox="0 0 1440 600" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <!-- Flat void background -->
+      <radialGradient id="star-bg" cx="50%" cy="50%" r="60%">
+        <stop offset="0%" stop-color="#0C0B09"/>
+        <stop offset="100%" stop-color="#080706"/>
+      </radialGradient>
+
+      <!-- Node gradients for star points -->
+      <radialGradient id="star-node-bright" cx="40%" cy="35%">
+        <stop offset="0%" stop-color="#E1E1E1"/>
+        <stop offset="30%" stop-color="#A8A8A8"/>
+        <stop offset="70%" stop-color="#3D3A35"/>
+        <stop offset="100%" stop-color="#1A1816"/>
+      </radialGradient>
+
+      <radialGradient id="star-node-dim" cx="40%" cy="35%">
+        <stop offset="0%" stop-color="#C8C8C8"/>
+        <stop offset="40%" stop-color="#808080"/>
+        <stop offset="80%" stop-color="#2C2A26"/>
+        <stop offset="100%" stop-color="#1A1816"/>
+      </radialGradient>
+
+      <!-- Noise texture filter -->
+      <filter id="star-grain" x="0" y="0" width="100%" height="100%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="4" seed="7" stitchTiles="stitch" result="noise"/>
+        <feColorMatrix type="saturate" values="0" in="noise" result="mono"/>
+        <feComponentTransfer in="mono" result="faint">
+          <feFuncA type="linear" slope="0.035" intercept="0"/>
+        </feComponentTransfer>
+        <feBlend in="SourceGraphic" in2="faint" mode="screen"/>
+      </filter>
+
+      <!-- Depth fog: radial mask to dim edges -->
+      <radialGradient id="star-depth-fog" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="white" stop-opacity="0"/>
+        <stop offset="60%" stop-color="white" stop-opacity="0"/>
+        <stop offset="100%" stop-color="white" stop-opacity="0.6"/>
+      </radialGradient>
+    </defs>
+
+    <!-- Background -->
+    <rect width="1440" height="600" fill="url(#star-bg)"/>
+
+    <!-- Noise texture overlay -->
+    <rect width="1440" height="600" fill="#0C0B09" filter="url(#star-grain)" opacity="0.5"/>
+
+    <!-- Scattered micro-stars (dim background stars) -->
+    <g opacity="0.6">
+      <circle cx="120" cy="80" r="0.5" fill="#1E1C19"/>
+      <circle cx="340" cy="140" r="0.7" fill="#252320"/>
+      <circle cx="210" cy="260" r="0.4" fill="#1E1C19"/>
+      <circle cx="520" cy="90" r="0.6" fill="#252320"/>
+      <circle cx="680" cy="150" r="0.5" fill="#1E1C19"/>
+      <circle cx="890" cy="80" r="0.7" fill="#252320"/>
+      <circle cx="1050" cy="120" r="0.4" fill="#1E1C19"/>
+      <circle cx="1200" cy="200" r="0.6" fill="#252320"/>
+      <circle cx="1350" cy="90" r="0.5" fill="#1E1C19"/>
+      <circle cx="160" cy="450" r="0.6" fill="#252320"/>
+      <circle cx="380" cy="520" r="0.5" fill="#1E1C19"/>
+      <circle cx="600" cy="480" r="0.7" fill="#252320"/>
+      <circle cx="840" cy="520" r="0.4" fill="#1E1C19"/>
+      <circle cx="1000" cy="470" r="0.6" fill="#252320"/>
+      <circle cx="1180" cy="510" r="0.5" fill="#1E1C19"/>
+      <circle cx="1320" cy="430" r="0.7" fill="#252320"/>
+      <circle cx="90" cy="330" r="0.4" fill="#1E1C19"/>
+      <circle cx="440" cy="380" r="0.5" fill="#252320"/>
+      <circle cx="760" cy="50" r="0.6" fill="#1E1C19"/>
+      <circle cx="1100" cy="350" r="0.5" fill="#252320"/>
+      <circle cx="280" cy="180" r="0.3" fill="#1E1C19"/>
+      <circle cx="950" cy="190" r="0.4" fill="#1E1C19"/>
+      <circle cx="1280" cy="300" r="0.5" fill="#252320"/>
+      <circle cx="500" cy="550" r="0.3" fill="#1E1C19"/>
+      <circle cx="700" cy="560" r="0.4" fill="#252320"/>
+      <circle cx="1060" cy="560" r="0.5" fill="#1E1C19"/>
+      <circle cx="180" cy="540" r="0.6" fill="#252320"/>
+      <circle cx="1400" cy="180" r="0.4" fill="#1E1C19"/>
+      <circle cx="60" cy="190" r="0.5" fill="#252320"/>
+      <circle cx="1380" cy="520" r="0.3" fill="#1E1C19"/>
+    </g>
+
+    <!-- Edges: precise, cartographic, thin white lines -->
+    <g>
+      <line x1="500" y1="200" x2="660" y2="260" stroke="#808080" stroke-width="0.6" opacity="0.5"/>
+      <line x1="660" y1="260" x2="780" y2="240" stroke="#808080" stroke-width="0.6" opacity="0.45"/>
+      <line x1="780" y1="240" x2="900" y2="300" stroke="#808080" stroke-width="0.6" opacity="0.4"/>
+      <line x1="900" y1="300" x2="1020" y2="250" stroke="#808080" stroke-width="0.6" opacity="0.35"/>
+      <line x1="660" y1="260" x2="620" y2="380" stroke="#808080" stroke-width="0.6" opacity="0.4"/>
+      <line x1="780" y1="240" x2="830" y2="370" stroke="#808080" stroke-width="0.6" opacity="0.35"/>
+      <line x1="380" y1="300" x2="500" y2="200" stroke="#808080" stroke-width="0.6" opacity="0.45"/>
+    </g>
+
+    <!-- Nodes: bright points against the void -->
+    <!-- Central cluster -->
+    <circle cx="780" cy="240" r="28" fill="url(#star-node-bright)" stroke="#2C2A26" stroke-width="0.8"/>
+    <circle cx="780" cy="240" r="3.5" fill="#E1E1E1" opacity="0.9"/>
+
+    <circle cx="660" cy="260" r="24" fill="url(#star-node-bright)" stroke="#2C2A26" stroke-width="0.8"/>
+    <circle cx="660" cy="260" r="3" fill="#E1E1E1" opacity="0.85"/>
+
+    <circle cx="900" cy="300" r="26" fill="url(#star-node-bright)" stroke="#2C2A26" stroke-width="0.8"/>
+    <circle cx="900" cy="300" r="3" fill="#E1E1E1" opacity="0.8"/>
+
+    <circle cx="500" cy="200" r="22" fill="url(#star-node-dim)" stroke="#252320" stroke-width="0.7"/>
+    <circle cx="500" cy="200" r="2.5" fill="#C8C8C8" opacity="0.7"/>
+
+    <!-- Peripheral — dimmer, further from center -->
+    <circle cx="1020" cy="250" r="20" fill="url(#star-node-dim)" stroke="#252320" stroke-width="0.6" opacity="0.7"/>
+    <circle cx="1020" cy="250" r="2" fill="#A8A8A8" opacity="0.5"/>
+
+    <circle cx="620" cy="380" r="22" fill="url(#star-node-dim)" stroke="#252320" stroke-width="0.7" opacity="0.8"/>
+    <circle cx="620" cy="380" r="2.5" fill="#C8C8C8" opacity="0.6"/>
+
+    <circle cx="830" cy="370" r="20" fill="url(#star-node-dim)" stroke="#252320" stroke-width="0.6" opacity="0.75"/>
+    <circle cx="830" cy="370" r="2" fill="#A8A8A8" opacity="0.5"/>
+
+    <circle cx="380" cy="300" r="18" fill="url(#star-node-dim)" stroke="#252320" stroke-width="0.5" opacity="0.6"/>
+    <circle cx="380" cy="300" r="1.5" fill="#808080" opacity="0.4"/>
+
+    <!-- Far outliers — very dim -->
+    <circle cx="240" cy="190" r="15" fill="url(#star-node-dim)" stroke="#1E1C19" stroke-width="0.5" opacity="0.4"/>
+    <circle cx="240" cy="190" r="1.2" fill="#606060" opacity="0.3"/>
+
+    <circle cx="1160" cy="350" r="16" fill="url(#star-node-dim)" stroke="#1E1C19" stroke-width="0.5" opacity="0.35"/>
+    <circle cx="1160" cy="350" r="1.2" fill="#606060" opacity="0.25"/>
+
+    <!-- Depth fog overlay: dims periphery -->
+    <rect width="1440" height="600" fill="url(#star-depth-fog)" opacity="0.3" style="mix-blend-mode: multiply; pointer-events: none"/>
+  </svg>
+</section>
+
+<div class="divider"></div>
+
+<!-- ====================================================================
+     EXPLORATION 3: CIRCUIT BOARD
+     Technical schematic of a living system
+     ==================================================================== -->
+<section class="exploration" id="circuit-board">
+  <div class="exploration-label">
+    Exploration 03
+    <span class="name">"Circuit Board"</span>
+    <span class="desc">Technical schematic of a living system. Orthogonal trace grid, junction dots, luminance zones, angular edge routing.</span>
+  </div>
+
+  <svg class="canvas-svg" viewBox="0 0 1440 600" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <!-- Base background -->
+      <rect id="circuit-bg-base" width="1440" height="600"/>
+
+      <!-- Trace grid pattern -->
+      <pattern id="circuit-grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+        <!-- Vertical line -->
+        <line x1="20" y1="0" x2="20" y2="40" stroke="#1A1816" stroke-width="0.4"/>
+        <!-- Horizontal line -->
+        <line x1="0" y1="20" x2="40" y2="20" stroke="#1A1816" stroke-width="0.4"/>
+        <!-- Junction dot at intersection -->
+        <circle cx="20" cy="20" r="1" fill="#252320"/>
+      </pattern>
+
+      <!-- Luminance zone gradients -->
+      <radialGradient id="zone-warm" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#13120F"/>
+        <stop offset="100%" stop-color="#0C0B09" stop-opacity="0"/>
+      </radialGradient>
+
+      <radialGradient id="zone-cool" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#0F0E0B"/>
+        <stop offset="100%" stop-color="#0C0B09" stop-opacity="0"/>
+      </radialGradient>
+
+      <!-- IC chip node gradient -->
+      <linearGradient id="ic-node" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#2C2A26"/>
+        <stop offset="50%" stop-color="#1E1C19"/>
+        <stop offset="100%" stop-color="#1A1816"/>
+      </linearGradient>
+
+      <!-- Active trace glow -->
+      <linearGradient id="active-trace" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#D4A800" stop-opacity="0"/>
+        <stop offset="50%" stop-color="#FFCC00" stop-opacity="0.6"/>
+        <stop offset="100%" stop-color="#D4A800" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Background -->
+    <rect width="1440" height="600" fill="#0C0B09"/>
+
+    <!-- Luminance zones: faint areas of different brightness -->
+    <ellipse cx="600" cy="280" rx="240" ry="180" fill="url(#zone-warm)" opacity="0.4"/>
+    <ellipse cx="950" cy="350" rx="200" ry="150" fill="url(#zone-cool)" opacity="0.3"/>
+    <ellipse cx="350" cy="400" rx="160" ry="120" fill="url(#zone-warm)" opacity="0.25"/>
+
+    <!-- Trace grid overlay -->
+    <rect width="1440" height="600" fill="url(#circuit-grid)"/>
+
+    <!-- Angular edges: orthogonal routing (L-shaped and Z-shaped paths) -->
+    <!-- Active traces with gold accent -->
+    <g filter="url(#glow-edge)">
+      <!-- Edge 1: L-route -->
+      <polyline points="460,200 460,280 600,280" fill="none" stroke="#D4A800" stroke-width="1" opacity="0.35"
+        stroke-dasharray="4 3" style="animation: dash-flow 4s linear infinite"/>
+      <!-- Edge 2: straight horizontal -->
+      <polyline points="600,280 760,280" fill="none" stroke="#D4A800" stroke-width="1.2" opacity="0.4"
+        stroke-dasharray="4 3" style="animation: dash-flow 3s linear infinite"/>
+      <!-- Edge 3: L-route down -->
+      <polyline points="760,280 760,360 880,360" fill="none" stroke="#D4A800" stroke-width="1" opacity="0.3"
+        stroke-dasharray="4 3" style="animation: dash-flow 5s linear infinite"/>
+      <!-- Edge 4: Z-route -->
+      <polyline points="880,360 960,360 960,240 1060,240" fill="none" stroke="#D4A800" stroke-width="0.8" opacity="0.25"
+        stroke-dasharray="4 3" style="animation: dash-flow 4.5s linear infinite"/>
+    </g>
+
+    <!-- Inactive traces (dimmer, no gold) -->
+    <g>
+      <polyline points="600,280 600,400 520,400" fill="none" stroke="#2C2A26" stroke-width="0.6" opacity="0.5"
+        stroke-dasharray="3 4" style="animation: dash-flow-reverse 8s linear infinite"/>
+      <polyline points="760,280 840,280 840,200 920,200" fill="none" stroke="#252320" stroke-width="0.6" opacity="0.4"/>
+      <polyline points="340,320 460,320 460,200" fill="none" stroke="#252320" stroke-width="0.5" opacity="0.35"/>
+    </g>
+
+    <!-- Nodes: IC chip style (rounded rects at grid intersections) -->
+    <!-- Primary nodes -->
+    <g>
+      <!-- Node 1: Main IC -->
+      <rect x="580" y="260" width="40" height="40" rx="4" fill="url(#ic-node)" stroke="#3D3A35" stroke-width="1"/>
+      <rect x="590" y="270" width="20" height="20" rx="2" fill="#1A1816" stroke="#2C2A26" stroke-width="0.5"/>
+      <circle cx="600" cy="280" r="2" fill="#FFCC00" opacity="0.6"/>
+      <!-- Pin marks -->
+      <line x1="580" y1="272" x2="576" y2="272" stroke="#2C2A26" stroke-width="0.5"/>
+      <line x1="580" y1="280" x2="576" y2="280" stroke="#2C2A26" stroke-width="0.5"/>
+      <line x1="580" y1="288" x2="576" y2="288" stroke="#2C2A26" stroke-width="0.5"/>
+      <line x1="620" y1="272" x2="624" y2="272" stroke="#2C2A26" stroke-width="0.5"/>
+      <line x1="620" y1="280" x2="624" y2="280" stroke="#2C2A26" stroke-width="0.5"/>
+      <line x1="620" y1="288" x2="624" y2="288" stroke="#2C2A26" stroke-width="0.5"/>
+    </g>
+
+    <g>
+      <!-- Node 2 -->
+      <rect x="740" y="260" width="40" height="40" rx="4" fill="url(#ic-node)" stroke="#3D3A35" stroke-width="1"/>
+      <rect x="750" y="270" width="20" height="20" rx="2" fill="#1A1816" stroke="#2C2A26" stroke-width="0.5"/>
+      <circle cx="760" cy="280" r="2" fill="#FFCC00" opacity="0.5"/>
+      <line x1="740" y1="272" x2="736" y2="272" stroke="#2C2A26" stroke-width="0.5"/>
+      <line x1="740" y1="280" x2="736" y2="280" stroke="#2C2A26" stroke-width="0.5"/>
+      <line x1="740" y1="288" x2="736" y2="288" stroke="#2C2A26" stroke-width="0.5"/>
+      <line x1="780" y1="272" x2="784" y2="272" stroke="#2C2A26" stroke-width="0.5"/>
+      <line x1="780" y1="280" x2="784" y2="280" stroke="#2C2A26" stroke-width="0.5"/>
+      <line x1="780" y1="288" x2="784" y2="288" stroke="#2C2A26" stroke-width="0.5"/>
+    </g>
+
+    <g>
+      <!-- Node 3 -->
+      <rect x="860" y="340" width="40" height="40" rx="4" fill="url(#ic-node)" stroke="#2C2A26" stroke-width="0.8"/>
+      <rect x="870" y="350" width="20" height="20" rx="2" fill="#1A1816" stroke="#252320" stroke-width="0.5"/>
+      <circle cx="880" cy="360" r="1.5" fill="#D4A800" opacity="0.4"/>
+    </g>
+
+    <!-- Smaller satellite nodes -->
+    <g>
+      <rect x="440" y="184" width="32" height="32" rx="3" fill="url(#ic-node)" stroke="#2C2A26" stroke-width="0.7"/>
+      <circle cx="456" cy="200" r="1.5" fill="#D4A800" opacity="0.35"/>
+    </g>
+
+    <g>
+      <rect x="1044" y="224" width="32" height="32" rx="3" fill="url(#ic-node)" stroke="#252320" stroke-width="0.6" opacity="0.7"/>
+      <circle cx="1060" cy="240" r="1.5" fill="#D4A800" opacity="0.25"/>
+    </g>
+
+    <g>
+      <rect x="504" y="384" width="32" height="32" rx="3" fill="url(#ic-node)" stroke="#252320" stroke-width="0.6" opacity="0.7"/>
+      <circle cx="520" cy="400" r="1.5" fill="#D4A800" opacity="0.3"/>
+    </g>
+
+    <g>
+      <rect x="904" y="184" width="28" height="28" rx="3" fill="url(#ic-node)" stroke="#252320" stroke-width="0.5" opacity="0.6"/>
+      <circle cx="918" cy="198" r="1.2" fill="#808080" opacity="0.3"/>
+    </g>
+
+    <g>
+      <rect x="324" y="304" width="28" height="28" rx="3" fill="url(#ic-node)" stroke="#1E1C19" stroke-width="0.5" opacity="0.5"/>
+      <circle cx="338" cy="318" r="1.2" fill="#808080" opacity="0.25"/>
+    </g>
+
+    <!-- Peripheral micro-nodes (passive components) -->
+    <circle cx="680" cy="200" r="4" fill="#1A1816" stroke="#252320" stroke-width="0.4"/>
+    <circle cx="820" cy="320" r="3" fill="#1A1816" stroke="#252320" stroke-width="0.4"/>
+  </svg>
+</section>
+
+<div class="divider"></div>
+
+<!-- ====================================================================
+     EXPLORATION 4: DEEP FIELD
+     Peering into deep space through a telescope
+     ==================================================================== -->
+<section class="exploration" id="deep-field">
+  <div class="exploration-label">
+    Exploration 04
+    <span class="name">"Deep Field"</span>
+    <span class="desc">Peering into deep space through a telescope. Animated particles, plasma conduit edges, bloom effects, depth layers.</span>
+  </div>
+
+  <svg class="canvas-svg" viewBox="0 0 1440 600" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <!-- Deep center gradient -->
+      <radialGradient id="deep-bg" cx="50%" cy="50%" r="55%">
+        <stop offset="0%" stop-color="#13120F"/>
+        <stop offset="50%" stop-color="#0C0B09"/>
+        <stop offset="100%" stop-color="#080706"/>
+      </radialGradient>
+
+      <!-- Bloom node gradient - hot center -->
+      <radialGradient id="deep-node-hot" cx="40%" cy="35%">
+        <stop offset="0%" stop-color="#FFCC00" stop-opacity="0.8"/>
+        <stop offset="20%" stop-color="#D4A800" stop-opacity="0.4"/>
+        <stop offset="50%" stop-color="#3D3A35" stop-opacity="0.6"/>
+        <stop offset="100%" stop-color="#1E1C19"/>
+      </radialGradient>
+
+      <radialGradient id="deep-node-warm" cx="40%" cy="35%">
+        <stop offset="0%" stop-color="#E1E1E1" stop-opacity="0.7"/>
+        <stop offset="30%" stop-color="#A8A8A8" stop-opacity="0.4"/>
+        <stop offset="60%" stop-color="#3D3A35" stop-opacity="0.5"/>
+        <stop offset="100%" stop-color="#1A1816"/>
+      </radialGradient>
+
+      <radialGradient id="deep-node-cool" cx="40%" cy="35%">
+        <stop offset="0%" stop-color="#808080" stop-opacity="0.5"/>
+        <stop offset="40%" stop-color="#3D3A35" stop-opacity="0.3"/>
+        <stop offset="100%" stop-color="#13120F"/>
+      </radialGradient>
+
+      <!-- Bloom halo -->
+      <radialGradient id="bloom-halo-gold">
+        <stop offset="0%" stop-color="#FFCC00" stop-opacity="0.2"/>
+        <stop offset="30%" stop-color="#D4A800" stop-opacity="0.08"/>
+        <stop offset="70%" stop-color="#D4A800" stop-opacity="0.02"/>
+        <stop offset="100%" stop-color="#D4A800" stop-opacity="0"/>
+      </radialGradient>
+
+      <radialGradient id="bloom-halo-white">
+        <stop offset="0%" stop-color="#E1E1E1" stop-opacity="0.12"/>
+        <stop offset="30%" stop-color="#A8A8A8" stop-opacity="0.05"/>
+        <stop offset="70%" stop-color="#808080" stop-opacity="0.01"/>
+        <stop offset="100%" stop-color="#808080" stop-opacity="0"/>
+      </radialGradient>
+
+      <radialGradient id="bloom-halo-dim">
+        <stop offset="0%" stop-color="#808080" stop-opacity="0.06"/>
+        <stop offset="50%" stop-color="#606060" stop-opacity="0.02"/>
+        <stop offset="100%" stop-color="#606060" stop-opacity="0"/>
+      </radialGradient>
+
+      <!-- Plasma edge gradient -->
+      <linearGradient id="plasma-edge-1" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#FF6B00" stop-opacity="0"/>
+        <stop offset="20%" stop-color="#FF6B00" stop-opacity="0.3"/>
+        <stop offset="50%" stop-color="#FFCC00" stop-opacity="0.5"/>
+        <stop offset="80%" stop-color="#FF6B00" stop-opacity="0.3"/>
+        <stop offset="100%" stop-color="#FF6B00" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Background gradient -->
+    <rect width="1440" height="600" fill="url(#deep-bg)"/>
+
+    <!-- Drifting dust particles — "far" layer (slow, dim, blurred) -->
+    <g opacity="0.15">
+      <circle cx="200" cy="120" r="1" fill="#3D3A35" style="animation: particle-float 30s linear infinite"/>
+      <circle cx="450" cy="80" r="0.8" fill="#2C2A26" style="animation: particle-float 35s linear infinite 5s"/>
+      <circle cx="700" cy="150" r="1.2" fill="#3D3A35" style="animation: particle-float 28s linear infinite 3s"/>
+      <circle cx="1000" cy="100" r="0.7" fill="#252320" style="animation: particle-float 40s linear infinite 8s"/>
+      <circle cx="1250" cy="160" r="1" fill="#3D3A35" style="animation: particle-float 32s linear infinite 12s"/>
+      <circle cx="300" cy="480" r="0.9" fill="#2C2A26" style="animation: particle-float 36s linear infinite 2s"/>
+      <circle cx="550" cy="520" r="1.1" fill="#3D3A35" style="animation: particle-float 25s linear infinite 7s"/>
+      <circle cx="850" cy="500" r="0.8" fill="#252320" style="animation: particle-float 38s linear infinite 10s"/>
+      <circle cx="1100" cy="450" r="1" fill="#3D3A35" style="animation: particle-float 33s linear infinite 4s"/>
+      <circle cx="1350" cy="490" r="0.7" fill="#2C2A26" style="animation: particle-float 42s linear infinite 15s"/>
+    </g>
+
+    <!-- Drifting dust — "mid" layer (medium speed, slightly brighter) -->
+    <g opacity="0.2">
+      <circle cx="380" cy="260" r="1.2" fill="#3D3A35" style="animation: particle-float 22s linear infinite 1s"/>
+      <circle cx="620" cy="340" r="1.5" fill="#3D3A35" style="animation: particle-float 18s linear infinite 6s"/>
+      <circle cx="920" cy="220" r="1" fill="#2C2A26" style="animation: particle-float 24s linear infinite 3s"/>
+      <circle cx="1080" cy="380" r="1.3" fill="#3D3A35" style="animation: particle-float 20s linear infinite 9s"/>
+      <circle cx="180" cy="380" r="1.1" fill="#2C2A26" style="animation: particle-float 26s linear infinite 11s"/>
+      <circle cx="1300" cy="280" r="0.9" fill="#3D3A35" style="animation: particle-float 23s linear infinite 14s"/>
+    </g>
+
+    <!-- Drifting dust — "near" layer (faster, brighter, larger) -->
+    <g opacity="0.25">
+      <circle cx="500" cy="300" r="1.8" fill="#3D3A35" style="animation: particle-float 15s linear infinite 2s"/>
+      <circle cx="780" cy="350" r="2" fill="#3D3A35" style="animation: particle-float 12s linear infinite 5s"/>
+      <circle cx="1000" cy="280" r="1.5" fill="#2C2A26" style="animation: particle-float 16s linear infinite 8s"/>
+      <circle cx="350" cy="400" r="1.6" fill="#3D3A35" style="animation: particle-float 14s linear infinite 4s"/>
+    </g>
+
+    <!-- Plasma conduit edges -->
+    <g filter="url(#glow-plasma)">
+      <!-- Edge 1 -->
+      <line x1="480" y1="230" x2="640" y2="290" stroke="#FF6B00" stroke-width="1.5" opacity="0.3"
+        stroke-dasharray="8 6" style="animation: energy-flow 3s linear infinite"/>
+      <line x1="480" y1="230" x2="640" y2="290" stroke="#FFCC00" stroke-width="0.5" opacity="0.2"/>
+
+      <!-- Edge 2 -->
+      <line x1="640" y1="290" x2="760" y2="260" stroke="#FF6B00" stroke-width="1.8" opacity="0.35"
+        stroke-dasharray="8 6" style="animation: energy-flow 2.5s linear infinite 0.5s"/>
+      <line x1="640" y1="290" x2="760" y2="260" stroke="#FFCC00" stroke-width="0.6" opacity="0.25"/>
+
+      <!-- Edge 3 -->
+      <line x1="760" y1="260" x2="920" y2="320" stroke="#FF6B00" stroke-width="1.5" opacity="0.28"
+        stroke-dasharray="8 6" style="animation: energy-flow 3.5s linear infinite 1s"/>
+      <line x1="760" y1="260" x2="920" y2="320" stroke="#FFCC00" stroke-width="0.5" opacity="0.18"/>
+
+      <!-- Edge 4 -->
+      <line x1="920" y1="320" x2="1060" y2="270" stroke="#FF6B00" stroke-width="1.2" opacity="0.2"
+        stroke-dasharray="8 6" style="animation: energy-flow 4s linear infinite 1.5s"/>
+      <line x1="920" y1="320" x2="1060" y2="270" stroke="#D4A800" stroke-width="0.4" opacity="0.12"/>
+
+      <!-- Edge 5 -->
+      <line x1="640" y1="290" x2="580" y2="400" stroke="#FF6B00" stroke-width="1.3" opacity="0.25"
+        stroke-dasharray="8 6" style="animation: energy-flow 3s linear infinite 2s"/>
+      <line x1="640" y1="290" x2="580" y2="400" stroke="#FFCC00" stroke-width="0.4" opacity="0.15"/>
+
+      <!-- Edge 6 -->
+      <line x1="760" y1="260" x2="800" y2="400" stroke="#FF6B00" stroke-width="1" opacity="0.18"
+        stroke-dasharray="8 6" style="animation: energy-flow 3.8s linear infinite 2.5s"/>
+      <line x1="760" y1="260" x2="800" y2="400" stroke="#D4A800" stroke-width="0.3" opacity="0.1"/>
+
+      <!-- Edge 7 -->
+      <line x1="360" y1="310" x2="480" y2="230" stroke="#FF6B00" stroke-width="1.2" opacity="0.22"
+        stroke-dasharray="8 6" style="animation: energy-flow 3.2s linear infinite 0.8s"/>
+      <line x1="360" y1="310" x2="480" y2="230" stroke="#D4A800" stroke-width="0.4" opacity="0.12"/>
+    </g>
+
+    <!-- Nodes with bloom effects — "close" layer -->
+    <!-- Node 1: Primary, largest, hottest -->
+    <circle cx="760" cy="260" r="60" fill="url(#bloom-halo-gold)" filter="url(#glow-bloom)" style="animation: bloom-pulse 5s ease-in-out infinite"/>
+    <circle cx="760" cy="260" r="28" fill="url(#deep-node-hot)" stroke="#3D3A35" stroke-width="0.8"/>
+    <circle cx="754" cy="252" r="6" fill="#FFCC00" opacity="0.15"/>
+    <circle cx="760" cy="260" r="3.5" fill="#FFCC00" opacity="0.8"/>
+
+    <!-- Node 2 -->
+    <circle cx="640" cy="290" r="50" fill="url(#bloom-halo-white)" filter="url(#glow-bloom)" style="animation: bloom-pulse 6s ease-in-out infinite 1s"/>
+    <circle cx="640" cy="290" r="24" fill="url(#deep-node-warm)" stroke="#2C2A26" stroke-width="0.7"/>
+    <circle cx="636" cy="284" r="5" fill="#E1E1E1" opacity="0.1"/>
+    <circle cx="640" cy="290" r="3" fill="#E1E1E1" opacity="0.7"/>
+
+    <!-- Node 3 -->
+    <circle cx="920" cy="320" r="48" fill="url(#bloom-halo-white)" filter="url(#glow-bloom)" style="animation: bloom-pulse 7s ease-in-out infinite 2s"/>
+    <circle cx="920" cy="320" r="26" fill="url(#deep-node-warm)" stroke="#2C2A26" stroke-width="0.7"/>
+    <circle cx="916" cy="314" r="5" fill="#C8C8C8" opacity="0.1"/>
+    <circle cx="920" cy="320" r="3" fill="#E1E1E1" opacity="0.65"/>
+
+    <!-- Node 4 -->
+    <circle cx="480" cy="230" r="40" fill="url(#bloom-halo-white)" filter="url(#glow-bloom)" style="animation: bloom-pulse 5.5s ease-in-out infinite 3s"/>
+    <circle cx="480" cy="230" r="22" fill="url(#deep-node-warm)" stroke="#252320" stroke-width="0.6"/>
+    <circle cx="480" cy="230" r="2.5" fill="#C8C8C8" opacity="0.6"/>
+
+    <!-- Node 5: "mid" depth — slightly blurred/dimmer -->
+    <circle cx="1060" cy="270" r="34" fill="url(#bloom-halo-dim)" filter="url(#glow-soft)" style="animation: bloom-pulse 8s ease-in-out infinite 4s"/>
+    <circle cx="1060" cy="270" r="20" fill="url(#deep-node-cool)" stroke="#252320" stroke-width="0.5" opacity="0.75"/>
+    <circle cx="1060" cy="270" r="2" fill="#A8A8A8" opacity="0.4"/>
+
+    <!-- Node 6 -->
+    <circle cx="580" cy="400" r="36" fill="url(#bloom-halo-dim)" filter="url(#glow-soft)" style="animation: bloom-pulse 6.5s ease-in-out infinite 1.5s"/>
+    <circle cx="580" cy="400" r="20" fill="url(#deep-node-cool)" stroke="#252320" stroke-width="0.5" opacity="0.7"/>
+    <circle cx="580" cy="400" r="2" fill="#A8A8A8" opacity="0.4"/>
+
+    <!-- Node 7 -->
+    <circle cx="800" cy="400" r="32" fill="url(#bloom-halo-dim)" filter="url(#glow-soft)" style="animation: bloom-pulse 7.5s ease-in-out infinite 2.5s"/>
+    <circle cx="800" cy="400" r="18" fill="url(#deep-node-cool)" stroke="#1E1C19" stroke-width="0.5" opacity="0.65"/>
+    <circle cx="800" cy="400" r="1.5" fill="#808080" opacity="0.35"/>
+
+    <!-- Node 8: "far" depth — dim, small -->
+    <circle cx="360" cy="310" r="28" fill="url(#bloom-halo-dim)" style="animation: bloom-pulse 9s ease-in-out infinite 5s"/>
+    <circle cx="360" cy="310" r="16" fill="url(#deep-node-cool)" stroke="#1E1C19" stroke-width="0.4" opacity="0.5"/>
+    <circle cx="360" cy="310" r="1.2" fill="#606060" opacity="0.25"/>
+
+    <!-- Node 9: very distant -->
+    <circle cx="220" cy="180" r="22" fill="url(#bloom-halo-dim)" opacity="0.4"/>
+    <circle cx="220" cy="180" r="13" fill="url(#deep-node-cool)" stroke="#1A1816" stroke-width="0.3" opacity="0.35"/>
+    <circle cx="220" cy="180" r="1" fill="#606060" opacity="0.15"/>
+
+    <!-- Node 10: very distant -->
+    <circle cx="1200" cy="380" r="20" fill="url(#bloom-halo-dim)" opacity="0.3"/>
+    <circle cx="1200" cy="380" r="12" fill="url(#deep-node-cool)" stroke="#1A1816" stroke-width="0.3" opacity="0.3"/>
+    <circle cx="1200" cy="380" r="1" fill="#606060" opacity="0.12"/>
+
+    <!-- Faint noise overlay for texture -->
+    <rect width="1440" height="600" fill="#0C0B09" filter="url(#noise-overlay)" opacity="0.3" style="pointer-events:none; mix-blend-mode: screen"/>
+  </svg>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dreamcacher — Input Bar + Floating UI Explorations</title>
+<link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   FOUNDATION
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  /* Elevation stack */
+  --e0: #080706;
+  --e1: #0C0B09;
+  --e2: #13120F;
+  --e3: #1A1816;
+  --e4: #1E1C19;
+  --e5: #252320;
+  --e6: #2C2A26;
+  --e7: #3D3A35;
+
+  /* Text hierarchy */
+  --t-primary:   #E1E1E1;
+  --t-secondary: #C8C8C8;
+  --t-tertiary:  #A8A8A8;
+  --t-subtle:    #808080;
+  --t-ghost:     #606060;
+  --t-dim:       #404040;
+  --t-invisible: #2C2A26;
+
+  /* Accent */
+  --accent: #DD0000;
+  --accent-30: #DD000030;
+
+  /* Faction — Anthropic amber */
+  --faction-amber: #D4A574;
+  --gold: #D4A800;
+  --gold-60: #D4A80060;
+  --gold-30: #D4A80030;
+  --gold-muted: #FFCC00;
+
+  /* Spacing */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-8: 32px;
+
+  /* Radii */
+  --r-sm: 4px;
+  --r-md: 6px;
+  --r-lg: 8px;
+  --r-xl: 10px;
+  --r-2xl: 12px;
+
+  /* Easing — Dreamcacher */
+  --dc-snap: cubic-bezier(0.16, 1, 0.3, 1);
+  --dc-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --dc-ease-in: cubic-bezier(0.4, 0, 1, 1);
+}
+
+body {
+  background: var(--e1);
+  color: var(--t-secondary);
+  font-family: 'Inconsolata', monospace;
+  font-size: 13px;
+  line-height: 20px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.page {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--sp-8) var(--sp-6);
+}
+
+.page-title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  color: var(--t-primary);
+  margin-bottom: var(--sp-1);
+}
+
+.page-subtitle {
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 16px;
+  color: var(--t-ghost);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: var(--sp-8);
+}
+
+.section {
+  margin-bottom: 64px;
+}
+
+.section-header {
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 12px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--t-ghost);
+  margin-bottom: var(--sp-6);
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px solid var(--e5);
+}
+
+.grid-2x2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+}
+
+.variant {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+.variant-title {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--t-tertiary);
+}
+
+.variant-desc {
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 16px;
+  color: var(--t-dim);
+  margin-top: -12px;
+}
+
+.state-label {
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 12px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--t-dim);
+  margin-bottom: var(--sp-2);
+}
+
+.state-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+/* Dark stage for each input demo */
+.stage {
+  background: var(--e0);
+  border-radius: var(--r-lg);
+  padding: var(--sp-6) var(--sp-5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 72px;
+}
+
+/* ============================================================
+   VARIANT 1: GLASS CAPSULE
+   ============================================================ */
+.glass-capsule {
+  width: 100%;
+  max-width: 560px;
+  height: 44px;
+  border-radius: 22px;
+  background: rgba(26, 24, 22, 0.85);
+  backdrop-filter: blur(20px) saturate(1.2);
+  border: 1px solid var(--e6);
+  border-top-color: var(--e7);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--sp-4);
+  gap: var(--sp-3);
+  transition: border-color 0.25s var(--dc-ease-out),
+              box-shadow 0.25s var(--dc-ease-out);
+  position: relative;
+}
+
+.glass-capsule .model-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--faction-amber);
+  flex-shrink: 0;
+  box-shadow: 0 0 6px rgba(212, 165, 116, 0.3);
+}
+
+.glass-capsule .input-text {
+  flex: 1;
+  font-family: 'Inconsolata', monospace;
+  font-size: 13px;
+  line-height: 20px;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--t-subtle);
+}
+
+.glass-capsule .input-text.typing {
+  color: var(--t-secondary);
+}
+
+.glass-capsule .send-arrow {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  opacity: 0.3;
+  transition: opacity 0.15s;
+}
+
+.glass-capsule .send-arrow.active {
+  opacity: 0.8;
+}
+
+/* Focused state */
+.glass-capsule.focused {
+  border-color: var(--gold-60);
+  border-top-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold-30),
+              0 4px 16px -2px rgba(0, 0, 0, 0.5);
+}
+
+.glass-capsule.focused .input-text {
+  color: var(--t-primary);
+}
+
+/* Streaming state */
+.glass-capsule.streaming {
+  border-color: var(--gold-60);
+  animation: glass-capsule-pulse 2s ease-in-out infinite;
+}
+
+@keyframes glass-capsule-pulse {
+  0%, 100% { border-color: var(--gold-30); box-shadow: 0 0 0 1px rgba(212, 168, 0, 0.05), 0 4px 16px -2px rgba(0,0,0,0.5); }
+  50% { border-color: var(--gold-60); box-shadow: 0 0 0 1px rgba(212, 168, 0, 0.15), 0 4px 16px -2px rgba(0,0,0,0.5); }
+}
+
+.glass-capsule.streaming .input-text {
+  color: var(--t-subtle);
+}
+
+/* With suggestions */
+.glass-capsule.with-suggestions {
+  border-color: var(--e6);
+  border-top-color: var(--e7);
+}
+
+.suggestion-pills {
+  display: flex;
+  gap: var(--sp-2);
+  position: absolute;
+  top: -32px;
+  left: var(--sp-4);
+}
+
+.suggestion-pill {
+  font-family: 'Inconsolata', monospace;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 16px;
+  color: var(--t-ghost);
+  background: var(--e3);
+  border: 1px solid var(--e5);
+  border-radius: 12px;
+  padding: 2px 10px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.suggestion-pill:hover {
+  color: var(--t-tertiary);
+  border-color: var(--e6);
+  background: var(--e4);
+}
+
+/* ============================================================
+   VARIANT 2: FLOATING TERMINAL
+   ============================================================ */
+.floating-terminal {
+  width: 100%;
+  max-width: 560px;
+  height: 44px;
+  border-radius: var(--r-md);
+  background: var(--e2);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--sp-4);
+  gap: var(--sp-2);
+  position: relative;
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.4);
+  border: none;
+}
+
+.floating-terminal .prompt-char {
+  font-family: 'Inconsolata', monospace;
+  font-size: 13px;
+  color: var(--t-dim);
+  flex-shrink: 0;
+  transition: color 0.2s;
+}
+
+.floating-terminal.focused .prompt-char {
+  color: var(--gold);
+}
+
+.floating-terminal .input-text {
+  flex: 1;
+  font-family: 'Inconsolata', monospace;
+  font-size: 13px;
+  line-height: 20px;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--t-subtle);
+}
+
+.floating-terminal .input-text.typing {
+  color: var(--t-secondary);
+}
+
+.floating-terminal .cursor-block {
+  display: inline-block;
+  width: 7px;
+  height: 15px;
+  background: var(--gold-muted);
+  animation: cursor-blink 1s step-end infinite;
+  vertical-align: middle;
+  margin-left: 1px;
+}
+
+@keyframes cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* Underline for focus */
+.floating-terminal::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s var(--dc-ease-out);
+}
+
+.floating-terminal.focused::after {
+  transform: scaleX(1);
+}
+
+/* Streaming underline */
+.floating-terminal.streaming::after {
+  transform: scaleX(1);
+  animation: terminal-scan 1.5s ease-in-out infinite;
+  background: linear-gradient(90deg, transparent 0%, var(--gold) 50%, transparent 100%);
+  background-size: 200% 100%;
+}
+
+@keyframes terminal-scan {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.floating-terminal.streaming .cursor-block {
+  animation: none;
+  opacity: 0.5;
+}
+
+/* With suggestions */
+.floating-terminal .suggestion-inline {
+  position: absolute;
+  top: -28px;
+  left: var(--sp-4);
+  display: flex;
+  gap: var(--sp-3);
+}
+
+.suggestion-inline .suggestion-item {
+  font-family: 'Inconsolata', monospace;
+  font-size: 10px;
+  line-height: 16px;
+  color: var(--t-dim);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.suggestion-inline .suggestion-item:hover {
+  color: var(--t-ghost);
+}
+
+.suggestion-inline .suggestion-item::before {
+  content: '> ';
+  color: var(--t-invisible);
+}
+
+/* ============================================================
+   VARIANT 3: RETICLE INPUT
+   ============================================================ */
+.reticle-input {
+  width: 100%;
+  max-width: 560px;
+  height: 44px;
+  background: var(--e3);
+  border: 1px solid var(--e5);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--sp-5);
+  gap: var(--sp-3);
+  position: relative;
+}
+
+/* Corner brackets */
+.reticle-input .bracket {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  transition: border-color 0.3s var(--dc-ease-out);
+}
+
+.reticle-input .bracket.tl {
+  top: -1px; left: -1px;
+  border-top: 2px solid var(--e7);
+  border-left: 2px solid var(--e7);
+}
+.reticle-input .bracket.tr {
+  top: -1px; right: -1px;
+  border-top: 2px solid var(--e7);
+  border-right: 2px solid var(--e7);
+}
+.reticle-input .bracket.bl {
+  bottom: -1px; left: -1px;
+  border-bottom: 2px solid var(--e7);
+  border-left: 2px solid var(--e7);
+}
+.reticle-input .bracket.br {
+  bottom: -1px; right: -1px;
+  border-bottom: 2px solid var(--e7);
+  border-right: 2px solid var(--e7);
+}
+
+/* Tick marks */
+.reticle-input .tick {
+  position: absolute;
+  background: var(--e5);
+  transition: background 0.3s var(--dc-ease-out);
+}
+.reticle-input .tick.h {
+  width: 6px;
+  height: 1px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.reticle-input .tick.v {
+  width: 1px;
+  height: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.reticle-input .tick.left { left: 6px; }
+.reticle-input .tick.right { right: 6px; }
+.reticle-input .tick.top { top: 4px; }
+.reticle-input .tick.bottom { bottom: 4px; }
+
+.reticle-input .model-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--faction-amber);
+  flex-shrink: 0;
+  box-shadow: 0 0 4px rgba(212, 165, 116, 0.25);
+}
+
+.reticle-input .input-text {
+  flex: 1;
+  font-family: 'Inconsolata', monospace;
+  font-size: 13px;
+  line-height: 20px;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--t-subtle);
+}
+
+.reticle-input .input-text.typing {
+  color: var(--t-secondary);
+}
+
+.reticle-input .crosshair-icon {
+  flex-shrink: 0;
+  opacity: 0.25;
+  transition: opacity 0.15s;
+}
+
+.reticle-input .crosshair-icon.active {
+  opacity: 0.7;
+}
+
+/* Focused — brackets illuminate */
+.reticle-input.focused .bracket {
+  border-color: var(--gold);
+}
+
+.reticle-input.focused .tick {
+  background: var(--gold-30);
+}
+
+.reticle-input.focused {
+  border-color: var(--e6);
+}
+
+.reticle-input.focused .input-text {
+  color: var(--t-primary);
+}
+
+/* Streaming — brackets pulse */
+.reticle-input.streaming .bracket {
+  animation: bracket-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes bracket-pulse {
+  0%, 100% { border-color: var(--gold-30); }
+  50% { border-color: var(--gold); }
+}
+
+.reticle-input.streaming .model-indicator {
+  animation: dot-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes dot-pulse {
+  0%, 100% { box-shadow: 0 0 4px rgba(212, 165, 116, 0.25); }
+  50% { box-shadow: 0 0 8px rgba(212, 165, 116, 0.5); }
+}
+
+/* Suggestions */
+.reticle-input .suggestion-tags {
+  position: absolute;
+  top: -28px;
+  left: var(--sp-5);
+  display: flex;
+  gap: var(--sp-2);
+}
+
+.suggestion-tag {
+  font-family: 'Inconsolata', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--t-dim);
+  border: 1px solid var(--e5);
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.suggestion-tag:hover {
+  color: var(--t-ghost);
+  border-color: var(--e6);
+}
+
+/* ============================================================
+   VARIANT 4: EMBER SLOT
+   ============================================================ */
+.ember-slot-container {
+  width: 100%;
+  max-width: 560px;
+  position: relative;
+}
+
+.ember-slot {
+  width: 100%;
+  height: 40px;
+  background: var(--e0);
+  border: 1px solid var(--e3);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--sp-4);
+  gap: var(--sp-3);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+  transition: border-color 0.4s var(--dc-ease-out),
+              box-shadow 0.4s var(--dc-ease-out);
+}
+
+.ember-slot .model-ember {
+  width: 4px;
+  height: 16px;
+  border-radius: 2px;
+  background: var(--faction-amber);
+  flex-shrink: 0;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+
+.ember-slot .input-text {
+  flex: 1;
+  font-family: 'Inconsolata', monospace;
+  font-size: 12px;
+  line-height: 20px;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--t-dim);
+  letter-spacing: 0.3px;
+}
+
+.ember-slot .input-text.typing {
+  color: var(--t-secondary);
+}
+
+/* Inner glow overlay */
+.ember-slot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 100% 80% at 50% 50%,
+    transparent 60%,
+    transparent 100%
+  );
+  pointer-events: none;
+  transition: background 0.4s var(--dc-ease-out);
+}
+
+/* Focus — warm edges */
+.ember-slot.focused {
+  border-color: rgba(212, 168, 0, 0.25);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4),
+              inset 0 0 12px rgba(212, 168, 0, 0.06);
+}
+
+.ember-slot.focused::before {
+  background: radial-gradient(
+    ellipse 120% 100% at 50% 50%,
+    transparent 40%,
+    rgba(212, 168, 0, 0.03) 70%,
+    rgba(212, 168, 0, 0.06) 100%
+  );
+}
+
+.ember-slot.focused .model-ember {
+  opacity: 0.9;
+}
+
+.ember-slot.focused .input-text {
+  color: var(--t-primary);
+}
+
+/* Streaming — ember particles */
+.ember-slot.streaming {
+  border-color: rgba(212, 168, 0, 0.2);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4),
+              inset 0 0 16px rgba(212, 168, 0, 0.05);
+}
+
+.ember-slot.streaming .model-ember {
+  animation: ember-glow 1.5s ease-in-out infinite;
+}
+
+@keyframes ember-glow {
+  0%, 100% { opacity: 0.5; box-shadow: 0 0 4px rgba(212, 165, 116, 0.2); }
+  50% { opacity: 1; box-shadow: 0 0 8px rgba(212, 165, 116, 0.4); }
+}
+
+/* Ember particles */
+.ember-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.ember-particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: var(--faction-amber);
+  opacity: 0;
+}
+
+.ember-slot.streaming .ember-particle {
+  animation: float-up var(--dur) var(--delay) ease-out infinite;
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-28px) translateX(var(--drift)) scale(0.3);
+    opacity: 0;
+  }
+}
+
+/* Suggestions for ember */
+.ember-suggestion-row {
+  display: flex;
+  gap: var(--sp-3);
+  margin-top: var(--sp-2);
+}
+
+.ember-suggestion {
+  font-family: 'Inconsolata', monospace;
+  font-size: 10px;
+  line-height: 16px;
+  color: var(--t-dim);
+  cursor: pointer;
+  transition: color 0.2s;
+  position: relative;
+  padding-left: 10px;
+}
+
+.ember-suggestion::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--e5);
+  transition: background 0.2s;
+}
+
+.ember-suggestion:hover {
+  color: var(--t-ghost);
+}
+
+.ember-suggestion:hover::before {
+  background: var(--faction-amber);
+}
+
+/* ============================================================
+   CONTEXT MENU
+   ============================================================ */
+.context-menu-stage {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 320px;
+  padding: 48px;
+  background: var(--e0);
+  border-radius: var(--r-lg);
+  position: relative;
+}
+
+/* Fake node for context */
+.fake-node {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, var(--e7), var(--e4) 60%, var(--e3) 100%);
+  box-shadow: 0 0 0 1px var(--e5),
+              0 0 12px rgba(212, 165, 116, 0.1);
+  position: relative;
+  margin-right: 12px;
+  margin-top: 40px;
+  flex-shrink: 0;
+}
+
+.fake-node::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--t-primary);
+  box-shadow: 0 0 4px rgba(225, 225, 225, 0.3);
+}
+
+.context-menu {
+  width: 200px;
+  background: linear-gradient(180deg, rgba(30,28,25,0.94) 0%, rgba(22,20,18,0.91) 100%);
+  backdrop-filter: blur(24px) saturate(1.3);
+  border-top: 1px solid rgba(61,58,53,0.7);
+  border-left: 1px solid rgba(44,42,38,0.5);
+  border-right: 1px solid rgba(44,42,38,0.4);
+  border-bottom: 1px solid rgba(19,18,15,0.7);
+  border-radius: var(--r-2xl);
+  box-shadow:
+    0 1px 0 0 rgba(61,58,53,0.2) inset,
+    0 -1px 0 0 rgba(0,0,0,0.25) inset,
+    0 8px 32px -4px rgba(0,0,0,0.6),
+    0 2px 6px 0 rgba(0,0,0,0.35),
+    0 0 0 1px rgba(0,0,0,0.15);
+  padding: var(--sp-1) 0;
+  animation: menu-enter 0.2s var(--dc-snap) both;
+  transform-origin: top left;
+}
+
+@keyframes menu-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  margin: 0 var(--sp-1);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: background 0.1s;
+  position: relative;
+}
+
+.menu-item:hover {
+  background: var(--e4);
+}
+
+.menu-item .menu-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-item .menu-icon svg {
+  width: 14px;
+  height: 14px;
+}
+
+.menu-item .menu-label {
+  flex: 1;
+  font-family: 'Inconsolata', monospace;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--t-secondary);
+}
+
+.menu-item:hover .menu-label {
+  color: var(--t-primary);
+}
+
+.menu-item .menu-shortcut {
+  font-family: 'Inconsolata', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 12px;
+  letter-spacing: 0.5px;
+  color: var(--t-ghost);
+}
+
+.menu-separator {
+  height: 1px;
+  background: var(--e5);
+  margin: var(--sp-1) var(--sp-3);
+}
+
+.menu-item.destructive .menu-label {
+  color: #DD0000;
+}
+
+.menu-item.destructive:hover {
+  background: rgba(221, 0, 0, 0.08);
+}
+
+.menu-item.destructive:hover .menu-label {
+  color: #FF3333;
+}
+
+/* Menu item entrance stagger */
+.menu-item:nth-child(1) { animation: menu-item-in 0.15s 0.04s var(--dc-snap) both; }
+.menu-item:nth-child(2) { animation: menu-item-in 0.15s 0.07s var(--dc-snap) both; }
+.menu-item:nth-child(3) { animation: menu-item-in 0.15s 0.10s var(--dc-snap) both; }
+.menu-item:nth-child(4) { animation: menu-item-in 0.15s 0.13s var(--dc-snap) both; }
+/* separator sits at child 5 */
+.menu-item:nth-child(6) { animation: menu-item-in 0.15s 0.16s var(--dc-snap) both; }
+
+@keyframes menu-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ============================================================
+   TOOLTIPS
+   ============================================================ */
+.tooltip-demos {
+  display: flex;
+  gap: 80px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.tooltip-demo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  position: relative;
+}
+
+.tooltip-demo-label {
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 12px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--t-dim);
+  margin-bottom: var(--sp-2);
+}
+
+/* Tooltip trigger (fake node/edge/button) */
+.tooltip-trigger-node {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, var(--e7), var(--e4) 60%, var(--e3) 100%);
+  box-shadow: 0 0 0 1px var(--e5);
+  cursor: pointer;
+  position: relative;
+}
+
+.tooltip-trigger-node::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--t-primary);
+}
+
+.tooltip-trigger-edge {
+  width: 80px;
+  height: 2px;
+  background: var(--e6);
+  border-radius: 1px;
+  cursor: pointer;
+  position: relative;
+  margin: 15px 0;
+}
+
+.tooltip-trigger-edge::before,
+.tooltip-trigger-edge::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--e5);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.tooltip-trigger-edge::before { left: -4px; }
+.tooltip-trigger-edge::after { right: -4px; }
+
+.tooltip-trigger-button {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--r-sm);
+  background: var(--e3);
+  border: 1px solid var(--e5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* Simple tooltip */
+.tooltip-simple {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--e4);
+  border: 1px solid var(--e6);
+  border-radius: var(--r-sm);
+  padding: 3px 8px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  animation: tooltip-enter 0.15s var(--dc-ease-out) both;
+}
+
+.tooltip-simple::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: var(--e5);
+}
+
+.tooltip-simple .tooltip-text {
+  font-family: 'Inconsolata', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--t-tertiary);
+}
+
+/* Rich tooltip */
+.tooltip-rich {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  background: linear-gradient(180deg, rgba(30,28,25,0.94) 0%, rgba(22,20,18,0.91) 100%);
+  backdrop-filter: blur(20px) saturate(1.2);
+  border-top: 1px solid rgba(61,58,53,0.6);
+  border-left: 1px solid rgba(44,42,38,0.4);
+  border-right: 1px solid rgba(44,42,38,0.3);
+  border-bottom: 1px solid rgba(19,18,15,0.6);
+  border-radius: var(--r-lg);
+  padding: var(--sp-3);
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.5),
+              0 1px 3px 0 rgba(0,0,0,0.3);
+  animation: tooltip-enter 0.2s var(--dc-ease-out) both;
+}
+
+.tooltip-rich::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: rgba(19,18,15,0.6);
+}
+
+.tooltip-rich .tooltip-title {
+  font-family: 'Inconsolata', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--t-tertiary);
+  margin-bottom: var(--sp-2);
+}
+
+.tooltip-rich .tooltip-meta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tooltip-rich .tooltip-meta-key {
+  font-family: 'Inconsolata', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 12px;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--t-dim);
+}
+
+.tooltip-rich .tooltip-meta-val {
+  font-family: 'Inconsolata', monospace;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 16px;
+  color: var(--t-ghost);
+}
+
+.tooltip-rich .tooltip-divider {
+  height: 1px;
+  background: var(--e5);
+  margin: var(--sp-2) 0;
+}
+
+/* Keyboard shortcut tooltip */
+.tooltip-kbd {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--e4);
+  border: 1px solid var(--e6);
+  border-radius: var(--r-sm);
+  padding: 4px 10px;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  animation: tooltip-enter 0.15s var(--dc-ease-out) both;
+}
+
+.tooltip-kbd::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 4px solid transparent;
+  border-top-color: var(--e5);
+}
+
+.tooltip-kbd .tooltip-action {
+  font-family: 'Inconsolata', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 16px;
+  color: var(--t-tertiary);
+}
+
+.tooltip-kbd .kbd-combo {
+  display: flex;
+  gap: 2px;
+}
+
+.tooltip-kbd .kbd {
+  font-family: 'Inconsolata', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 12px;
+  color: var(--t-ghost);
+  background: var(--e2);
+  border: 1px solid var(--e5);
+  border-radius: 3px;
+  padding: 1px 4px;
+  min-width: 16px;
+  text-align: center;
+}
+
+@keyframes tooltip-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .floating-terminal .cursor-block {
+    animation: none;
+    opacity: 0.7;
+  }
+}
+
+/* ============================================================
+   INTERACTIVE DEMO STATES
+   ============================================================ */
+.demo-controls {
+  display: flex;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-3);
+}
+
+.demo-btn {
+  font-family: 'Inconsolata', monospace;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--t-dim);
+  background: var(--e2);
+  border: 1px solid var(--e5);
+  border-radius: var(--r-sm);
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.demo-btn:hover {
+  color: var(--t-ghost);
+  border-color: var(--e6);
+}
+
+.demo-btn.active {
+  color: var(--t-tertiary);
+  border-color: var(--e7);
+  background: var(--e3);
+}
+
+/* ============================================================
+   COMPARISON STRIP (below each variant)
+   ============================================================ */
+.comparison-note {
+  font-size: 10px;
+  line-height: 16px;
+  color: var(--t-dim);
+  margin-top: var(--sp-2);
+  padding-left: var(--sp-2);
+  border-left: 2px solid var(--e5);
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <h1 class="page-title">Dreamcacher Input Bar + Floating UI Explorations</h1>
+  <p class="page-subtitle">4 divergent input approaches, context menu, tooltip system -- interaction states shown inline</p>
+
+  <!-- ========================================================
+       VARIANT 1: GLASS CAPSULE
+       ======================================================== -->
+  <div class="section">
+    <div class="section-header">Input Bar Explorations</div>
+    <div class="grid-2x2">
+
+      <!-- VARIANT 1 -->
+      <div class="variant">
+        <div class="variant-title">Variant 1 -- Glass Capsule</div>
+        <div class="variant-desc">Pill-shaped, dark glass fill, directional borders. Gold focus accent.</div>
+
+        <div class="state-row">
+          <!-- Empty -->
+          <div class="state-label">Empty / Placeholder</div>
+          <div class="stage">
+            <div class="glass-capsule">
+              <div class="model-dot"></div>
+              <span class="input-text">Ask anything...</span>
+              <svg class="send-arrow" viewBox="0 0 20 20" fill="none">
+                <path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--t-dim)"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Focused -->
+          <div class="state-label">Focused / Typing</div>
+          <div class="stage">
+            <div class="glass-capsule focused">
+              <div class="model-dot"></div>
+              <span class="input-text typing">What makes a great design system|</span>
+              <svg class="send-arrow active" viewBox="0 0 20 20" fill="none">
+                <path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--t-tertiary)"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Streaming -->
+          <div class="state-label">Streaming / Waiting</div>
+          <div class="stage">
+            <div class="glass-capsule streaming">
+              <div class="model-dot"></div>
+              <span class="input-text" style="color: var(--t-dim); font-style: italic;">Thinking...</span>
+              <svg class="send-arrow" viewBox="0 0 20 20" fill="none" style="opacity: 0;">
+                <path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- With Suggestions -->
+          <div class="state-label">With Suggestions</div>
+          <div class="stage" style="padding-top: 40px;">
+            <div class="glass-capsule with-suggestions">
+              <div class="suggestion-pills">
+                <span class="suggestion-pill">Tell me more</span>
+                <span class="suggestion-pill">Branch here</span>
+                <span class="suggestion-pill">Summarize</span>
+              </div>
+              <div class="model-dot"></div>
+              <span class="input-text">Ask anything...</span>
+              <svg class="send-arrow" viewBox="0 0 20 20" fill="none">
+                <path d="M4 10h12M12 6l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--t-dim)"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="comparison-note">
+          Warm, approachable. The pill shape creates a soft landing zone. Gold border on focus
+          is subtle enough for sustained use. Streaming pulse is ambient, not distracting.
+        </div>
+      </div>
+
+      <!-- ========================================================
+           VARIANT 2: FLOATING TERMINAL
+           ======================================================== -->
+      <div class="variant">
+        <div class="variant-title">Variant 2 -- Floating Terminal</div>
+        <div class="variant-desc">Rectangle, monospace cursor, gold underline prompt. No border at rest.</div>
+
+        <div class="state-row">
+          <!-- Empty -->
+          <div class="state-label">Empty / Placeholder</div>
+          <div class="stage">
+            <div class="floating-terminal">
+              <span class="prompt-char">&gt;</span>
+              <span class="input-text">Ask anything...</span>
+              <span class="cursor-block" style="opacity: 0;"></span>
+            </div>
+          </div>
+
+          <!-- Focused -->
+          <div class="state-label">Focused / Typing</div>
+          <div class="stage">
+            <div class="floating-terminal focused">
+              <span class="prompt-char">&gt;</span>
+              <span class="input-text typing">What makes a great design system</span>
+              <span class="cursor-block"></span>
+            </div>
+          </div>
+
+          <!-- Streaming -->
+          <div class="state-label">Streaming / Waiting</div>
+          <div class="stage">
+            <div class="floating-terminal streaming">
+              <span class="prompt-char" style="color: var(--gold-60);">&gt;</span>
+              <span class="input-text" style="color: var(--t-dim); font-style: italic;">Thinking...</span>
+              <span class="cursor-block" style="opacity: 0.3;"></span>
+            </div>
+          </div>
+
+          <!-- With Suggestions -->
+          <div class="state-label">With Suggestions</div>
+          <div class="stage" style="padding-top: 40px;">
+            <div class="floating-terminal">
+              <div class="suggestion-inline">
+                <span class="suggestion-item">Tell me more</span>
+                <span class="suggestion-item">Branch here</span>
+                <span class="suggestion-item">Summarize</span>
+              </div>
+              <span class="prompt-char">&gt;</span>
+              <span class="input-text">Ask anything...</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="comparison-note">
+          Developer-native. The terminal metaphor creates familiarity for power users.
+          Gold underline reveal on focus is satisfying. Scanning underline during streaming
+          communicates "working" without visual noise.
+        </div>
+      </div>
+
+      <!-- ========================================================
+           VARIANT 3: RETICLE INPUT
+           ======================================================== -->
+      <div class="variant">
+        <div class="variant-title">Variant 3 -- Reticle Input</div>
+        <div class="variant-desc">Technical HUD markings, corner brackets, precision feel.</div>
+
+        <div class="state-row">
+          <!-- Empty -->
+          <div class="state-label">Empty / Placeholder</div>
+          <div class="stage">
+            <div class="reticle-input">
+              <div class="bracket tl"></div>
+              <div class="bracket tr"></div>
+              <div class="bracket bl"></div>
+              <div class="bracket br"></div>
+              <div class="tick h left"></div>
+              <div class="tick h right"></div>
+              <div class="tick v top"></div>
+              <div class="tick v bottom"></div>
+              <div class="model-indicator"></div>
+              <span class="input-text">Ask anything...</span>
+              <svg class="crosshair-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="5" stroke="var(--t-dim)" stroke-width="1"/>
+                <line x1="8" y1="1" x2="8" y2="4" stroke="var(--t-dim)" stroke-width="1"/>
+                <line x1="8" y1="12" x2="8" y2="15" stroke="var(--t-dim)" stroke-width="1"/>
+                <line x1="1" y1="8" x2="4" y2="8" stroke="var(--t-dim)" stroke-width="1"/>
+                <line x1="12" y1="8" x2="15" y2="8" stroke="var(--t-dim)" stroke-width="1"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Focused -->
+          <div class="state-label">Focused / Typing</div>
+          <div class="stage">
+            <div class="reticle-input focused">
+              <div class="bracket tl"></div>
+              <div class="bracket tr"></div>
+              <div class="bracket bl"></div>
+              <div class="bracket br"></div>
+              <div class="tick h left"></div>
+              <div class="tick h right"></div>
+              <div class="tick v top"></div>
+              <div class="tick v bottom"></div>
+              <div class="model-indicator"></div>
+              <span class="input-text typing">What makes a great design system|</span>
+              <svg class="crosshair-icon active" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="5" stroke="var(--t-tertiary)" stroke-width="1"/>
+                <line x1="8" y1="1" x2="8" y2="4" stroke="var(--t-tertiary)" stroke-width="1"/>
+                <line x1="8" y1="12" x2="8" y2="15" stroke="var(--t-tertiary)" stroke-width="1"/>
+                <line x1="1" y1="8" x2="4" y2="8" stroke="var(--t-tertiary)" stroke-width="1"/>
+                <line x1="12" y1="8" x2="15" y2="8" stroke="var(--t-tertiary)" stroke-width="1"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Streaming -->
+          <div class="state-label">Streaming / Waiting</div>
+          <div class="stage">
+            <div class="reticle-input streaming">
+              <div class="bracket tl"></div>
+              <div class="bracket tr"></div>
+              <div class="bracket bl"></div>
+              <div class="bracket br"></div>
+              <div class="tick h left"></div>
+              <div class="tick h right"></div>
+              <div class="tick v top"></div>
+              <div class="tick v bottom"></div>
+              <div class="model-indicator"></div>
+              <span class="input-text" style="color: var(--t-dim); font-style: italic;">Analyzing...</span>
+              <svg class="crosshair-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" style="opacity: 0.2;">
+                <circle cx="8" cy="8" r="5" stroke="var(--t-dim)" stroke-width="1"/>
+                <line x1="8" y1="1" x2="8" y2="4" stroke="var(--t-dim)" stroke-width="1"/>
+                <line x1="8" y1="12" x2="8" y2="15" stroke="var(--t-dim)" stroke-width="1"/>
+                <line x1="1" y1="8" x2="4" y2="8" stroke="var(--t-dim)" stroke-width="1"/>
+                <line x1="12" y1="8" x2="15" y2="8" stroke="var(--t-dim)" stroke-width="1"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- With Suggestions -->
+          <div class="state-label">With Suggestions</div>
+          <div class="stage" style="padding-top: 40px;">
+            <div class="reticle-input">
+              <div class="bracket tl"></div>
+              <div class="bracket tr"></div>
+              <div class="bracket bl"></div>
+              <div class="bracket br"></div>
+              <div class="tick h left"></div>
+              <div class="tick h right"></div>
+              <div class="tick v top"></div>
+              <div class="tick v bottom"></div>
+              <div class="suggestion-tags">
+                <span class="suggestion-tag">Tell me more</span>
+                <span class="suggestion-tag">Branch</span>
+                <span class="suggestion-tag">Summarize</span>
+              </div>
+              <div class="model-indicator"></div>
+              <span class="input-text">Ask anything...</span>
+              <svg class="crosshair-icon" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="5" stroke="var(--t-dim)" stroke-width="1"/>
+                <line x1="8" y1="1" x2="8" y2="4" stroke="var(--t-dim)" stroke-width="1"/>
+                <line x1="8" y1="12" x2="8" y2="15" stroke="var(--t-dim)" stroke-width="1"/>
+                <line x1="1" y1="8" x2="4" y2="8" stroke="var(--t-dim)" stroke-width="1"/>
+                <line x1="12" y1="8" x2="15" y2="8" stroke="var(--t-dim)" stroke-width="1"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="comparison-note">
+          Precision instrument aesthetic. The corner brackets create a "locked-on" feeling
+          when illuminated. Strongest visual identity of the four -- the HUD language
+          reinforces the observatory/specimen metaphor.
+        </div>
+      </div>
+
+      <!-- ========================================================
+           VARIANT 4: EMBER SLOT
+           ======================================================== -->
+      <div class="variant">
+        <div class="variant-title">Variant 4 -- Ember Slot</div>
+        <div class="variant-desc">Narrow recessed slot, warming edges on focus, ember particles when streaming.</div>
+
+        <div class="state-row">
+          <!-- Empty -->
+          <div class="state-label">Empty / Placeholder</div>
+          <div class="stage">
+            <div class="ember-slot-container">
+              <div class="ember-slot">
+                <div class="model-ember"></div>
+                <span class="input-text">Ask anything...</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Focused -->
+          <div class="state-label">Focused / Typing</div>
+          <div class="stage">
+            <div class="ember-slot-container">
+              <div class="ember-slot focused">
+                <div class="model-ember"></div>
+                <span class="input-text typing">What makes a great design system|</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Streaming -->
+          <div class="state-label">Streaming / Waiting</div>
+          <div class="stage">
+            <div class="ember-slot-container">
+              <div class="ember-slot streaming">
+                <div class="ember-particles">
+                  <div class="ember-particle" style="left: 15%; bottom: 0; --dur: 1.8s; --delay: 0s; --drift: 3px;"></div>
+                  <div class="ember-particle" style="left: 30%; bottom: 0; --dur: 2.2s; --delay: 0.3s; --drift: -5px;"></div>
+                  <div class="ember-particle" style="left: 48%; bottom: 0; --dur: 1.6s; --delay: 0.7s; --drift: 2px;"></div>
+                  <div class="ember-particle" style="left: 62%; bottom: 0; --dur: 2.0s; --delay: 0.1s; --drift: -3px;"></div>
+                  <div class="ember-particle" style="left: 78%; bottom: 0; --dur: 1.9s; --delay: 0.5s; --drift: 4px;"></div>
+                  <div class="ember-particle" style="left: 88%; bottom: 0; --dur: 2.3s; --delay: 0.9s; --drift: -2px;"></div>
+                  <div class="ember-particle" style="left: 22%; bottom: 0; --dur: 2.1s; --delay: 1.2s; --drift: 1px;"></div>
+                  <div class="ember-particle" style="left: 55%; bottom: 0; --dur: 1.7s; --delay: 0.4s; --drift: -4px;"></div>
+                </div>
+                <div class="model-ember"></div>
+                <span class="input-text" style="color: var(--t-dim); font-style: italic;">Thinking...</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- With Suggestions -->
+          <div class="state-label">With Suggestions</div>
+          <div class="stage">
+            <div class="ember-slot-container">
+              <div class="ember-slot">
+                <div class="model-ember"></div>
+                <span class="input-text">Ask anything...</span>
+              </div>
+              <div class="ember-suggestion-row">
+                <span class="ember-suggestion">Tell me more</span>
+                <span class="ember-suggestion">Branch here</span>
+                <span class="ember-suggestion">Summarize</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="comparison-note">
+          Most atmospheric. The recessed slot feels like inserting a query into a machine.
+          Ember particles during streaming add life without being loud. The warming edges
+          create a forge-like quality -- technology with heat.
+        </div>
+      </div>
+
+    </div><!-- /grid-2x2 -->
+  </div><!-- /section -->
+
+  <!-- ========================================================
+       CONTEXT MENU
+       ======================================================== -->
+  <div class="section">
+    <div class="section-header">Context Menu</div>
+    <p style="font-size: 10px; color: var(--t-dim); line-height: 16px; margin-bottom: var(--sp-6);">
+      Right-click on a node. Elevated glass treatment, staggered item entrance, destructive action separated.
+    </p>
+
+    <div class="context-menu-stage">
+      <div class="fake-node"></div>
+
+      <div class="context-menu">
+        <div class="menu-item">
+          <div class="menu-icon">
+            <svg viewBox="0 0 14 14" fill="none">
+              <path d="M7 2v10M2 7h10" stroke="var(--t-ghost)" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="menu-label">Branch</span>
+          <span class="menu-shortcut">B</span>
+        </div>
+
+        <div class="menu-item" style="background: var(--e4);">
+          <div class="menu-icon">
+            <svg viewBox="0 0 14 14" fill="none">
+              <circle cx="7" cy="7" r="4.5" stroke="var(--t-ghost)" stroke-width="1.2"/>
+              <circle cx="7" cy="7" r="1.5" fill="var(--t-ghost)"/>
+            </svg>
+          </div>
+          <span class="menu-label" style="color: var(--t-primary);">Inspect</span>
+          <span class="menu-shortcut">I</span>
+        </div>
+
+        <div class="menu-item">
+          <div class="menu-icon">
+            <svg viewBox="0 0 14 14" fill="none">
+              <rect x="2" y="3" width="10" height="8" rx="1.5" stroke="var(--t-ghost)" stroke-width="1.2"/>
+              <path d="M5 3V2a1.5 1.5 0 0 1 1.5-1.5h1A1.5 1.5 0 0 1 9 2v1" stroke="var(--t-ghost)" stroke-width="1.2"/>
+            </svg>
+          </div>
+          <span class="menu-label">Clip</span>
+          <span class="menu-shortcut">C</span>
+        </div>
+
+        <div class="menu-item">
+          <div class="menu-icon">
+            <svg viewBox="0 0 14 14" fill="none">
+              <rect x="3" y="3" width="7" height="8" rx="1" stroke="var(--t-ghost)" stroke-width="1.2"/>
+              <rect x="5" y="1" width="7" height="8" rx="1" stroke="var(--t-ghost)" stroke-width="1.2" fill="var(--e2)"/>
+            </svg>
+          </div>
+          <span class="menu-label">Copy</span>
+          <span class="menu-shortcut">&#8984;C</span>
+        </div>
+
+        <div class="menu-separator"></div>
+
+        <div class="menu-item destructive">
+          <div class="menu-icon">
+            <svg viewBox="0 0 14 14" fill="none">
+              <path d="M3 4h8M5 4V3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v1M5.5 6.5v3.5M8.5 6.5v3.5" stroke="#DD0000" stroke-width="1.2" stroke-linecap="round"/>
+              <path d="M4 4l.5 7.5a1 1 0 0 0 1 .9h3a1 1 0 0 0 1-.9L10 4" stroke="#DD0000" stroke-width="1.2"/>
+            </svg>
+          </div>
+          <span class="menu-label">Delete</span>
+          <span class="menu-shortcut">&#9003;</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       TOOLTIPS
+       ======================================================== -->
+  <div class="section">
+    <div class="section-header">Tooltip System</div>
+    <p style="font-size: 10px; color: var(--t-dim); line-height: 16px; margin-bottom: var(--sp-6);">
+      Three tooltip tiers: simple label, rich metadata, keyboard shortcut. Each uses the Dreamcacher glass vocabulary at appropriate elevation.
+    </p>
+
+    <div style="background: var(--e0); border-radius: var(--r-lg); padding: 64px 48px;">
+      <div class="tooltip-demos">
+
+        <!-- 1. Simple label -->
+        <div class="tooltip-demo">
+          <div class="tooltip-demo-label">Simple Label</div>
+          <div style="position: relative; display: flex; justify-content: center;">
+            <div class="tooltip-trigger-node"></div>
+            <div class="tooltip-simple">
+              <span class="tooltip-text">Design system basics</span>
+            </div>
+          </div>
+          <div class="comparison-note" style="margin-top: 16px; max-width: 180px; font-size: 9px; line-height: 14px;">
+            Appears on node hover after 400ms delay. Single line, E[4] background, subtle arrow.
+            Disappears immediately on mouseout.
+          </div>
+        </div>
+
+        <!-- 2. Rich metadata -->
+        <div class="tooltip-demo">
+          <div class="tooltip-demo-label">Rich Metadata</div>
+          <div style="position: relative; display: flex; justify-content: center;">
+            <div class="tooltip-trigger-edge"></div>
+            <div class="tooltip-rich">
+              <div class="tooltip-title">Reply Edge</div>
+              <div class="tooltip-divider"></div>
+              <div class="tooltip-meta-row" style="margin-bottom: 4px;">
+                <span class="tooltip-meta-key">Type</span>
+                <span class="tooltip-meta-val">reply</span>
+              </div>
+              <div class="tooltip-meta-row" style="margin-bottom: 4px;">
+                <span class="tooltip-meta-key">Weight</span>
+                <span class="tooltip-meta-val">1.0</span>
+              </div>
+              <div class="tooltip-meta-row">
+                <span class="tooltip-meta-key">Created</span>
+                <span class="tooltip-meta-val">2m ago</span>
+              </div>
+            </div>
+          </div>
+          <div class="comparison-note" style="margin-top: 16px; max-width: 180px; font-size: 9px; line-height: 14px;">
+            Appears on edge hover after 600ms delay. Glass treatment matches elevated panels.
+            Key-value layout with divider. Disappears on mouseout with 100ms fade.
+          </div>
+        </div>
+
+        <!-- 3. Keyboard shortcut -->
+        <div class="tooltip-demo">
+          <div class="tooltip-demo-label">Keyboard Shortcut</div>
+          <div style="position: relative; display: flex; justify-content: center;">
+            <div class="tooltip-trigger-button">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M7 2v10M2 7h10" stroke="var(--t-ghost)" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <div class="tooltip-kbd">
+              <span class="tooltip-action">Branch</span>
+              <div class="kbd-combo">
+                <span class="kbd">B</span>
+              </div>
+            </div>
+          </div>
+          <div class="comparison-note" style="margin-top: 16px; max-width: 180px; font-size: 9px; line-height: 14px;">
+            Appears on toolbar button hover after 300ms. Action name + key combo side by side.
+            kbd elements use E[2] fill with E[5] border for physical key appearance.
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       TIMING REFERENCE
+       ======================================================== -->
+  <div class="section">
+    <div class="section-header">Interaction Timing Reference</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--sp-6); font-size: 10px; line-height: 16px;">
+      <div>
+        <div style="color: var(--t-dim); font-size: 9px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 8px;">Input Focus</div>
+        <div style="color: var(--t-ghost);">Border transition: <span style="color: var(--t-tertiary);">250ms ease-out</span></div>
+        <div style="color: var(--t-ghost);">Underline reveal: <span style="color: var(--t-tertiary);">250ms ease-out</span></div>
+        <div style="color: var(--t-ghost);">Bracket illuminate: <span style="color: var(--t-tertiary);">300ms ease-out</span></div>
+        <div style="color: var(--t-ghost);">Ember warm: <span style="color: var(--t-tertiary);">400ms ease-out</span></div>
+      </div>
+      <div>
+        <div style="color: var(--t-dim); font-size: 9px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 8px;">Streaming Loops</div>
+        <div style="color: var(--t-ghost);">Gold pulse: <span style="color: var(--t-tertiary);">2s ease-in-out</span></div>
+        <div style="color: var(--t-ghost);">Underline scan: <span style="color: var(--t-tertiary);">1.5s ease-in-out</span></div>
+        <div style="color: var(--t-ghost);">Bracket pulse: <span style="color: var(--t-tertiary);">1.8s ease-in-out</span></div>
+        <div style="color: var(--t-ghost);">Ember float: <span style="color: var(--t-tertiary);">1.6-2.3s ease-out</span></div>
+      </div>
+      <div>
+        <div style="color: var(--t-dim); font-size: 9px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 8px;">Floating UI</div>
+        <div style="color: var(--t-ghost);">Context menu enter: <span style="color: var(--t-tertiary);">200ms dc-snap</span></div>
+        <div style="color: var(--t-ghost);">Menu item stagger: <span style="color: var(--t-tertiary);">30ms per item</span></div>
+        <div style="color: var(--t-ghost);">Tooltip enter: <span style="color: var(--t-tertiary);">150ms ease-out</span></div>
+        <div style="color: var(--t-ghost);">Tooltip delay: <span style="color: var(--t-tertiary);">300-600ms</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================
+       ACCESSIBILITY NOTE
+       ======================================================== -->
+  <div class="section" style="margin-bottom: 0;">
+    <div class="section-header">Accessibility</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--sp-6); font-size: 10px; line-height: 16px; color: var(--t-ghost);">
+      <div>
+        All animations respect <span style="color: var(--t-tertiary);">prefers-reduced-motion</span>. When reduced motion
+        is active, transitions collapse to instant state changes with a 1ms duration (perceived as
+        immediate). Continuous animations (cursor blink, streaming pulses, ember particles) stop entirely.
+        Focus indicators remain visible and unaffected.
+      </div>
+      <div>
+        Context menu items are keyboard-navigable. Tooltips use appropriate ARIA roles
+        (<span style="color: var(--t-tertiary);">role="tooltip"</span>). Destructive actions use
+        <span style="color: var(--t-tertiary);">color + icon + separation</span> for triple redundancy --
+        never color alone. All flash rates stay below 3 per second.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>

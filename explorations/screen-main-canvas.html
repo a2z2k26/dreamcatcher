@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dreamcacher — Main Canvas</title>
+<link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ===== RESET ===== */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 100vw; height: 100vh; overflow: hidden; background: #0C0B09; font-family: 'Inconsolata', monospace; -webkit-font-smoothing: antialiased; }
+
+  /* ===== CANVAS ===== */
+  .canvas {
+    position: fixed; inset: 0;
+    background: #0C0B09;
+  }
+
+  .canvas-svg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+  }
+
+  /* ===== VIGNETTE ===== */
+  .vignette {
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 50%, transparent 0%, rgba(8,7,6,0.25) 60%, rgba(8,7,6,0.7) 100%);
+    pointer-events: none; z-index: 2;
+  }
+
+  /* ===== GLASS PANELS ===== */
+  .glass {
+    background: linear-gradient(180deg, rgba(26,24,22,0.92) 0%, rgba(19,18,15,0.88) 100%);
+    backdrop-filter: blur(20px) saturate(1.2);
+    -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    border-top: 1px solid rgba(61,58,53,0.6);
+    border-left: 1px solid rgba(44,42,38,0.4);
+    border-right: 1px solid rgba(44,42,38,0.3);
+    border-bottom: 1px solid rgba(19,18,15,0.6);
+    box-shadow:
+      0 1px 0 0 rgba(61,58,53,0.15) inset,
+      0 -1px 0 0 rgba(0,0,0,0.2) inset,
+      0 4px 16px -2px rgba(0,0,0,0.5),
+      0 1px 3px 0 rgba(0,0,0,0.3);
+  }
+
+  /* ===== TOP BAR ===== */
+  .top-bar {
+    position: fixed; top: 12px; left: 0; right: 0;
+    display: flex; justify-content: center; align-items: flex-start;
+    z-index: 80; pointer-events: none;
+  }
+
+  .session-pill {
+    pointer-events: auto;
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .session-pill:hover { background: linear-gradient(180deg, rgba(30,28,25,0.95) 0%, rgba(22,20,18,0.92) 100%); }
+  .session-pill .dc-label {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+    color: #808080;
+  }
+  .session-pill .phase-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: #E1E1E1;
+    flex-shrink: 0;
+  }
+  .session-pill .session-name {
+    font-size: 11px; font-weight: 500; color: #A8A8A8;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    max-width: 160px;
+  }
+  .session-pill .node-count {
+    font-size: 9px; font-weight: 600; color: #404040;
+  }
+
+  /* ===== TOP RIGHT CONTROLS ===== */
+  .top-controls {
+    position: fixed; top: 12px; right: 12px;
+    display: flex; gap: 6px; z-index: 80;
+  }
+  .model-badge {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 16px; border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .model-badge:hover { border-top-color: rgba(61,58,53,0.8); }
+  .model-badge .model-icon {
+    width: 14px; height: 14px; border-radius: 3px;
+    background: #D4A574; opacity: 0.8;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .model-badge .model-name {
+    font-size: 11px; font-weight: 500; color: #A8A8A8;
+  }
+  .model-badge .chevron {
+    font-size: 8px; color: #606060; margin-left: 2px;
+  }
+
+  /* ===== BOTTOM BAR ===== */
+  .bottom-bar {
+    position: fixed; bottom: 20px; left: 50%;
+    transform: translateX(-50%);
+    z-index: 80; display: flex; flex-direction: column; align-items: center; gap: 10px;
+  }
+
+  .input-bar {
+    display: flex; align-items: center; gap: 12px;
+    width: 420px; padding: 10px 16px;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .input-bar .input-model-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, #E8A050, #D4A574);
+    flex-shrink: 0; opacity: 0.8;
+  }
+  .input-bar .input-text {
+    flex: 1; font-size: 13px; font-weight: 400; color: #606060;
+    background: none; border: none; outline: none;
+    font-family: 'Inconsolata', monospace;
+    letter-spacing: 0;
+  }
+  .input-bar .enter-hint {
+    font-size: 11px; color: #404040; flex-shrink: 0;
+  }
+
+  /* ===== ACTION CHIPS ===== */
+  .action-chips {
+    display: flex; gap: 6px;
+  }
+  .chip {
+    font-size: 10px; font-weight: 500; color: #606060;
+    padding: 4px 10px; border-radius: 6px;
+    background: rgba(26,24,22,0.7);
+    border: 1px solid rgba(37,35,32,0.6);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    letter-spacing: 0.3px;
+  }
+  .chip:hover { color: #A8A8A8; border-color: rgba(44,42,38,0.6); }
+
+  /* ===== LEFT EDGE — CLIP SHELF ===== */
+  .clip-shelf-indicator {
+    position: fixed; left: 0; top: 50%; transform: translateY(-50%);
+    z-index: 50;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 8px 3px;
+  }
+  .clip-shelf-line {
+    width: 2px; height: 48px;
+    background: linear-gradient(180deg, transparent 0%, #2C2A26 30%, #2C2A26 70%, transparent 100%);
+    border-radius: 1px;
+  }
+  .clip-shelf-count {
+    font-size: 8px; font-weight: 600; color: #404040;
+    writing-mode: vertical-rl;
+    letter-spacing: 0.5px;
+  }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes aura-breathe {
+    0%, 100% { opacity: 0.04; r: 72; }
+    50% { opacity: 0.07; r: 75; }
+  }
+
+  @keyframes orbit-spin {
+    from { stroke-dashoffset: 0; }
+    to { stroke-dashoffset: -200; }
+  }
+
+  @keyframes particle-orbit-1 {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes particle-orbit-2 {
+    from { transform: rotate(120deg); }
+    to { transform: rotate(-240deg); }
+  }
+  @keyframes particle-orbit-3 {
+    from { transform: rotate(240deg); }
+    to { transform: rotate(600deg); }
+  }
+
+  @keyframes edge-flow {
+    from { stroke-dashoffset: 0; }
+    to { stroke-dashoffset: -36; }
+  }
+
+  @keyframes edge-flow-slow {
+    from { stroke-dashoffset: 0; }
+    to { stroke-dashoffset: -20; }
+  }
+
+  @keyframes core-pulse {
+    0%, 100% { opacity: 0.12; }
+    50% { opacity: 0.22; }
+  }
+
+  @keyframes selection-breathe {
+    0%, 100% { r: 42; opacity: 0.12; }
+    50% { r: 45; opacity: 0.18; }
+  }
+
+  @keyframes ambient-drift {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(0.3px, -0.5px); }
+    50% { transform: translate(-0.2px, 0.4px); }
+    75% { transform: translate(0.4px, 0.2px); }
+    100% { transform: translate(0, 0); }
+  }
+
+  @keyframes streaming-orbit {
+    from { stroke-dashoffset: 0; }
+    to { stroke-dashoffset: -62.8; }
+  }
+
+  @keyframes streaming-halo {
+    0%, 100% { r: 40; opacity: 0.18; }
+    50% { r: 45; opacity: 0.08; }
+  }
+
+  @keyframes artifact-shimmer {
+    0%, 100% { opacity: 0.04; }
+    50% { opacity: 0.08; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== VIGNETTE OVERLAY ===== -->
+<div class="vignette"></div>
+
+<!-- ===== MAIN CANVAS SVG ===== -->
+<div class="canvas">
+<svg class="canvas-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <!-- DOT GRID PATTERN -->
+    <pattern id="dot-grid" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="10" cy="10" r="0.8" fill="#252320"/>
+    </pattern>
+
+    <!-- NODE GRADIENTS: USER -->
+    <radialGradient id="node-user-fill" cx="45%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#3D3A35"/>
+      <stop offset="50%" stop-color="#1E1C19"/>
+      <stop offset="100%" stop-color="#13120F"/>
+    </radialGradient>
+
+    <radialGradient id="node-specular" cx="38%" cy="28%" r="40%">
+      <stop offset="0%" stop-color="white" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="node-core" cx="40%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="60%" stop-color="#C8C8C8"/>
+      <stop offset="100%" stop-color="#A8A8A8"/>
+    </radialGradient>
+
+    <!-- NODE GRADIENTS: ARTIFACT -->
+    <radialGradient id="node-artifact-fill" cx="45%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#33302A"/>
+      <stop offset="60%" stop-color="#221F1A"/>
+      <stop offset="100%" stop-color="#161411"/>
+    </radialGradient>
+
+    <radialGradient id="node-artifact-core" cx="40%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#FFF8F0"/>
+      <stop offset="60%" stop-color="#D4C4B0"/>
+      <stop offset="100%" stop-color="#A89880"/>
+    </radialGradient>
+
+    <radialGradient id="node-artifact-leak" cx="30%" cy="25%">
+      <stop offset="0%" stop-color="#D4A574" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#D4A574" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- AI NODE GRADIENTS -->
+    <radialGradient id="ai-bezel-anthropic" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#D4A574" stop-opacity="0.08"/>
+      <stop offset="90%" stop-color="#1A1816" stop-opacity="1"/>
+      <stop offset="95%" stop-color="#0C0B09" stop-opacity="1"/>
+    </radialGradient>
+
+    <radialGradient id="ai-bezel-openai" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#52C41A" stop-opacity="0.08"/>
+      <stop offset="90%" stop-color="#1A1816" stop-opacity="1"/>
+      <stop offset="95%" stop-color="#0C0B09" stop-opacity="1"/>
+    </radialGradient>
+
+    <!-- SELECTION GLOW -->
+    <radialGradient id="selection-glow">
+      <stop offset="0%" stop-color="#FFCC00" stop-opacity="0.10"/>
+      <stop offset="60%" stop-color="#FFCC00" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="#FFCC00" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- EDGE GLOW FILTER -->
+    <filter id="edge-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- NODE GLOW FILTER -->
+    <filter id="node-glow-gold" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur"/>
+      <feColorMatrix in="blur" type="matrix"
+        values="1 0 0 0 0.05
+                0 0.8 0 0 0.03
+                0 0 0.3 0 0
+                0 0 0 0.6 0" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- AMBIENT NODE AURA -->
+    <radialGradient id="node-aura">
+      <stop offset="0%" stop-color="#606060" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="#606060" stop-opacity="0"/>
+    </radialGradient>
+
+    <radialGradient id="node-aura-warm">
+      <stop offset="0%" stop-color="#D4A574" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#D4A574" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- EPIC NODE AURA -->
+    <radialGradient id="node-aura-epic">
+      <stop offset="0%" stop-color="#606060" stop-opacity="0.04"/>
+      <stop offset="100%" stop-color="#606060" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- GOOGLE AI BEZEL -->
+    <radialGradient id="ai-bezel-google" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#FAAD14" stop-opacity="0.06"/>
+      <stop offset="90%" stop-color="#1A1816" stop-opacity="1"/>
+      <stop offset="95%" stop-color="#0C0B09" stop-opacity="1"/>
+    </radialGradient>
+
+    <!-- STREAMING FILTER -->
+    <filter id="streaming-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
+    </filter>
+  </defs>
+
+  <!-- DOT GRID BACKGROUND -->
+  <rect x="0" y="0" width="1440" height="900" fill="url(#dot-grid)"/>
+
+  <!-- ===================================================================== -->
+  <!-- EDGES — drawn first so nodes layer on top                              -->
+  <!-- ===================================================================== -->
+
+  <!-- DIMMED EDGES (abandoned branch) -->
+  <path d="M 380 220 C 380 260, 340 280, 320 310" stroke="#252320" stroke-width="0.5" fill="none" opacity="0.3"/>
+  <path d="M 320 310 C 310 340, 280 350, 270 380" stroke="#252320" stroke-width="0.5" fill="none" opacity="0.2"/>
+  <path d="M 270 380 C 260 400, 240 410, 230 430" stroke="#252320" stroke-width="0.5" fill="none" opacity="0.15"/>
+
+  <!-- DEFAULT EDGES (inactive path) -->
+  <path d="M 660 200 C 660 250, 700 280, 720 320" stroke="#606060" stroke-width="1" fill="none" opacity="0.25"/>
+  <path d="M 720 320 C 740 360, 780 370, 800 400" stroke="#606060" stroke-width="1" fill="none" opacity="0.2"/>
+  <path d="M 1050 250 C 1050 290, 1020 310, 1000 340" stroke="#606060" stroke-width="1" fill="none" opacity="0.2"/>
+  <path d="M 1000 340 C 980 370, 940 380, 920 410" stroke="#606060" stroke-width="1" fill="none" opacity="0.2"/>
+  <path d="M 1200 350 C 1190 390, 1170 410, 1150 440" stroke="#606060" stroke-width="1" fill="none" opacity="0.2"/>
+
+  <!-- ACTIVE PATH EDGES (gold-tinted, the conversation the user is exploring) -->
+  <!-- Glow underlayer -->
+  <path d="M 520 160 C 530 210, 560 240, 580 290" stroke="rgba(212,168,0,0.06)" stroke-width="10" fill="none"/>
+  <path d="M 580 290 C 600 340, 640 370, 660 420" stroke="rgba(212,168,0,0.06)" stroke-width="10" fill="none"/>
+  <path d="M 660 420 C 680 460, 720 480, 740 510" stroke="rgba(212,168,0,0.06)" stroke-width="10" fill="none"/>
+  <path d="M 740 510 C 760 550, 800 570, 820 600" stroke="rgba(212,168,0,0.05)" stroke-width="10" fill="none"/>
+  <path d="M 820 600 C 835 630, 845 650, 850 680" stroke="rgba(212,168,0,0.04)" stroke-width="10" fill="none"/>
+
+  <!-- Primary active path stroke -->
+  <path d="M 520 160 C 530 210, 560 240, 580 290" stroke="rgba(212,168,0,0.35)" stroke-width="1.5" fill="none" filter="url(#edge-glow)"/>
+  <path d="M 580 290 C 600 340, 640 370, 660 420" stroke="rgba(212,168,0,0.35)" stroke-width="1.5" fill="none" filter="url(#edge-glow)"/>
+  <path d="M 660 420 C 680 460, 720 480, 740 510" stroke="rgba(212,168,0,0.30)" stroke-width="1.5" fill="none" filter="url(#edge-glow)"/>
+  <path d="M 740 510 C 760 550, 800 570, 820 600" stroke="rgba(212,168,0,0.25)" stroke-width="1.5" fill="none"/>
+  <path d="M 820 600 C 835 630, 845 650, 850 680" stroke="rgba(212,168,0,0.20)" stroke-width="1.5" fill="none"/>
+
+  <!-- BRANCH EDGES (dashed, animated) -->
+  <path d="M 580 290 C 600 310, 640 310, 660 300" stroke="rgba(176,176,176,0.25)" stroke-width="1.5" fill="none" stroke-dasharray="12 6" style="animation: edge-flow 3s linear infinite;"/>
+  <path d="M 660 420 C 680 430, 720 420, 750 410" stroke="rgba(176,176,176,0.20)" stroke-width="1.5" fill="none" stroke-dasharray="12 6" style="animation: edge-flow 3s linear infinite;"/>
+  <path d="M 580 290 C 560 330, 520 350, 490 380" stroke="rgba(176,176,176,0.20)" stroke-width="1.5" fill="none" stroke-dasharray="12 6" style="animation: edge-flow 3s linear infinite;"/>
+
+  <!-- LATERAL EDGES (between separate clusters) -->
+  <path d="M 920 410 C 900 430, 880 450, 870 470" stroke="#606060" stroke-width="0.8" fill="none" opacity="0.15" stroke-dasharray="6 2 2 2" style="animation: edge-flow-slow 5s linear infinite;"/>
+
+  <!-- Edge from artifact node to main path -->
+  <path d="M 180 540 C 240 520, 300 490, 350 480" stroke="rgba(160,160,160,0.15)" stroke-width="1.0" fill="none" stroke-dasharray="8 4" style="animation: edge-flow-slow 6s linear infinite;"/>
+
+  <!-- Edge from far user node to the right cluster -->
+  <path d="M 1080 520 C 1100 490, 1120 470, 1150 440" stroke="#606060" stroke-width="0.8" fill="none" opacity="0.18"/>
+
+  <!-- Edge from root (380,220) to active path start (520,160) -->
+  <path d="M 380 220 C 420 200, 470 175, 520 160" stroke="rgba(140,140,140,0.20)" stroke-width="1.5" fill="none"/>
+
+  <!-- Edge connecting far-bottom node -->
+  <path d="M 660 420 C 640 480, 600 560, 560 640" stroke="#606060" stroke-width="0.8" fill="none" opacity="0.15"/>
+
+  <!-- Edge from right cluster down -->
+  <path d="M 800 400 C 850 440, 900 470, 920 410" stroke="#606060" stroke-width="1" fill="none" opacity="0.18"/>
+
+  <!-- ===================================================================== -->
+  <!-- NODES                                                                   -->
+  <!-- ===================================================================== -->
+
+  <!-- ===== DIMMED NODES (abandoned branch, very low opacity) ===== -->
+
+  <!-- Dimmed node 1 -->
+  <g transform="translate(320, 310)" opacity="0.12">
+    <circle r="24" fill="url(#node-user-fill)" stroke="#C8C8C8" stroke-width="1"/>
+    <circle r="3" fill="url(#node-core)"/>
+    <text y="38" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#808080" opacity="0.5">dead end</text>
+  </g>
+
+  <!-- Dimmed node 2 -->
+  <g transform="translate(270, 380)" opacity="0.08">
+    <circle r="20" fill="url(#node-user-fill)" stroke="#C8C8C8" stroke-width="1"/>
+    <circle r="2.5" fill="url(#node-core)"/>
+  </g>
+
+  <!-- Dimmed node 3 -->
+  <g transform="translate(230, 430)" opacity="0.06">
+    <circle r="18" fill="url(#node-user-fill)" stroke="#C8C8C8" stroke-width="1"/>
+    <circle r="2" fill="url(#node-core)"/>
+  </g>
+
+  <!-- ===== INACTIVE CLUSTER: TOP-RIGHT ===== -->
+
+  <!-- User node (far right, shallow) -->
+  <g transform="translate(1200, 350)" style="animation: ambient-drift 20s ease-in-out infinite;">
+    <circle r="48" fill="url(#node-aura)" opacity="0.6"/>
+    <circle cx="0" cy="2" r="24" fill="black" opacity="0.3"/>
+    <circle r="24" fill="url(#node-user-fill)" stroke="#C8C8C8" stroke-width="1.8"/>
+    <circle r="24" fill="url(#node-specular)" opacity="0.18"/>
+    <!-- rim light -->
+    <circle cx="1" cy="2" r="24.5" fill="none" stroke="#3D3A35" stroke-width="1" stroke-dasharray="43 113" opacity="0.5"/>
+    <!-- core -->
+    <circle cx="0" cy="1" r="5.5" fill="black" opacity="0.15"/>
+    <circle r="5" fill="url(#node-core)"/>
+    <text y="38" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#808080">constraints</text>
+  </g>
+
+  <!-- AI node (openai) -->
+  <g transform="translate(1050, 250)" style="animation: ambient-drift 25s ease-in-out infinite reverse;">
+    <circle r="56" fill="url(#node-aura)" opacity="0.5"/>
+    <circle r="28" fill="url(#ai-bezel-openai)" stroke="#252320" stroke-width="2"/>
+    <circle r="25" fill="none" stroke="#252320" stroke-width="0.5" opacity="0.3"/>
+    <!-- refraction ring -->
+    <circle r="16.8" fill="none" stroke="#606060" stroke-width="0.4" stroke-dasharray="1.5 3" opacity="0.35"/>
+    <!-- faction ring -->
+    <circle r="12.6" fill="none" stroke="#52C41A" stroke-width="0.5" opacity="0.15"/>
+    <!-- faction wash -->
+    <circle r="19.6" fill="#52C41A" opacity="0.07"/>
+    <!-- core indicator -->
+    <circle r="5.6" fill="#52C41A" opacity="0.12" style="animation: core-pulse 2.8s ease-in-out infinite;"/>
+    <text y="44" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#606060">gpt response</text>
+  </g>
+
+  <!-- User node (mid right) -->
+  <g transform="translate(1000, 340)">
+    <circle r="48" fill="url(#node-aura)" opacity="0.4"/>
+    <circle cx="0" cy="2" r="24" fill="black" opacity="0.25"/>
+    <circle r="24" fill="url(#node-user-fill)" stroke="#C8C8C8" stroke-width="1.8"/>
+    <circle r="24" fill="url(#node-specular)" opacity="0.15"/>
+    <circle cx="1" cy="2" r="24.5" fill="none" stroke="#3D3A35" stroke-width="1" stroke-dasharray="43 113" opacity="0.4"/>
+    <circle cx="0" cy="1" r="5.5" fill="black" opacity="0.15"/>
+    <circle r="5" fill="url(#node-core)"/>
+    <text y="38" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#808080">follow up</text>
+  </g>
+
+  <!-- AI node far right -->
+  <g transform="translate(920, 410)" style="animation: ambient-drift 18s ease-in-out infinite;">
+    <circle r="56" fill="url(#node-aura)" opacity="0.4"/>
+    <circle r="28" fill="url(#ai-bezel-openai)" stroke="#252320" stroke-width="2"/>
+    <circle r="25" fill="none" stroke="#252320" stroke-width="0.5" opacity="0.25"/>
+    <circle r="16.8" fill="none" stroke="#606060" stroke-width="0.4" stroke-dasharray="1.5 3" opacity="0.3"/>
+    <circle r="12.6" fill="none" stroke="#52C41A" stroke-width="0.5" opacity="0.12"/>
+    <circle r="19.6" fill="#52C41A" opacity="0.05"/>
+    <circle r="5.6" fill="#52C41A" opacity="0.10" style="animation: core-pulse 3.2s ease-in-out infinite 0.5s;"/>
+    <text y="44" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#606060">comparison</text>
+  </g>
+
+  <!-- Lone user node (top far) -->
+  <g transform="translate(1150, 440)" opacity="0.6" style="animation: ambient-drift 22s ease-in-out infinite;">
+    <circle r="44" fill="url(#node-aura)" opacity="0.35"/>
+    <circle cx="0" cy="2" r="22" fill="black" opacity="0.2"/>
+    <circle r="22" fill="url(#node-user-fill)" stroke="#C8C8C8" stroke-width="1.5"/>
+    <circle r="22" fill="url(#node-specular)" opacity="0.12"/>
+    <circle cx="0" cy="1" r="4.5" fill="black" opacity="0.12"/>
+    <circle r="4" fill="url(#node-core)"/>
+    <text y="36" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#808080" opacity="0.6">edge case</text>
+  </g>
+
+
+  <!-- ===== INACTIVE CLUSTER: TOP-LEFT ===== -->
+
+  <!-- Root user node (origin) -->
+  <g transform="translate(380, 220)" style="animation: ambient-drift 24s ease-in-out infinite;">
+    <circle r="48" fill="url(#node-aura)" opacity="0.5"/>
+    <circle cx="0" cy="2" r="24" fill="black" opacity="0.3"/>
+    <circle r="24" fill="url(#node-user-fill)" stroke="#C8C8C8" stroke-width="1.8"/>
+    <circle r="24" fill="url(#node-specular)" opacity="0.20"/>
+    <circle cx="1" cy="2" r="24.5" fill="none" stroke="#3D3A35" stroke-width="1" stroke-dasharray="43 113" opacity="0.5"/>
+    <circle cx="0" cy="1" r="5.5" fill="black" opacity="0.15"/>
+    <circle r="5" fill="url(#node-core)"/>
+    <text y="38" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#808080">initial question</text>
+  </g>
+
+  <!-- Small user node (top area) -->
+  <g transform="translate(660, 200)" opacity="0.7" style="animation: ambient-drift 19s ease-in-out infinite reverse;">
+    <circle r="44" fill="url(#node-aura)" opacity="0.35"/>
+    <circle cx="0" cy="2" r="22" fill="black" opacity="0.2"/>
+    <circle r="22" fill="url(#node-user-fill)" stroke="#C8C8C8" stroke-width="1.5"/>
+    <circle r="22" fill="url(#node-specular)" opacity="0.15"/>
+    <circle cx="0" cy="1" r="4.5" fill="black" opacity="0.12"/>
+    <circle r="4" fill="url(#node-core)"/>
+    <text y="34" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#808080" opacity="0.6">tangent</text>
+  </g>
+
+  <!-- User node (left mid) -->
+  <g transform="translate(720, 320)" style="animation: ambient-drift 21s ease-in-out infinite;">
+    <circle r="48" fill="url(#node-aura)" opacity="0.4"/>
+    <circle cx="0" cy="2" r="24" fill="black" opacity="0.25"/>
+    <circle r="24" fill="url(#node-user-fill)" stroke="#C8C8C8" stroke-width="1.8"/>
+    <circle r="24" fill="url(#node-specular)" opacity="0.15"/>
+    <circle cx="1" cy="2" r="24.5" fill="none" stroke="#3D3A35" stroke-width="1" stroke-dasharray="43 113" opacity="0.4"/>
+    <circle cx="0" cy="1" r="5.5" fill="black" opacity="0.12"/>
+    <circle r="5" fill="url(#node-core)"/>
+    <text y="38" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#808080">refinement</text>
+  </g>
+
+  <!-- AI node (far left, inactive) -->
+  <g transform="translate(800, 400)" style="animation: ambient-drift 23s ease-in-out infinite;">
+    <circle r="56" fill="url(#node-aura)" opacity="0.35"/>
+    <circle r="28" fill="url(#ai-bezel-anthropic)" stroke="#252320" stroke-width="2"/>
+    <circle r="25" fill="none" stroke="#252320" stroke-width="0.5" opacity="0.25"/>
+    <circle r="16.8" fill="none" stroke="#606060" stroke-width="0.4" stroke-dasharray="1.5 3" opacity="0.3"/>
+    <circle r="12.6" fill="none" stroke="#D4A574" stroke-width="0.5" opacity="0.12"/>
+    <circle r="19.6" fill="#D4A574" opacity="0.05"/>
+    <circle r="5.6" fill="#D4A574" opacity="0.10" style="animation: core-pulse 2.4s ease-in-out infinite 1s;"/>
+    <text y="44" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#606060">analysis</text>
+  </g>
+
+
+  <!-- ===== ACTIVE PATH MAIN TRUNK ===== -->
+
+  <!-- NODE 1: Root of active path — User node (Tier 1: Uncommon — has orbit ring) -->
+  <g transform="translate(520, 160)" style="animation: ambient-drift 20s ease-in-out infinite;">
+    <!-- aura -->
+    <circle r="52" fill="url(#node-aura-warm)" opacity="0.7"/>
+    <!-- orbit ring (Tier 1) -->
+    <circle r="30" fill="none" stroke="#404040" stroke-width="0.4" stroke-dasharray="3 47" opacity="0.3" style="animation: orbit-spin 25s linear infinite;"/>
+    <!-- shadow -->
+    <circle cx="0" cy="2" r="24" fill="black" opacity="0.3"/>
+    <!-- body -->
+    <circle r="24" fill="url(#node-user-fill)" stroke="#C8C8C8" stroke-width="1.8"/>
+    <circle r="24" fill="url(#node-specular)" opacity="0.22"/>
+    <!-- rim -->
+    <circle cx="1" cy="2" r="24.5" fill="none" stroke="#3D3A35" stroke-width="1" stroke-dasharray="43 113" opacity="0.5"/>
+    <!-- core -->
+    <circle cx="0" cy="1" r="5.5" fill="black" opacity="0.15"/>
+    <circle r="5" fill="url(#node-core)"/>
+    <!-- branch badge (2 children) -->
+    <circle cx="19" cy="-19" r="8" fill="#2C2A26" stroke="#808080" stroke-width="0.5"/>
+    <text x="19" y="-16" text-anchor="middle" font-family="Inconsolata" font-size="10" font-weight="700" fill="#E1E1E1">2</text>
+    <text y="38" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#808080">how should we...</text>
+  </g>
+
+  <!-- NODE 2: AI response (Anthropic) — Tier 1 -->
+  <g transform="translate(580, 290)" style="animation: ambient-drift 22s ease-in-out infinite reverse;">
+    <!-- aura -->
+    <circle r="60" fill="url(#node-aura-warm)" opacity="0.6"/>
+    <!-- orbit ring -->
+    <circle r="34" fill="none" stroke="#404040" stroke-width="0.4" stroke-dasharray="3 55" opacity="0.25" style="animation: orbit-spin 22s linear infinite reverse;"/>
+    <!-- bezel -->
+    <circle r="28" fill="url(#ai-bezel-anthropic)" stroke="#252320" stroke-width="2"/>
+    <circle r="25" fill="none" stroke="#252320" stroke-width="0.5" opacity="0.3"/>
+    <!-- refraction ring -->
+    <circle r="16.8" fill="none" stroke="#606060" stroke-width="0.4" stroke-dasharray="1.5 3" opacity="0.4"/>
+    <!-- faction ring -->
+    <circle r="12.6" fill="none" stroke="#D4A574" stroke-width="0.5" opacity="0.20"/>
+    <!-- faction wash -->
+    <circle r="19.6" fill="#D4A574" opacity="0.08"/>
+    <!-- core indicator -->
+    <circle r="5.6" fill="#D4A574" opacity="0.15" style="animation: core-pulse 2.5s ease-in-out infinite;"/>
+    <!-- branch badge (2 children) -->
+    <circle cx="22" cy="-22" r="8" fill="#2C2A26" stroke="#808080" stroke-width="0.5"/>
+    <text x="22" y="-19" text-anchor="middle" font-family="Inconsolata" font-size="10" font-weight="700" fill="#E1E1E1">2</text>
+    <text y="44" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#606060">architecture rec...</text>
+  </g>
+
+  <!-- BRANCH-OFF node (user, going right) -->
+  <g transform="translate(660, 300)" opacity="0.55" style="animation: ambient-drift 18s ease-in-out infinite;">
+    <circle r="44" fill="url(#node-aura)" opacity="0.3"/>
+    <circle cx="0" cy="2" r="22" fill="black" opacity="0.2"/>
+    <circle r="22" fill="url(#node-user-fill)" stroke="#C8C8C8" stroke-width="1.5"/>
+    <circle r="22" fill="url(#node-specular)" opacity="0.12"/>
+    <circle cx="0" cy="1" r="4" fill="black" opacity="0.12"/>
+    <circle r="3.5" fill="url(#node-core)"/>
+    <text y="34" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#808080" opacity="0.6">alt approach</text>
+  </g>
+
+  <!-- BRANCH-OFF node (user, going left) -->
+  <g transform="translate(490, 380)" opacity="0.5" style="animation: ambient-drift 17s ease-in-out infinite reverse;">
+    <circle r="44" fill="url(#node-aura)" opacity="0.3"/>
+    <circle cx="0" cy="2" r="22" fill="black" opacity="0.2"/>
+    <circle r="22" fill="url(#node-user-fill)" stroke="#C8C8C8" stroke-width="1.5"/>
+    <circle r="22" fill="url(#node-specular)" opacity="0.12"/>
+    <circle cx="0" cy="1" r="4" fill="black" opacity="0.12"/>
+    <circle r="3.5" fill="url(#node-core)"/>
+    <text y="34" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#808080" opacity="0.6">scope question</text>
+  </g>
+
+  <!-- NODE 3: User follow-up — Tier 2 (Rare — has particles) -->
+  <g transform="translate(660, 420)" style="animation: ambient-drift 19s ease-in-out infinite;">
+    <!-- aura (larger for Tier 2) -->
+    <circle r="56" fill="url(#node-aura-warm)" opacity="0.7"/>
+    <!-- orbit ring -->
+    <circle r="30" fill="none" stroke="#404040" stroke-width="0.4" stroke-dasharray="3 47" opacity="0.3" style="animation: orbit-spin 20s linear infinite;"/>
+    <!-- particle orbits (Tier 2) -->
+    <g style="animation: particle-orbit-1 30s linear infinite;">
+      <circle cx="34" cy="0" r="1" fill="#606060" opacity="0.25"/>
+    </g>
+    <g style="animation: particle-orbit-2 25s linear infinite;">
+      <circle cx="38" cy="0" r="0.7" fill="#404040" opacity="0.20"/>
+    </g>
+    <g style="animation: particle-orbit-3 20s linear infinite;">
+      <circle cx="32" cy="0" r="0.8" fill="#606060" opacity="0.15"/>
+    </g>
+    <!-- shadow -->
+    <circle cx="0" cy="2" r="24" fill="black" opacity="0.3"/>
+    <!-- body — hexagonal (branch point with 2 children) -->
+    <polygon points="24,0 12,20.8 -12,20.8 -24,0 -12,-20.8 12,-20.8" fill="url(#node-user-fill)" stroke="#C8C8C8" stroke-width="1.8" stroke-linejoin="round"/>
+    <polygon points="24,0 12,20.8 -12,20.8 -24,0 -12,-20.8 12,-20.8" fill="url(#node-specular)" opacity="0.20" stroke-linejoin="round"/>
+    <!-- core -->
+    <circle cx="0" cy="1" r="5.5" fill="black" opacity="0.15"/>
+    <circle r="5" fill="url(#node-core)"/>
+    <!-- branch badge -->
+    <circle cx="19" cy="-19" r="8" fill="#2C2A26" stroke="#808080" stroke-width="0.5"/>
+    <text x="19" y="-16" text-anchor="middle" font-family="Inconsolata" font-size="10" font-weight="700" fill="#E1E1E1">2</text>
+    <text y="40" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#808080">deeper analysis</text>
+  </g>
+
+  <!-- BRANCH off node 3, going right -->
+  <g transform="translate(750, 410)" opacity="0.5" style="animation: ambient-drift 16s ease-in-out infinite reverse;">
+    <circle r="44" fill="url(#node-aura)" opacity="0.25"/>
+    <circle cx="0" cy="2" r="22" fill="black" opacity="0.2"/>
+    <circle r="22" fill="url(#node-user-fill)" stroke="#C8C8C8" stroke-width="1.5"/>
+    <circle r="22" fill="url(#node-specular)" opacity="0.12"/>
+    <circle cx="0" cy="1" r="4" fill="black" opacity="0.12"/>
+    <circle r="3.5" fill="url(#node-core)"/>
+    <text y="34" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#808080" opacity="0.5">tradeoffs</text>
+  </g>
+
+  <!-- NODE 4: AI deeper response (Anthropic) -->
+  <g transform="translate(740, 510)" style="animation: ambient-drift 21s ease-in-out infinite reverse;">
+    <circle r="60" fill="url(#node-aura-warm)" opacity="0.55"/>
+    <!-- orbit ring -->
+    <circle r="34" fill="none" stroke="#404040" stroke-width="0.4" stroke-dasharray="3 55" opacity="0.25" style="animation: orbit-spin 28s linear infinite;"/>
+    <!-- bezel -->
+    <circle r="28" fill="url(#ai-bezel-anthropic)" stroke="#252320" stroke-width="2"/>
+    <circle r="25" fill="none" stroke="#252320" stroke-width="0.5" opacity="0.3"/>
+    <circle r="16.8" fill="none" stroke="#606060" stroke-width="0.4" stroke-dasharray="1.5 3" opacity="0.35"/>
+    <circle r="12.6" fill="none" stroke="#D4A574" stroke-width="0.5" opacity="0.18"/>
+    <circle r="19.6" fill="#D4A574" opacity="0.07"/>
+    <circle r="5.6" fill="#D4A574" opacity="0.13" style="animation: core-pulse 2.7s ease-in-out infinite 0.3s;"/>
+    <text y="44" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#606060">implementation...</text>
+  </g>
+
+  <!-- NODE 5: User node (deeper) -->
+  <g transform="translate(820, 600)" style="animation: ambient-drift 20s ease-in-out infinite;">
+    <circle r="52" fill="url(#node-aura-warm)" opacity="0.6"/>
+    <circle r="30" fill="none" stroke="#404040" stroke-width="0.4" stroke-dasharray="3 47" opacity="0.2" style="animation: orbit-spin 23s linear infinite reverse;"/>
+    <circle cx="0" cy="2" r="24" fill="black" opacity="0.3"/>
+    <circle r="24" fill="url(#node-user-fill)" stroke="#C8C8C8" stroke-width="1.8"/>
+    <circle r="24" fill="url(#node-specular)" opacity="0.18"/>
+    <circle cx="1" cy="2" r="24.5" fill="none" stroke="#3D3A35" stroke-width="1" stroke-dasharray="43 113" opacity="0.45"/>
+    <circle cx="0" cy="1" r="5.5" fill="black" opacity="0.15"/>
+    <circle r="5" fill="url(#node-core)"/>
+    <text y="38" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#808080">what about...</text>
+  </g>
+
+  <!-- ===== SELECTED NODE (NODE 6) — Full selection treatment ===== -->
+  <g transform="translate(850, 680)" style="animation: ambient-drift 18s ease-in-out infinite reverse;">
+    <!-- Selection atmospheric halo -->
+    <circle r="60" fill="url(#selection-glow)" opacity="1"/>
+    <!-- Selection breathing ring -->
+    <circle r="42" fill="none" stroke="#FFCC00" stroke-width="0.6" opacity="0.15">
+      <animate attributeName="r" values="42;45;42" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1; 0.4 0 0.6 1"/>
+      <animate attributeName="opacity" values="0.12;0.18;0.12" dur="2s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1; 0.4 0 0.6 1"/>
+    </circle>
+    <!-- Selection crisp ring -->
+    <circle r="34" fill="none" stroke="#FFCC00" stroke-width="1.5" opacity="0.65"/>
+    <!-- Node aura (warm, brighter for selected) -->
+    <circle r="64" fill="url(#node-aura-warm)" opacity="0.8"/>
+    <!-- AI bezel -->
+    <circle r="28" fill="url(#ai-bezel-anthropic)" stroke="#FFCC00" stroke-width="2.5"/>
+    <circle r="25" fill="none" stroke="#252320" stroke-width="0.5" opacity="0.3"/>
+    <!-- refraction -->
+    <circle r="16.8" fill="none" stroke="#606060" stroke-width="0.4" stroke-dasharray="1.5 3" opacity="0.45"/>
+    <!-- faction ring -->
+    <circle r="12.6" fill="none" stroke="#D4A574" stroke-width="0.5" opacity="0.25"/>
+    <!-- faction wash (brighter when selected) -->
+    <circle r="19.6" fill="#D4A574" opacity="0.12"/>
+    <!-- core -->
+    <circle r="5.6" fill="#D4A574" opacity="0.18" style="animation: core-pulse 2.2s ease-in-out infinite;"/>
+    <!-- label (expanded, showing preview text because selected) -->
+    <text y="46" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#A8A8A8">final recommendation</text>
+    <text y="60" text-anchor="middle" font-family="Inconsolata" font-size="9" fill="#606060">Based on the analysis, I'd recommend...</text>
+  </g>
+
+
+  <!-- ===== ARTIFACT NODE (Tier 4 — Full rarity treatment) ===== -->
+  <g transform="translate(180, 540)" style="animation: ambient-drift 26s ease-in-out infinite;">
+    <!-- Epic ambient aura (breathing) -->
+    <circle r="70" fill="url(#node-aura-epic)">
+      <animate attributeName="r" values="68;72;68" dur="4s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1; 0.4 0 0.6 1"/>
+      <animate attributeName="opacity" values="0.06;0.09;0.06" dur="4s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.6 1; 0.4 0 0.6 1"/>
+    </circle>
+    <!-- Warm aura -->
+    <circle r="55" fill="url(#node-aura-warm)" opacity="0.8"/>
+    <!-- Orbit ring (Tier 1+) -->
+    <circle r="30" fill="none" stroke="#D4A574" stroke-width="0.5" stroke-dasharray="4 46" opacity="0.35" style="animation: orbit-spin 18s linear infinite;"/>
+    <!-- Particle orbits (Tier 2+) -->
+    <g style="animation: particle-orbit-1 22s linear infinite;">
+      <circle cx="36" cy="0" r="1.1" fill="#D4A574" opacity="0.3"/>
+    </g>
+    <g style="animation: particle-orbit-2 18s linear infinite;">
+      <circle cx="40" cy="0" r="0.8" fill="#A8A8A8" opacity="0.22"/>
+    </g>
+    <g style="animation: particle-orbit-3 15s linear infinite;">
+      <circle cx="34" cy="0" r="0.9" fill="#D4A574" opacity="0.18"/>
+    </g>
+    <g style="animation: particle-orbit-1 28s linear infinite reverse;">
+      <circle cx="42" cy="0" r="0.6" fill="#808080" opacity="0.15"/>
+    </g>
+    <!-- shadow -->
+    <circle cx="0" cy="2" r="24" fill="black" opacity="0.35"/>
+    <!-- body (artifact gradient) -->
+    <circle r="24" fill="url(#node-artifact-fill)" stroke="#D4A574" stroke-width="1.8" stroke-opacity="0.4"/>
+    <!-- artifact light leak -->
+    <circle r="24" fill="url(#node-artifact-leak)" style="animation: artifact-shimmer 6s ease-in-out infinite;"/>
+    <!-- specular (warmer) -->
+    <circle r="24" fill="url(#node-specular)" opacity="0.20"/>
+    <!-- rim -->
+    <circle cx="1" cy="2" r="24.5" fill="none" stroke="#D4A574" stroke-width="1" stroke-dasharray="43 113" opacity="0.35"/>
+    <!-- core (artifact warm) -->
+    <circle cx="0" cy="1" r="5.5" fill="black" opacity="0.15"/>
+    <circle r="5" fill="url(#node-artifact-core)"/>
+    <!-- star indicator -->
+    <text x="0" y="-30" text-anchor="middle" font-family="Inconsolata" font-size="8" font-weight="600" fill="#D4A574" opacity="0.5" letter-spacing="0.5px">&#9733;</text>
+    <text y="38" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#D4A574" opacity="0.6">key insight</text>
+  </g>
+
+
+  <!-- ===== REMAINING SCATTERED NODES ===== -->
+
+  <!-- User node (bottom left area) -->
+  <g transform="translate(350, 480)" opacity="0.6" style="animation: ambient-drift 19s ease-in-out infinite reverse;">
+    <circle r="44" fill="url(#node-aura)" opacity="0.35"/>
+    <circle cx="0" cy="2" r="22" fill="black" opacity="0.2"/>
+    <circle r="22" fill="url(#node-user-fill)" stroke="#C8C8C8" stroke-width="1.5"/>
+    <circle r="22" fill="url(#node-specular)" opacity="0.13"/>
+    <circle cx="0" cy="1" r="4" fill="black" opacity="0.1"/>
+    <circle r="3.5" fill="url(#node-core)"/>
+    <text y="34" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#808080" opacity="0.5">context</text>
+  </g>
+
+  <!-- AI node (bottom right, Google/Gemini) -->
+  <g transform="translate(1080, 520)" opacity="0.55" style="animation: ambient-drift 23s ease-in-out infinite;">
+    <circle r="56" fill="url(#node-aura)" opacity="0.3"/>
+    <circle r="28" fill="url(#ai-bezel-google)" stroke="#252320" stroke-width="2"/>
+    <circle r="25" fill="none" stroke="#252320" stroke-width="0.5" opacity="0.2"/>
+    <circle r="16.8" fill="none" stroke="#606060" stroke-width="0.4" stroke-dasharray="1.5 3" opacity="0.25"/>
+    <circle r="12.6" fill="none" stroke="#FAAD14" stroke-width="0.5" opacity="0.10"/>
+    <circle r="19.6" fill="#FAAD14" opacity="0.04"/>
+    <circle r="5.6" fill="#FAAD14" opacity="0.10" style="animation: core-pulse 3s ease-in-out infinite 0.8s;"/>
+    <text y="44" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#606060" opacity="0.6">gemini take</text>
+  </g>
+
+  <!-- User node (far bottom) -->
+  <g transform="translate(560, 640)" opacity="0.5" style="animation: ambient-drift 21s ease-in-out infinite;">
+    <circle r="44" fill="url(#node-aura)" opacity="0.3"/>
+    <circle cx="0" cy="2" r="22" fill="black" opacity="0.2"/>
+    <circle r="22" fill="url(#node-user-fill)" stroke="#C8C8C8" stroke-width="1.5"/>
+    <circle r="22" fill="url(#node-specular)" opacity="0.12"/>
+    <circle cx="0" cy="1" r="4" fill="black" opacity="0.1"/>
+    <circle r="3.5" fill="url(#node-core)"/>
+    <text y="34" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#808080" opacity="0.5">aside</text>
+  </g>
+
+  <!-- Small isolated user node (top center) -->
+  <g transform="translate(870, 180)" opacity="0.45" style="animation: ambient-drift 15s ease-in-out infinite reverse;">
+    <circle r="40" fill="url(#node-aura)" opacity="0.25"/>
+    <circle cx="0" cy="2" r="20" fill="black" opacity="0.18"/>
+    <circle r="20" fill="url(#node-user-fill)" stroke="#C8C8C8" stroke-width="1.3"/>
+    <circle r="20" fill="url(#node-specular)" opacity="0.10"/>
+    <circle cx="0" cy="1" r="3.5" fill="black" opacity="0.1"/>
+    <circle r="3" fill="url(#node-core)"/>
+    <text y="32" text-anchor="middle" font-family="Inconsolata" font-size="10" fill="#808080" opacity="0.4">note</text>
+  </g>
+
+</svg>
+</div>
+
+<!-- ===== TOP BAR: SESSION PILL ===== -->
+<div class="top-bar">
+  <div class="session-pill glass">
+    <span class="dc-label">DC</span>
+    <span class="phase-dot"></span>
+    <span class="session-name">Project Architecture...</span>
+    <span class="node-count">18</span>
+  </div>
+</div>
+
+<!-- ===== TOP RIGHT: MODEL BADGE ===== -->
+<div class="top-controls">
+  <div class="model-badge glass">
+    <div class="model-icon">
+      <!-- Simplified Anthropic mark -->
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <path d="M5 1L9 9H1L5 1Z" fill="#080706" stroke="none"/>
+      </svg>
+    </div>
+    <span class="model-name">Claude Sonnet</span>
+    <span class="chevron">&#9662;</span>
+  </div>
+</div>
+
+<!-- ===== BOTTOM BAR: INPUT + CHIPS ===== -->
+<div class="bottom-bar">
+  <div class="input-bar glass">
+    <div class="input-model-dot"></div>
+    <span class="input-text">Ask anything...</span>
+    <span class="enter-hint">&#8629;</span>
+  </div>
+  <div class="action-chips">
+    <div class="chip">Branch</div>
+    <div class="chip">Clip</div>
+    <div class="chip">Inspect</div>
+  </div>
+</div>
+
+<!-- ===== LEFT EDGE: CLIP SHELF ===== -->
+<div class="clip-shelf-indicator">
+  <div class="clip-shelf-line"></div>
+  <span class="clip-shelf-count">3</span>
+</div>
+
+</body>
+</html>

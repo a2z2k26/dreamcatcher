@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dreamcacher — Edge Explorations</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@400;500;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    /* Elevation stack */
+    --e0: #080706;
+    --e1: #0C0B09;
+    --e2: #13120F;
+    --e3: #1A1816;
+    --e4: #1E1C19;
+    --e5: #252320;
+    --e6: #2C2A26;
+    --e7: #3D3A35;
+
+    /* Gold */
+    --gold: #FFCC00;
+    --gold-mid: #D4A800;
+    --gold-dim: #8B7200;
+
+    /* Orange */
+    --orange: #FF6B00;
+    --orange-dim: #CC5500;
+
+    /* Red */
+    --red: #DD0000;
+
+    /* Text */
+    --t-primary: #E1E1E1;
+    --t-secondary: #C8C8C8;
+    --t-tertiary: #A8A8A8;
+    --t-subtle: #808080;
+    --t-ghost: #606060;
+    --t-dim: #404040;
+  }
+
+  body {
+    background: var(--e1);
+    color: var(--t-primary);
+    font-family: 'Inconsolata', monospace;
+    overflow-x: hidden;
+  }
+
+  header {
+    padding: 48px 48px 32px;
+    border-bottom: 1px solid var(--e5);
+  }
+
+  header h1 {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--t-tertiary);
+    margin-bottom: 8px;
+  }
+
+  header p {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--t-subtle);
+    line-height: 20px;
+    max-width: 600px;
+  }
+
+  .exploration {
+    padding: 48px;
+    border-bottom: 1px solid var(--e3);
+  }
+
+  .exploration:last-child {
+    border-bottom: none;
+  }
+
+  .exploration-header {
+    margin-bottom: 32px;
+  }
+
+  .exploration-header h2 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--t-primary);
+    margin-bottom: 6px;
+  }
+
+  .exploration-header .number {
+    color: var(--gold-mid);
+    margin-right: 8px;
+  }
+
+  .exploration-header p {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--t-subtle);
+    line-height: 16px;
+    max-width: 520px;
+  }
+
+  .states-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+
+  .state-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .state-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--t-ghost);
+  }
+
+  .state-label.active-label { color: var(--gold-dim); }
+  .state-label.hover-label { color: var(--t-subtle); }
+  .state-label.dimmed-label { color: var(--t-dim); }
+
+  /* SVG shared defs */
+  svg { overflow: visible; }
+
+  /* Node base gradient */
+  .node-body {
+    fill: url(#nodeGrad);
+    stroke: var(--t-subtle);
+    stroke-width: 1.5;
+  }
+
+  /* Shared filter IDs are defined in the first SVG and referenced globally */
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Edge Explorations</h1>
+  <p>Six divergent approaches to node connections in Dreamcacher.
+     Each shows rest, hover, active path, and dimmed states.
+     Focus is on the edge treatment -- nodes are intentionally minimal.</p>
+</header>
+
+<!-- ============================================================
+     SHARED SVG DEFS (invisible, provides filters and gradients)
+     ============================================================ -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <!-- Node gradient: off-center radial, warm dark -->
+    <radialGradient id="nodeGrad" cx="45%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#2C2A26"/>
+      <stop offset="50%" stop-color="#1E1C19"/>
+      <stop offset="100%" stop-color="#13120F"/>
+    </radialGradient>
+
+    <!-- Node specular highlight -->
+    <radialGradient id="nodeSpecular" cx="38%" cy="28%" r="40%">
+      <stop offset="0%" stop-color="white" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- Glow filters at various intensities -->
+    <filter id="glowGold" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+      <feFlood flood-color="#FFCC00" flood-opacity="0.6" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="glowGoldSoft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+      <feFlood flood-color="#D4A800" flood-opacity="0.35" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="glowGoldSubtle" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur"/>
+      <feFlood flood-color="#D4A800" flood-opacity="0.2" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="glowOrange" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
+      <feFlood flood-color="#FF6B00" flood-opacity="0.5" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="glowAmber" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6" result="blur"/>
+      <feFlood flood-color="#FFCC00" flood-opacity="0.4" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="glowAmberWide" x="-80%" y="-80%" width="260%" height="260%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur"/>
+      <feFlood flood-color="#FF6B00" flood-opacity="0.3" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="glowFilament" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+      <feFlood flood-color="#FFD080" flood-opacity="0.5" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="glowFilamentBright" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
+      <feFlood flood-color="#FFE0A0" flood-opacity="0.7" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Plasma blur filter -->
+    <filter id="plasmaBlur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6"/>
+    </filter>
+
+    <filter id="plasmaBlurDim" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4"/>
+    </filter>
+
+    <!-- Spark filter for synapse -->
+    <filter id="sparkGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur"/>
+      <feFlood flood-color="#FFCC00" flood-opacity="0.8" result="color"/>
+      <feComposite in="color" in2="blur" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Animated gradient for plasma -->
+    <linearGradient id="plasmaActiveGrad" x1="0%" y1="0%" x2="100%" y2="0%" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#8B7200" stop-opacity="0.3">
+        <animate attributeName="stop-color" values="#8B7200;#FF6B00;#FFCC00;#FF6B00;#8B7200" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="stop-opacity" values="0.3;0.8;1;0.8;0.3" dur="3s" repeatCount="indefinite"/>
+      </stop>
+      <stop offset="50%" stop-color="#FFCC00" stop-opacity="1">
+        <animate attributeName="stop-color" values="#FFCC00;#D4A800;#FF6B00;#D4A800;#FFCC00" dur="3s" repeatCount="indefinite"/>
+      </stop>
+      <stop offset="100%" stop-color="#8B7200" stop-opacity="0.3">
+        <animate attributeName="stop-color" values="#8B7200;#FF6B00;#FFCC00;#FF6B00;#8B7200" dur="3s" repeatCount="indefinite"/>
+        <animate attributeName="stop-opacity" values="0.3;0.8;1;0.8;0.3" dur="3s" repeatCount="indefinite"/>
+      </stop>
+    </linearGradient>
+
+    <!-- Flowing gradient for plasma active -->
+    <linearGradient id="plasmaFlowGrad" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#CC5500" stop-opacity="0.2"/>
+      <stop offset="30%" stop-color="#FF6B00" stop-opacity="0.7"/>
+      <stop offset="50%" stop-color="#FFCC00" stop-opacity="1"/>
+      <stop offset="70%" stop-color="#FF6B00" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#CC5500" stop-opacity="0.2"/>
+      <animateTransform attributeName="gradientTransform" type="translate" values="-200,0;200,0" dur="2s" repeatCount="indefinite"/>
+    </linearGradient>
+
+  </defs>
+</svg>
+
+
+<!-- ============================================================
+     1. ENERGY CONDUIT
+     ============================================================ -->
+<section class="exploration">
+  <div class="exploration-header">
+    <h2><span class="number">01</span>Energy Conduit</h2>
+    <p>Double-line pipeline with animated dashes flowing in conversation direction.
+       Gold glow on active. Dimmed paths collapse to single thin line.</p>
+  </div>
+  <div class="states-row">
+
+    <!-- REST -->
+    <div class="state-cell">
+      <span class="state-label">rest</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <circle cx="50" cy="80" r="24" fill="url(#nodeGrad)" stroke="#808080" stroke-width="1.5"/>
+        <circle cx="50" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="50" cy="80" r="4" fill="#A8A8A8" opacity="0.6"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeGrad)" stroke="#808080" stroke-width="1.5"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="210" cy="80" r="4" fill="#A8A8A8" opacity="0.6"/>
+
+        <!-- Double conduit lines -->
+        <line x1="74" y1="76" x2="186" y2="76" stroke="#3D3A35" stroke-width="1.2" stroke-linecap="round"/>
+        <line x1="74" y1="84" x2="186" y2="84" stroke="#3D3A35" stroke-width="1.2" stroke-linecap="round"/>
+        <!-- Dashes flowing -->
+        <line x1="74" y1="80" x2="186" y2="80" stroke="#606060" stroke-width="0.5" stroke-dasharray="6 8" stroke-linecap="round">
+          <animate attributeName="stroke-dashoffset" from="0" to="-28" dur="1.5s" repeatCount="indefinite"/>
+        </line>
+        <!-- End caps -->
+        <circle cx="74" cy="80" r="2" fill="#3D3A35"/>
+        <circle cx="186" cy="80" r="2" fill="#3D3A35"/>
+      </svg>
+    </div>
+
+    <!-- HOVER -->
+    <div class="state-cell">
+      <span class="state-label hover-label">hover</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <circle cx="50" cy="80" r="24" fill="url(#nodeGrad)" stroke="#C8C8C8" stroke-width="1.5"/>
+        <circle cx="50" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="50" cy="80" r="4" fill="#C8C8C8" opacity="0.7"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeGrad)" stroke="#C8C8C8" stroke-width="1.5"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="210" cy="80" r="4" fill="#C8C8C8" opacity="0.7"/>
+
+        <!-- Conduit hover: brightened -->
+        <line x1="74" y1="76" x2="186" y2="76" stroke="#606060" stroke-width="1.4" stroke-linecap="round"/>
+        <line x1="74" y1="84" x2="186" y2="84" stroke="#606060" stroke-width="1.4" stroke-linecap="round"/>
+        <!-- Inner flow -->
+        <line x1="74" y1="80" x2="186" y2="80" stroke="#8B7200" stroke-width="0.8" stroke-dasharray="6 8" stroke-linecap="round">
+          <animate attributeName="stroke-dashoffset" from="0" to="-28" dur="1s" repeatCount="indefinite"/>
+        </line>
+        <!-- Subtle glow underlayer -->
+        <line x1="74" y1="80" x2="186" y2="80" stroke="#D4A800" stroke-width="6" opacity="0.06" stroke-linecap="round"/>
+        <!-- End caps -->
+        <circle cx="74" cy="80" r="2.5" fill="#606060"/>
+        <circle cx="186" cy="80" r="2.5" fill="#606060"/>
+      </svg>
+    </div>
+
+    <!-- ACTIVE -->
+    <div class="state-cell">
+      <span class="state-label active-label">active</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <circle cx="50" cy="80" r="24" fill="url(#nodeGrad)" stroke="#D4A800" stroke-width="2"/>
+        <circle cx="50" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="50" cy="80" r="4" fill="#FFCC00" opacity="0.8"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeGrad)" stroke="#D4A800" stroke-width="2"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="210" cy="80" r="4" fill="#FFCC00" opacity="0.8"/>
+
+        <!-- Glow underlayer -->
+        <line x1="74" y1="80" x2="186" y2="80" stroke="#FFCC00" stroke-width="12" opacity="0.08" stroke-linecap="round" filter="url(#glowGoldSubtle)"/>
+
+        <!-- Active conduit: gold double lines -->
+        <line x1="74" y1="76" x2="186" y2="76" stroke="#D4A800" stroke-width="1.5" stroke-linecap="round" filter="url(#glowGoldSoft)"/>
+        <line x1="74" y1="84" x2="186" y2="84" stroke="#D4A800" stroke-width="1.5" stroke-linecap="round" filter="url(#glowGoldSoft)"/>
+
+        <!-- Inner energy flow -->
+        <line x1="74" y1="80" x2="186" y2="80" stroke="#FFCC00" stroke-width="1.2" stroke-dasharray="4 6" stroke-linecap="round">
+          <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="0.6s" repeatCount="indefinite"/>
+        </line>
+
+        <!-- Bright pulse traveling -->
+        <circle r="2" fill="#FFCC00" opacity="0.9" filter="url(#glowGold)">
+          <animateMotion dur="1.2s" repeatCount="indefinite" path="M74,80 L186,80"/>
+          <animate attributeName="opacity" values="0.4;0.9;0.4" dur="1.2s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- End caps: gold -->
+        <circle cx="74" cy="80" r="3" fill="#D4A800" filter="url(#glowGoldSubtle)"/>
+        <circle cx="186" cy="80" r="3" fill="#D4A800" filter="url(#glowGoldSubtle)"/>
+      </svg>
+    </div>
+
+    <!-- DIMMED -->
+    <div class="state-cell">
+      <span class="state-label dimmed-label">dimmed</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <circle cx="50" cy="80" r="24" fill="url(#nodeGrad)" stroke="#3D3A35" stroke-width="1" opacity="0.5"/>
+        <circle cx="50" cy="80" r="4" fill="#606060" opacity="0.3"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeGrad)" stroke="#3D3A35" stroke-width="1" opacity="0.5"/>
+        <circle cx="210" cy="80" r="4" fill="#606060" opacity="0.3"/>
+
+        <!-- Single collapsed line, no animation -->
+        <line x1="74" y1="80" x2="186" y2="80" stroke="#252320" stroke-width="0.8" stroke-linecap="round" opacity="0.6"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     2. CIRCUIT TRACE
+     ============================================================ -->
+<section class="exploration">
+  <div class="exploration-header">
+    <h2><span class="number">02</span>Circuit Trace</h2>
+    <p>Manhattan routing with rounded corners. Solder-point dots at bends.
+       Gold on dark substrate. Active traces pulse with traveling light.</p>
+  </div>
+  <div class="states-row">
+
+    <!-- REST -->
+    <div class="state-cell">
+      <span class="state-label">rest</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <circle cx="50" cy="50" r="24" fill="url(#nodeGrad)" stroke="#808080" stroke-width="1.5"/>
+        <circle cx="50" cy="50" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="50" cy="50" r="4" fill="#A8A8A8" opacity="0.6"/>
+        <circle cx="210" cy="110" r="24" fill="url(#nodeGrad)" stroke="#808080" stroke-width="1.5"/>
+        <circle cx="210" cy="110" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="210" cy="110" r="4" fill="#A8A8A8" opacity="0.6"/>
+
+        <!-- Circuit trace: right-angle route -->
+        <path d="M74,50 L130,50 Q136,50 136,56 L136,104 Q136,110 142,110 L186,110"
+              fill="none" stroke="#3D3A35" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- Solder dots at corners -->
+        <circle cx="136" cy="50" r="2.5" fill="#2C2A26" stroke="#3D3A35" stroke-width="0.8"/>
+        <circle cx="136" cy="110" r="2.5" fill="#2C2A26" stroke="#3D3A35" stroke-width="0.8"/>
+      </svg>
+    </div>
+
+    <!-- HOVER -->
+    <div class="state-cell">
+      <span class="state-label hover-label">hover</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <circle cx="50" cy="50" r="24" fill="url(#nodeGrad)" stroke="#C8C8C8" stroke-width="1.5"/>
+        <circle cx="50" cy="50" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="50" cy="50" r="4" fill="#C8C8C8" opacity="0.7"/>
+        <circle cx="210" cy="110" r="24" fill="url(#nodeGrad)" stroke="#C8C8C8" stroke-width="1.5"/>
+        <circle cx="210" cy="110" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="210" cy="110" r="4" fill="#C8C8C8" opacity="0.7"/>
+
+        <!-- Trace brightened -->
+        <path d="M74,50 L130,50 Q136,50 136,56 L136,104 Q136,110 142,110 L186,110"
+              fill="none" stroke="#8B7200" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- Subtle underglow -->
+        <path d="M74,50 L130,50 Q136,50 136,56 L136,104 Q136,110 142,110 L186,110"
+              fill="none" stroke="#D4A800" stroke-width="6" opacity="0.06" stroke-linecap="round"/>
+        <!-- Solder dots hover -->
+        <circle cx="136" cy="50" r="3" fill="#3D3A35" stroke="#8B7200" stroke-width="1"/>
+        <circle cx="136" cy="110" r="3" fill="#3D3A35" stroke="#8B7200" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <!-- ACTIVE -->
+    <div class="state-cell">
+      <span class="state-label active-label">active</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <circle cx="50" cy="50" r="24" fill="url(#nodeGrad)" stroke="#D4A800" stroke-width="2"/>
+        <circle cx="50" cy="50" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="50" cy="50" r="4" fill="#FFCC00" opacity="0.8"/>
+        <circle cx="210" cy="110" r="24" fill="url(#nodeGrad)" stroke="#D4A800" stroke-width="2"/>
+        <circle cx="210" cy="110" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="210" cy="110" r="4" fill="#FFCC00" opacity="0.8"/>
+
+        <!-- Underglow -->
+        <path d="M74,50 L130,50 Q136,50 136,56 L136,104 Q136,110 142,110 L186,110"
+              fill="none" stroke="#FFCC00" stroke-width="10" opacity="0.08" stroke-linecap="round"/>
+
+        <!-- Active trace -->
+        <path d="M74,50 L130,50 Q136,50 136,56 L136,104 Q136,110 142,110 L186,110"
+              fill="none" stroke="#D4A800" stroke-width="2" stroke-linecap="round" filter="url(#glowGoldSoft)"/>
+
+        <!-- Traveling pulse -->
+        <circle r="3" fill="#FFCC00" filter="url(#glowGold)">
+          <animateMotion dur="1.5s" repeatCount="indefinite"
+            path="M74,50 L130,50 L136,56 L136,104 L142,110 L186,110"/>
+          <animate attributeName="opacity" values="0.3;1;0.3" dur="1.5s" repeatCount="indefinite"/>
+          <animate attributeName="r" values="2;3.5;2" dur="1.5s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- Active solder dots: gold glow -->
+        <circle cx="136" cy="50" r="3" fill="#D4A800" filter="url(#glowGoldSubtle)"/>
+        <circle cx="136" cy="110" r="3" fill="#D4A800" filter="url(#glowGoldSubtle)"/>
+
+        <!-- Second pulse, offset -->
+        <circle r="2" fill="#FFCC00" opacity="0.5" filter="url(#glowGoldSubtle)">
+          <animateMotion dur="1.5s" repeatCount="indefinite" begin="0.75s"
+            path="M74,50 L130,50 L136,56 L136,104 L142,110 L186,110"/>
+          <animate attributeName="opacity" values="0.2;0.6;0.2" dur="1.5s" repeatCount="indefinite" begin="0.75s"/>
+        </circle>
+      </svg>
+    </div>
+
+    <!-- DIMMED -->
+    <div class="state-cell">
+      <span class="state-label dimmed-label">dimmed</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <circle cx="50" cy="50" r="24" fill="url(#nodeGrad)" stroke="#3D3A35" stroke-width="1" opacity="0.5"/>
+        <circle cx="50" cy="50" r="4" fill="#606060" opacity="0.3"/>
+        <circle cx="210" cy="110" r="24" fill="url(#nodeGrad)" stroke="#3D3A35" stroke-width="1" opacity="0.5"/>
+        <circle cx="210" cy="110" r="4" fill="#606060" opacity="0.3"/>
+
+        <!-- Ghost trace -->
+        <path d="M74,50 L130,50 Q136,50 136,56 L136,104 Q136,110 142,110 L186,110"
+              fill="none" stroke="#1A1816" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+        <!-- Ghost solder dots -->
+        <circle cx="136" cy="50" r="1.5" fill="#1A1816" opacity="0.4"/>
+        <circle cx="136" cy="110" r="1.5" fill="#1A1816" opacity="0.4"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     3. PLASMA FLOW
+     ============================================================ -->
+<section class="exploration">
+  <div class="exploration-header">
+    <h2><span class="number">03</span>Plasma Flow</h2>
+    <p>Soft, wide, blurred energy conduit. Animated gradient shifts along the path.
+       Active: bright amber/orange center with gold edges. Dimmed: ghost grey, no motion.</p>
+  </div>
+  <div class="states-row">
+
+    <!-- REST -->
+    <div class="state-cell">
+      <span class="state-label">rest</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <defs>
+          <linearGradient id="plasmaRestGrad" x1="74" y1="80" x2="186" y2="80" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#3D3A35" stop-opacity="0.4"/>
+            <stop offset="50%" stop-color="#606060" stop-opacity="0.2"/>
+            <stop offset="100%" stop-color="#3D3A35" stop-opacity="0.4"/>
+          </linearGradient>
+        </defs>
+
+        <circle cx="50" cy="80" r="24" fill="url(#nodeGrad)" stroke="#808080" stroke-width="1.5"/>
+        <circle cx="50" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="50" cy="80" r="4" fill="#A8A8A8" opacity="0.6"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeGrad)" stroke="#808080" stroke-width="1.5"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="210" cy="80" r="4" fill="#A8A8A8" opacity="0.6"/>
+
+        <!-- Wide blurred plasma at rest -->
+        <line x1="74" y1="80" x2="186" y2="80" stroke="url(#plasmaRestGrad)" stroke-width="16" stroke-linecap="round" filter="url(#plasmaBlurDim)"/>
+        <!-- Core thread -->
+        <line x1="74" y1="80" x2="186" y2="80" stroke="#3D3A35" stroke-width="1" stroke-linecap="round" opacity="0.5"/>
+      </svg>
+    </div>
+
+    <!-- HOVER -->
+    <div class="state-cell">
+      <span class="state-label hover-label">hover</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <defs>
+          <linearGradient id="plasmaHoverGrad" x1="74" y1="80" x2="186" y2="80" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#8B7200" stop-opacity="0.3"/>
+            <stop offset="50%" stop-color="#D4A800" stop-opacity="0.2"/>
+            <stop offset="100%" stop-color="#8B7200" stop-opacity="0.3"/>
+          </linearGradient>
+        </defs>
+
+        <circle cx="50" cy="80" r="24" fill="url(#nodeGrad)" stroke="#C8C8C8" stroke-width="1.5"/>
+        <circle cx="50" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="50" cy="80" r="4" fill="#C8C8C8" opacity="0.7"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeGrad)" stroke="#C8C8C8" stroke-width="1.5"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="210" cy="80" r="4" fill="#C8C8C8" opacity="0.7"/>
+
+        <!-- Plasma hover: warmer -->
+        <line x1="74" y1="80" x2="186" y2="80" stroke="url(#plasmaHoverGrad)" stroke-width="18" stroke-linecap="round" filter="url(#plasmaBlur)"/>
+        <!-- Core: faint gold -->
+        <line x1="74" y1="80" x2="186" y2="80" stroke="#8B7200" stroke-width="1.2" stroke-linecap="round" opacity="0.5"/>
+        <!-- Slow shimmer -->
+        <line x1="74" y1="80" x2="186" y2="80" stroke="#D4A800" stroke-width="4" stroke-linecap="round" opacity="0.06" filter="url(#plasmaBlurDim)">
+          <animate attributeName="opacity" values="0.04;0.08;0.04" dur="2s" repeatCount="indefinite"/>
+        </line>
+      </svg>
+    </div>
+
+    <!-- ACTIVE -->
+    <div class="state-cell">
+      <span class="state-label active-label">active</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <defs>
+          <linearGradient id="plasmaActiveOuter" x1="74" y1="80" x2="186" y2="80" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#D4A800" stop-opacity="0.15">
+              <animate attributeName="stop-opacity" values="0.15;0.25;0.15" dur="2s" repeatCount="indefinite"/>
+            </stop>
+            <stop offset="50%" stop-color="#FFCC00" stop-opacity="0.2">
+              <animate attributeName="stop-opacity" values="0.2;0.35;0.2" dur="2s" repeatCount="indefinite"/>
+            </stop>
+            <stop offset="100%" stop-color="#D4A800" stop-opacity="0.15">
+              <animate attributeName="stop-opacity" values="0.15;0.25;0.15" dur="2s" repeatCount="indefinite"/>
+            </stop>
+          </linearGradient>
+          <linearGradient id="plasmaActiveCore" x1="74" y1="80" x2="186" y2="80" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#CC5500"/>
+            <stop offset="50%" stop-color="#FFCC00"/>
+            <stop offset="100%" stop-color="#CC5500"/>
+          </linearGradient>
+        </defs>
+
+        <circle cx="50" cy="80" r="24" fill="url(#nodeGrad)" stroke="#D4A800" stroke-width="2"/>
+        <circle cx="50" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="50" cy="80" r="4" fill="#FFCC00" opacity="0.8"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeGrad)" stroke="#D4A800" stroke-width="2"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="210" cy="80" r="4" fill="#FFCC00" opacity="0.8"/>
+
+        <!-- Wide outer plasma glow -->
+        <line x1="74" y1="80" x2="186" y2="80" stroke="url(#plasmaActiveOuter)" stroke-width="28" stroke-linecap="round" filter="url(#plasmaBlur)"/>
+
+        <!-- Medium plasma layer -->
+        <line x1="74" y1="80" x2="186" y2="80" stroke="#FF6B00" stroke-width="8" stroke-linecap="round" opacity="0.15" filter="url(#plasmaBlurDim)">
+          <animate attributeName="opacity" values="0.1;0.2;0.1" dur="1.5s" repeatCount="indefinite"/>
+        </line>
+
+        <!-- Core plasma: bright amber -->
+        <line x1="74" y1="80" x2="186" y2="80" stroke="url(#plasmaActiveCore)" stroke-width="2.5" stroke-linecap="round" filter="url(#glowGoldSoft)">
+          <animate attributeName="stroke-width" values="2;3;2" dur="2s" repeatCount="indefinite"/>
+        </line>
+
+        <!-- Traveling energy knot -->
+        <circle r="4" fill="#FFCC00" opacity="0.4" filter="url(#glowAmber)">
+          <animateMotion dur="2s" repeatCount="indefinite" path="M74,80 L186,80"/>
+          <animate attributeName="opacity" values="0.2;0.5;0.2" dur="2s" repeatCount="indefinite"/>
+          <animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite"/>
+        </circle>
+      </svg>
+    </div>
+
+    <!-- DIMMED -->
+    <div class="state-cell">
+      <span class="state-label dimmed-label">dimmed</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <circle cx="50" cy="80" r="24" fill="url(#nodeGrad)" stroke="#3D3A35" stroke-width="1" opacity="0.5"/>
+        <circle cx="50" cy="80" r="4" fill="#606060" opacity="0.3"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeGrad)" stroke="#3D3A35" stroke-width="1" opacity="0.5"/>
+        <circle cx="210" cy="80" r="4" fill="#606060" opacity="0.3"/>
+
+        <!-- Ghost plasma: barely there -->
+        <line x1="74" y1="80" x2="186" y2="80" stroke="#1A1816" stroke-width="8" stroke-linecap="round" filter="url(#plasmaBlurDim)" opacity="0.3"/>
+        <line x1="74" y1="80" x2="186" y2="80" stroke="#252320" stroke-width="0.5" stroke-linecap="round" opacity="0.3"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     4. THREAD
+     ============================================================ -->
+<section class="exploration">
+  <div class="exploration-header">
+    <h2><span class="number">04</span>Thread</h2>
+    <p>Ultra-thin spider silk. Bezier curves, not straight lines. Hover thickens with faint glow.
+       Active: gold with micro-particles traveling along it. Dimmed: 0.3px, barely visible.</p>
+  </div>
+  <div class="states-row">
+
+    <!-- REST -->
+    <div class="state-cell">
+      <span class="state-label">rest</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <circle cx="50" cy="60" r="24" fill="url(#nodeGrad)" stroke="#808080" stroke-width="1.5"/>
+        <circle cx="50" cy="60" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="50" cy="60" r="4" fill="#A8A8A8" opacity="0.6"/>
+        <circle cx="210" cy="100" r="24" fill="url(#nodeGrad)" stroke="#808080" stroke-width="1.5"/>
+        <circle cx="210" cy="100" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="210" cy="100" r="4" fill="#A8A8A8" opacity="0.6"/>
+
+        <!-- Ultra-thin bezier thread -->
+        <path d="M74,60 C110,58 160,102 186,100"
+              fill="none" stroke="#606060" stroke-width="0.5" opacity="0.6"/>
+      </svg>
+    </div>
+
+    <!-- HOVER -->
+    <div class="state-cell">
+      <span class="state-label hover-label">hover</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <circle cx="50" cy="60" r="24" fill="url(#nodeGrad)" stroke="#C8C8C8" stroke-width="1.5"/>
+        <circle cx="50" cy="60" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="50" cy="60" r="4" fill="#C8C8C8" opacity="0.7"/>
+        <circle cx="210" cy="100" r="24" fill="url(#nodeGrad)" stroke="#C8C8C8" stroke-width="1.5"/>
+        <circle cx="210" cy="100" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="210" cy="100" r="4" fill="#C8C8C8" opacity="0.7"/>
+
+        <!-- Glow underlayer -->
+        <path d="M74,60 C110,58 160,102 186,100"
+              fill="none" stroke="#D4A800" stroke-width="4" opacity="0.06" filter="url(#glowGoldSubtle)"/>
+        <!-- Thread thickened -->
+        <path d="M74,60 C110,58 160,102 186,100"
+              fill="none" stroke="#A8A8A8" stroke-width="0.8" opacity="0.8"/>
+      </svg>
+    </div>
+
+    <!-- ACTIVE -->
+    <div class="state-cell">
+      <span class="state-label active-label">active</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <circle cx="50" cy="60" r="24" fill="url(#nodeGrad)" stroke="#D4A800" stroke-width="2"/>
+        <circle cx="50" cy="60" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="50" cy="60" r="4" fill="#FFCC00" opacity="0.8"/>
+        <circle cx="210" cy="100" r="24" fill="url(#nodeGrad)" stroke="#D4A800" stroke-width="2"/>
+        <circle cx="210" cy="100" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="210" cy="100" r="4" fill="#FFCC00" opacity="0.8"/>
+
+        <!-- Glow trail -->
+        <path d="M74,60 C110,58 160,102 186,100"
+              fill="none" stroke="#FFCC00" stroke-width="6" opacity="0.06" filter="url(#glowGoldSoft)"/>
+        <!-- Gold thread -->
+        <path d="M74,60 C110,58 160,102 186,100"
+              fill="none" stroke="#D4A800" stroke-width="1" filter="url(#glowGoldSubtle)"/>
+
+        <!-- Micro-particles traveling along the bezier -->
+        <circle r="1.2" fill="#FFCC00" filter="url(#glowGoldSubtle)">
+          <animateMotion dur="1.8s" repeatCount="indefinite" path="M74,60 C110,58 160,102 186,100"/>
+          <animate attributeName="opacity" values="0.3;1;0.3" dur="1.8s" repeatCount="indefinite"/>
+        </circle>
+        <circle r="0.8" fill="#FFCC00" opacity="0.6" filter="url(#glowGoldSubtle)">
+          <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.4s" path="M74,60 C110,58 160,102 186,100"/>
+          <animate attributeName="opacity" values="0.2;0.7;0.2" dur="1.8s" repeatCount="indefinite" begin="0.4s"/>
+        </circle>
+        <circle r="0.6" fill="#FFCC00" opacity="0.4">
+          <animateMotion dur="1.8s" repeatCount="indefinite" begin="0.9s" path="M74,60 C110,58 160,102 186,100"/>
+          <animate attributeName="opacity" values="0.1;0.5;0.1" dur="1.8s" repeatCount="indefinite" begin="0.9s"/>
+        </circle>
+        <circle r="1" fill="#FFCC00" opacity="0.5" filter="url(#glowGoldSubtle)">
+          <animateMotion dur="1.8s" repeatCount="indefinite" begin="1.3s" path="M74,60 C110,58 160,102 186,100"/>
+          <animate attributeName="opacity" values="0.2;0.8;0.2" dur="1.8s" repeatCount="indefinite" begin="1.3s"/>
+        </circle>
+      </svg>
+    </div>
+
+    <!-- DIMMED -->
+    <div class="state-cell">
+      <span class="state-label dimmed-label">dimmed</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <circle cx="50" cy="60" r="24" fill="url(#nodeGrad)" stroke="#3D3A35" stroke-width="1" opacity="0.5"/>
+        <circle cx="50" cy="60" r="4" fill="#606060" opacity="0.3"/>
+        <circle cx="210" cy="100" r="24" fill="url(#nodeGrad)" stroke="#3D3A35" stroke-width="1" opacity="0.5"/>
+        <circle cx="210" cy="100" r="4" fill="#606060" opacity="0.3"/>
+
+        <!-- Ghost thread -->
+        <path d="M74,60 C110,58 160,102 186,100"
+              fill="none" stroke="#252320" stroke-width="0.3" opacity="0.4"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     5. NEURAL SYNAPSE
+     ============================================================ -->
+<section class="exploration">
+  <div class="exploration-header">
+    <h2><span class="number">05</span>Neural Synapse</h2>
+    <p>Connection has a gap in the middle -- a synaptic cleft. Energy bursts at the gap point.
+       Signals travel from parent, cross the gap, enter child. Rest: gap is dark. Active: gap fires amber.</p>
+  </div>
+  <div class="states-row">
+
+    <!-- REST -->
+    <div class="state-cell">
+      <span class="state-label">rest</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <circle cx="50" cy="80" r="24" fill="url(#nodeGrad)" stroke="#808080" stroke-width="1.5"/>
+        <circle cx="50" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="50" cy="80" r="4" fill="#A8A8A8" opacity="0.6"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeGrad)" stroke="#808080" stroke-width="1.5"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="210" cy="80" r="4" fill="#A8A8A8" opacity="0.6"/>
+
+        <!-- Pre-synaptic segment -->
+        <path d="M74,80 C95,78 110,78 120,80"
+              fill="none" stroke="#3D3A35" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- Synaptic terminal (bulb) -->
+        <circle cx="122" cy="80" r="3" fill="#1A1816" stroke="#3D3A35" stroke-width="0.8"/>
+
+        <!-- Gap (cleft) - 16px -->
+
+        <!-- Post-synaptic terminal (bulb) -->
+        <circle cx="138" cy="80" r="3" fill="#1A1816" stroke="#3D3A35" stroke-width="0.8"/>
+        <!-- Post-synaptic segment -->
+        <path d="M140,80 C150,82 165,82 186,80"
+              fill="none" stroke="#3D3A35" stroke-width="1.5" stroke-linecap="round"/>
+
+        <!-- Gap structure: subtle dashes showing potential -->
+        <line x1="125" y1="80" x2="135" y2="80" stroke="#252320" stroke-width="0.5" stroke-dasharray="1 2" opacity="0.4"/>
+      </svg>
+    </div>
+
+    <!-- HOVER -->
+    <div class="state-cell">
+      <span class="state-label hover-label">hover</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <circle cx="50" cy="80" r="24" fill="url(#nodeGrad)" stroke="#C8C8C8" stroke-width="1.5"/>
+        <circle cx="50" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="50" cy="80" r="4" fill="#C8C8C8" opacity="0.7"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeGrad)" stroke="#C8C8C8" stroke-width="1.5"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="210" cy="80" r="4" fill="#C8C8C8" opacity="0.7"/>
+
+        <!-- Pre-synaptic -->
+        <path d="M74,80 C95,78 110,78 120,80"
+              fill="none" stroke="#606060" stroke-width="1.5" stroke-linecap="round"/>
+        <!-- Terminal -->
+        <circle cx="122" cy="80" r="3.5" fill="#2C2A26" stroke="#8B7200" stroke-width="0.8"/>
+
+        <!-- Gap: subtle charge building -->
+        <line x1="125.5" y1="80" x2="134.5" y2="80" stroke="#8B7200" stroke-width="0.5" stroke-dasharray="1.5 2" opacity="0.5">
+          <animate attributeName="opacity" values="0.3;0.6;0.3" dur="1.5s" repeatCount="indefinite"/>
+        </line>
+
+        <!-- Post-synaptic terminal -->
+        <circle cx="138" cy="80" r="3.5" fill="#2C2A26" stroke="#8B7200" stroke-width="0.8"/>
+        <!-- Post-synaptic -->
+        <path d="M140,80 C150,82 165,82 186,80"
+              fill="none" stroke="#606060" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <!-- ACTIVE -->
+    <div class="state-cell">
+      <span class="state-label active-label">active</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <circle cx="50" cy="80" r="24" fill="url(#nodeGrad)" stroke="#D4A800" stroke-width="2"/>
+        <circle cx="50" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="50" cy="80" r="4" fill="#FFCC00" opacity="0.8"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeGrad)" stroke="#D4A800" stroke-width="2"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="210" cy="80" r="4" fill="#FFCC00" opacity="0.8"/>
+
+        <!-- Pre-synaptic: gold -->
+        <path d="M74,80 C95,78 110,78 120,80"
+              fill="none" stroke="#D4A800" stroke-width="1.8" stroke-linecap="round" filter="url(#glowGoldSubtle)"/>
+
+        <!-- Signal traveling to gap -->
+        <circle r="2" fill="#FFCC00" filter="url(#glowGoldSubtle)">
+          <animateMotion dur="0.8s" repeatCount="indefinite" path="M74,80 C95,78 110,78 120,80"/>
+          <animate attributeName="opacity" values="0.3;0.9;0.3" dur="0.8s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- Pre-synaptic terminal: firing -->
+        <circle cx="122" cy="80" r="4" fill="#D4A800" filter="url(#glowGold)">
+          <animate attributeName="r" values="3;4.5;3" dur="0.6s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.7;1;0.7" dur="0.6s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- THE GAP: sparking with energy -->
+        <!-- Spark burst at gap center -->
+        <circle cx="130" cy="80" r="2" fill="#FFCC00" filter="url(#sparkGlow)">
+          <animate attributeName="r" values="1;3;1" dur="0.4s" repeatCount="indefinite"/>
+          <animate attributeName="opacity" values="0.3;0.9;0.3" dur="0.4s" repeatCount="indefinite"/>
+        </circle>
+        <!-- Micro-sparks -->
+        <circle cx="128" cy="78" r="0.6" fill="#FFCC00" opacity="0.6">
+          <animate attributeName="opacity" values="0;0.8;0" dur="0.3s" repeatCount="indefinite"/>
+          <animate attributeName="cy" values="79;77;79" dur="0.3s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="132" cy="82" r="0.5" fill="#FF6B00" opacity="0.5">
+          <animate attributeName="opacity" values="0;0.7;0" dur="0.35s" repeatCount="indefinite" begin="0.1s"/>
+          <animate attributeName="cy" values="81;83;81" dur="0.35s" repeatCount="indefinite" begin="0.1s"/>
+        </circle>
+        <circle cx="130" cy="77" r="0.4" fill="#FFCC00" opacity="0.4">
+          <animate attributeName="opacity" values="0;0.6;0" dur="0.25s" repeatCount="indefinite" begin="0.2s"/>
+        </circle>
+        <!-- Gap bridge line (intermittent) -->
+        <line x1="125" y1="80" x2="135" y2="80" stroke="#FFCC00" stroke-width="0.8" opacity="0.4" filter="url(#glowGoldSubtle)">
+          <animate attributeName="opacity" values="0.1;0.6;0.1" dur="0.4s" repeatCount="indefinite"/>
+        </line>
+
+        <!-- Post-synaptic terminal: receiving -->
+        <circle cx="138" cy="80" r="4" fill="#D4A800" filter="url(#glowGold)">
+          <animate attributeName="r" values="3;4.5;3" dur="0.6s" repeatCount="indefinite" begin="0.15s"/>
+          <animate attributeName="opacity" values="0.5;0.9;0.5" dur="0.6s" repeatCount="indefinite" begin="0.15s"/>
+        </circle>
+
+        <!-- Post-synaptic: gold -->
+        <path d="M140,80 C150,82 165,82 186,80"
+              fill="none" stroke="#D4A800" stroke-width="1.8" stroke-linecap="round" filter="url(#glowGoldSubtle)"/>
+
+        <!-- Signal continuing from gap -->
+        <circle r="2" fill="#FFCC00" filter="url(#glowGoldSubtle)">
+          <animateMotion dur="0.8s" repeatCount="indefinite" begin="0.3s" path="M140,80 C150,82 165,82 186,80"/>
+          <animate attributeName="opacity" values="0.3;0.9;0.3" dur="0.8s" repeatCount="indefinite" begin="0.3s"/>
+        </circle>
+      </svg>
+    </div>
+
+    <!-- DIMMED -->
+    <div class="state-cell">
+      <span class="state-label dimmed-label">dimmed</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <circle cx="50" cy="80" r="24" fill="url(#nodeGrad)" stroke="#3D3A35" stroke-width="1" opacity="0.5"/>
+        <circle cx="50" cy="80" r="4" fill="#606060" opacity="0.3"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeGrad)" stroke="#3D3A35" stroke-width="1" opacity="0.5"/>
+        <circle cx="210" cy="80" r="4" fill="#606060" opacity="0.3"/>
+
+        <!-- Ghost segments -->
+        <path d="M74,80 C95,78 110,78 120,80"
+              fill="none" stroke="#1A1816" stroke-width="0.8" stroke-linecap="round" opacity="0.4"/>
+        <path d="M140,80 C150,82 165,82 186,80"
+              fill="none" stroke="#1A1816" stroke-width="0.8" stroke-linecap="round" opacity="0.4"/>
+        <!-- Dead terminals -->
+        <circle cx="122" cy="80" r="2" fill="#13120F" opacity="0.3"/>
+        <circle cx="138" cy="80" r="2" fill="#13120F" opacity="0.3"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     6. FILAMENT
+     ============================================================ -->
+<section class="exploration">
+  <div class="exploration-header">
+    <h2><span class="number">06</span>Filament</h2>
+    <p>Organic, slightly wavy path like a heated tungsten wire. Warm glow from within.
+       Brighter near nodes. Hover brightens and straightens. Active: bright amber-white, steady.</p>
+  </div>
+  <div class="states-row">
+
+    <!-- REST -->
+    <div class="state-cell">
+      <span class="state-label">rest</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <defs>
+          <linearGradient id="filamentRestGrad" x1="74" y1="0" x2="186" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#606060" stop-opacity="0.6"/>
+            <stop offset="20%" stop-color="#3D3A35" stop-opacity="0.4"/>
+            <stop offset="50%" stop-color="#3D3A35" stop-opacity="0.3"/>
+            <stop offset="80%" stop-color="#3D3A35" stop-opacity="0.4"/>
+            <stop offset="100%" stop-color="#606060" stop-opacity="0.6"/>
+          </linearGradient>
+        </defs>
+
+        <circle cx="50" cy="80" r="24" fill="url(#nodeGrad)" stroke="#808080" stroke-width="1.5"/>
+        <circle cx="50" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="50" cy="80" r="4" fill="#A8A8A8" opacity="0.6"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeGrad)" stroke="#808080" stroke-width="1.5"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="210" cy="80" r="4" fill="#A8A8A8" opacity="0.6"/>
+
+        <!-- Filament glow underlayer -->
+        <path d="M74,80 C90,77 105,84 120,79 C135,74 150,86 165,81 C175,78 182,80 186,80"
+              fill="none" stroke="#3D3A35" stroke-width="4" opacity="0.15" filter="url(#plasmaBlurDim)"/>
+        <!-- Filament wire -->
+        <path d="M74,80 C90,77 105,84 120,79 C135,74 150,86 165,81 C175,78 182,80 186,80"
+              fill="none" stroke="url(#filamentRestGrad)" stroke-width="1" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <!-- HOVER -->
+    <div class="state-cell">
+      <span class="state-label hover-label">hover</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <defs>
+          <linearGradient id="filamentHoverGrad" x1="74" y1="0" x2="186" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#D4A800" stop-opacity="0.7"/>
+            <stop offset="20%" stop-color="#8B7200" stop-opacity="0.5"/>
+            <stop offset="50%" stop-color="#8B7200" stop-opacity="0.4"/>
+            <stop offset="80%" stop-color="#8B7200" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#D4A800" stop-opacity="0.7"/>
+          </linearGradient>
+        </defs>
+
+        <circle cx="50" cy="80" r="24" fill="url(#nodeGrad)" stroke="#C8C8C8" stroke-width="1.5"/>
+        <circle cx="50" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="50" cy="80" r="4" fill="#C8C8C8" opacity="0.7"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeGrad)" stroke="#C8C8C8" stroke-width="1.5"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="210" cy="80" r="4" fill="#C8C8C8" opacity="0.7"/>
+
+        <!-- Filament glow: warmer, wider -->
+        <path d="M74,80 C92,78 108,82 125,80 C142,78 158,82 175,80 C180,80 184,80 186,80"
+              fill="none" stroke="#8B7200" stroke-width="6" opacity="0.12" filter="url(#plasmaBlurDim)"/>
+        <!-- Filament: straighter (less wave), brighter -->
+        <path d="M74,80 C92,78 108,82 125,80 C142,78 158,82 175,80 C180,80 184,80 186,80"
+              fill="none" stroke="url(#filamentHoverGrad)" stroke-width="1.2" stroke-linecap="round" filter="url(#glowGoldSubtle)"/>
+      </svg>
+    </div>
+
+    <!-- ACTIVE -->
+    <div class="state-cell">
+      <span class="state-label active-label">active</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <defs>
+          <linearGradient id="filamentActiveGrad" x1="74" y1="0" x2="186" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#FFCC00" stop-opacity="1"/>
+            <stop offset="15%" stop-color="#FFE0A0" stop-opacity="0.9"/>
+            <stop offset="50%" stop-color="#D4A800" stop-opacity="0.7">
+              <animate attributeName="stop-opacity" values="0.7;0.9;0.7" dur="3s" repeatCount="indefinite"/>
+            </stop>
+            <stop offset="85%" stop-color="#FFE0A0" stop-opacity="0.9"/>
+            <stop offset="100%" stop-color="#FFCC00" stop-opacity="1"/>
+          </linearGradient>
+        </defs>
+
+        <circle cx="50" cy="80" r="24" fill="url(#nodeGrad)" stroke="#D4A800" stroke-width="2"/>
+        <circle cx="50" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="50" cy="80" r="4" fill="#FFCC00" opacity="0.8"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeGrad)" stroke="#D4A800" stroke-width="2"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeSpecular)"/>
+        <circle cx="210" cy="80" r="4" fill="#FFCC00" opacity="0.8"/>
+
+        <!-- Wide outer glow -->
+        <path d="M74,80 C95,79 115,81 130,80 C145,79 165,81 186,80"
+              fill="none" stroke="#FF6B00" stroke-width="12" opacity="0.1" filter="url(#plasmaBlur)">
+          <animate attributeName="opacity" values="0.08;0.14;0.08" dur="3s" repeatCount="indefinite"/>
+        </path>
+
+        <!-- Medium glow -->
+        <path d="M74,80 C95,79 115,81 130,80 C145,79 165,81 186,80"
+              fill="none" stroke="#FFCC00" stroke-width="5" opacity="0.15" filter="url(#glowFilament)">
+          <animate attributeName="opacity" values="0.12;0.2;0.12" dur="3s" repeatCount="indefinite"/>
+        </path>
+
+        <!-- Bright filament core: nearly straight, hot amber-white -->
+        <path d="M74,80 C95,79 115,81 130,80 C145,79 165,81 186,80"
+              fill="none" stroke="url(#filamentActiveGrad)" stroke-width="1.8" stroke-linecap="round" filter="url(#glowFilamentBright)"/>
+
+        <!-- White-hot center highlight -->
+        <path d="M74,80 C95,79 115,81 130,80 C145,79 165,81 186,80"
+              fill="none" stroke="#FFF5E0" stroke-width="0.6" opacity="0.5" stroke-linecap="round">
+          <animate attributeName="opacity" values="0.3;0.6;0.3" dur="3s" repeatCount="indefinite"/>
+        </path>
+      </svg>
+    </div>
+
+    <!-- DIMMED -->
+    <div class="state-cell">
+      <span class="state-label dimmed-label">dimmed</span>
+      <svg width="260" height="160" viewBox="0 0 260 160">
+        <circle cx="50" cy="80" r="24" fill="url(#nodeGrad)" stroke="#3D3A35" stroke-width="1" opacity="0.5"/>
+        <circle cx="50" cy="80" r="4" fill="#606060" opacity="0.3"/>
+        <circle cx="210" cy="80" r="24" fill="url(#nodeGrad)" stroke="#3D3A35" stroke-width="1" opacity="0.5"/>
+        <circle cx="210" cy="80" r="4" fill="#606060" opacity="0.3"/>
+
+        <!-- Cold dead filament: wavy, barely visible -->
+        <path d="M74,80 C90,77 105,84 120,79 C135,74 150,86 165,81 C175,78 182,80 186,80"
+              fill="none" stroke="#1A1816" stroke-width="0.6" opacity="0.35" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer style="padding: 32px 48px 48px; border-top: 1px solid var(--e3);">
+  <p style="font-size: 9px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; color: var(--t-dim);">
+    Dreamcacher Edge Explorations — Interaction Design
+  </p>
+  <p style="font-size: 10px; color: var(--t-ghost); margin-top: 8px; line-height: 16px;">
+    Each exploration optimized for the Bumba-Dark warm palette. All animations use SMIL for portability.
+    Production implementation would use GSAP for performance at scale (60fps across 100+ edges).
+  </p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Dreamcacher — Inspector Panel</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inconsolata:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  /* Warm black elevation ramp — 8 stops */
+  --e0: #080706;
+  --e1: #0C0B09;
+  --e2: #12110E;
+  --e3: #1A1816;
+  --e4: #1E1C19;
+  --e5: #252320;
+  --e6: #2C2A26;
+  --e7: #3D3A35;
+
+  /* Text luminance hierarchy */
+  --t1: #E1E1E1;
+  --t2: #C8C8C8;
+  --t3: #A8A8A8;
+  --t4: #808080;
+  --t5: #606060;
+  --t6: #484848;
+
+  /* Accent */
+  --red: #DD0000;
+
+  /* Model faction — Bumba warm palette */
+  --amber: #D4A574;
+  --gold: #D4A800;
+  --green: #52C41A;
+  --yellow: #FAAD14;
+  --orange: #FA8C16;
+
+  /* Canvas */
+  --canvas-bg: #0C0B09;
+  --grid-dot: #1A1816;
+
+  /* Inspector panel */
+  --panel-bg: rgba(26, 24, 22, 0.85);
+  --panel-border-top: #3D3A35;
+  --panel-border-left: #252320;
+  --panel-border-bottom: #1A1816;
+  --panel-shadow: rgba(0, 0, 0, 0.3);
+  --panel-width: 380px;
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Inconsolata', 'SF Mono', monospace;
+}
+
+html, body {
+  background: var(--canvas-bg);
+  overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  user-select: none;
+}
+
+/* ═══════════════════════════════════════
+   CANVAS LAYER
+   ═══════════════════════════════════════ */
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.canvas-grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.canvas-world {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ═══════════════════════════════════════
+   CONNECTION LINE: Node → Inspector
+   ═══════════════════════════════════════ */
+
+.connection-line {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* ═══════════════════════════════════════
+   INSPECTOR PANEL
+   ═══════════════════════════════════════ */
+
+.inspector {
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 48px;
+  width: var(--panel-width);
+  background: var(--panel-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--panel-border-top);
+  border-left: 1px solid var(--panel-border-left);
+  border-bottom: 1px solid var(--panel-border-bottom);
+  box-shadow: -4px 0 20px var(--panel-shadow);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: panel-slide-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes panel-slide-in {
+  from {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.inspector-scroll {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+.inspector-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.inspector-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.inspector-scroll::-webkit-scrollbar-thumb {
+  background: var(--e5);
+  border-radius: 2px;
+}
+.inspector-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--e6);
+}
+
+/* ── Section: Header ── */
+.insp-header {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--e3);
+  animation: content-stagger 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+@keyframes content-stagger {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.insp-type-badge {
+  font-family: var(--font-sans);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--t4);
+  margin-bottom: 6px;
+}
+
+.insp-timestamp {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--t5);
+  margin-bottom: 10px;
+}
+
+.insp-model-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 100px;
+  border: 1px solid var(--t3);
+  background: transparent;
+}
+
+.insp-model-pill svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.insp-model-pill span {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--t3);
+  letter-spacing: 0.2px;
+}
+
+/* ── Section: Content ── */
+.insp-content {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--e3);
+  animation: content-stagger 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+}
+
+.insp-message {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.7;
+  color: var(--t2);
+  letter-spacing: 0.01em;
+}
+
+.insp-show-more {
+  display: inline-block;
+  margin-top: 8px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--red);
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+  transition: opacity 0.15s ease;
+}
+
+.insp-show-more:hover {
+  opacity: 0.75;
+}
+
+/* ── Section: Thinking ── */
+.insp-thinking {
+  padding: 0 20px;
+  border-bottom: 1px solid var(--e3);
+  animation: content-stagger 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+.insp-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 0;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.insp-section-header:hover .insp-section-label {
+  color: var(--t4);
+}
+
+.insp-section-label {
+  font-family: var(--font-sans);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--t5);
+  transition: color 0.15s ease;
+}
+
+.insp-chevron {
+  width: 12px;
+  height: 12px;
+  color: var(--t5);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), color 0.15s ease;
+  flex-shrink: 0;
+}
+
+.insp-section-header:hover .insp-chevron {
+  color: var(--t4);
+}
+
+.insp-thinking-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              padding 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.insp-thinking-body.expanded {
+  max-height: 300px;
+  padding-bottom: 14px;
+}
+
+.insp-thinking-content {
+  padding-left: 12px;
+  border-left: 2px solid var(--gold);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--t4);
+  letter-spacing: 0.01em;
+}
+
+.insp-chevron.rotated {
+  transform: rotate(90deg);
+}
+
+/* ── Section: Metadata ── */
+.insp-metadata {
+  padding: 0 20px;
+  border-bottom: 1px solid var(--e3);
+  animation: content-stagger 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+}
+
+.insp-metadata .insp-section-header {
+  cursor: default;
+}
+
+.insp-meta-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: 16px;
+}
+
+.insp-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.insp-meta-key {
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--t5);
+  letter-spacing: 0.2px;
+}
+
+.insp-meta-value {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--t3);
+}
+
+.insp-meta-value--rarity {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rarity-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--amber);
+  box-shadow: 0 0 6px rgba(212, 165, 116, 0.5);
+}
+
+/* ── Section: Actions ── */
+.insp-actions {
+  padding: 0 20px 20px;
+  animation: content-stagger 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s both;
+}
+
+.insp-actions .insp-section-header {
+  cursor: default;
+}
+
+.insp-action-grid {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.insp-action-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--e6);
+  background: var(--e4);
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--t3);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.insp-action-pill:hover {
+  background: var(--e5);
+  border-color: var(--e7);
+  color: var(--t1);
+}
+
+.insp-action-pill svg {
+  width: 11px;
+  height: 11px;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.insp-action-pill:hover svg {
+  opacity: 1;
+}
+
+/* Force one pill to show hover state */
+.insp-action-pill--hovered {
+  background: var(--e5);
+  border-color: var(--e7);
+  color: var(--t1);
+}
+
+.insp-action-pill--hovered svg {
+  opacity: 1;
+}
+
+/* ═══════════════════════════════════════
+   BOTTOM BAR
+   ═══════════════════════════════════════ */
+
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--e0);
+  border-top: 1px solid var(--e3);
+  z-index: 100;
+  padding: 0 20px;
+}
+
+.input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  max-width: 560px;
+  background: var(--e2);
+  border: 1px solid var(--e5);
+  border-radius: 8px;
+  padding: 0 14px;
+  height: 34px;
+  transition: border-color 0.2s ease;
+}
+
+.input-wrap:focus-within {
+  border-color: var(--e6);
+}
+
+.input-model-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  color: var(--t5);
+}
+
+.input-field {
+  flex: 1;
+  background: none;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--t2);
+  outline: none;
+  padding: 0;
+}
+
+.input-field::placeholder {
+  color: var(--t6);
+}
+
+.input-hint {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--t6);
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════
+   SVG NODE STYLES
+   ═══════════════════════════════════════ */
+
+/* Selection ring glow animation */
+@keyframes selection-glow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes selection-rotate {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -40; }
+}
+
+@keyframes node-pulse {
+  0%, 100% { r: 28; }
+  50% { r: 29.5; }
+}
+
+/* Dot grid pattern */
+@keyframes grid-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ═══════ CANVAS ═══════ -->
+<div class="canvas">
+  <svg class="canvas-world" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <!-- Dot grid pattern -->
+      <pattern id="dotGrid" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+        <circle cx="12" cy="12" r="0.7" fill="#1A1816"/>
+      </pattern>
+
+      <!-- Selection glow filter -->
+      <filter id="selectionGlow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+        <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+      </filter>
+
+      <!-- Node shadow filter -->
+      <filter id="nodeShadow" x="-40%" y="-40%" width="180%" height="180%">
+        <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity="0.4"/>
+      </filter>
+
+      <!-- Soft inner glow for AI nodes -->
+      <radialGradient id="aiNodeGrad" cx="50%" cy="45%" r="55%">
+        <stop offset="0%" stop-color="#1E1C19" stop-opacity="1"/>
+        <stop offset="100%" stop-color="#12110E" stop-opacity="1"/>
+      </radialGradient>
+
+      <!-- User node fill -->
+      <radialGradient id="userNodeGrad" cx="50%" cy="45%" r="55%">
+        <stop offset="0%" stop-color="#1A1816" stop-opacity="1"/>
+        <stop offset="100%" stop-color="#0C0B09" stop-opacity="1"/>
+      </radialGradient>
+
+      <!-- Selected node outer glow -->
+      <filter id="selectedGlow" x="-100%" y="-100%" width="300%" height="300%">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur"/>
+        <feColorMatrix in="blur" type="matrix"
+          values="1 0 0 0 0.83
+                  0 1 0 0 0.66
+                  0 0 1 0 0
+                  0 0 0 0.5 0" result="gold"/>
+        <feMerge>
+          <feMergeNode in="gold"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
+
+      <!-- Connection line gradient to inspector -->
+      <linearGradient id="connectorGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#D4A800" stop-opacity="0.4"/>
+        <stop offset="60%" stop-color="#D4A800" stop-opacity="0.15"/>
+        <stop offset="100%" stop-color="#D4A800" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+
+    <!-- Dot grid background -->
+    <rect width="100%" height="100%" fill="url(#dotGrid)" opacity="0.8"/>
+
+    <!-- ═══════ EDGES ═══════ -->
+    <g id="edges">
+      <!-- Main conversation thread -->
+      <!-- n1 → n2 -->
+      <path d="M 340,190 C 340,230 380,250 410,285" fill="none" stroke="#3D3A35" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- n2 → n3 -->
+      <path d="M 430,335 C 440,370 470,395 500,420" fill="none" stroke="#3D3A35" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- n3 → n4 -->
+      <path d="M 530,465 C 550,500 580,520 620,540" fill="none" stroke="#3D3A35" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- n4 → n5 (to branch point) -->
+      <path d="M 660,580 C 690,620 730,650 780,670" fill="none" stroke="#3D3A35" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- n5 → n6 (main thread continues) -->
+      <path d="M 820,710 C 840,740 850,760 860,790" fill="none" stroke="#3D3A35" stroke-width="1.5" stroke-linecap="round"/>
+      <!-- n5 → selected node (branch) -->
+      <path d="M 820,680 C 880,660 940,620 1000,580" fill="none" stroke="rgba(212, 168, 0, 0.2)" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="6 4"/>
+      <!-- selected → child 1 -->
+      <path d="M 1060,545 C 1080,510 1060,480 1040,450" fill="none" stroke="rgba(212, 168, 0, 0.15)" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="6 4"/>
+    </g>
+
+    <!-- ═══════ NODES ═══════ -->
+    <g id="nodes">
+
+      <!-- Node 1: User prompt -->
+      <g transform="translate(320, 170)">
+        <circle cx="0" cy="0" r="24" fill="url(#userNodeGrad)" stroke="#808080" stroke-width="1.2" filter="url(#nodeShadow)"/>
+        <circle cx="0" cy="0" r="5" fill="none" stroke="#606060" stroke-width="1.5" opacity="0.7"/>
+        <!-- User icon -->
+        <circle cx="0" cy="-2" r="3.5" fill="none" stroke="#808080" stroke-width="1" opacity="0.5"/>
+        <path d="M -5,5 Q 0,1 5,5" fill="none" stroke="#808080" stroke-width="1" opacity="0.5"/>
+        <text x="0" y="40" text-anchor="middle" fill="#606060" font-family="Inter, sans-serif" font-size="10" font-weight="500">Architecture?</text>
+      </g>
+
+      <!-- Node 2: AI response -->
+      <g transform="translate(415, 305)">
+        <circle cx="0" cy="0" r="28" fill="url(#aiNodeGrad)" stroke="#606060" stroke-width="1.2" filter="url(#nodeShadow)"/>
+        <circle cx="0" cy="0" r="4" fill="none" stroke="#484848" stroke-width="1.5" opacity="0.6"/>
+        <!-- Anthropic-style mark -->
+        <path d="M -3,-3 L 0,3 L 3,-3" fill="none" stroke="#D4A574" stroke-width="1" opacity="0.4"/>
+        <text x="0" y="44" text-anchor="middle" fill="#606060" font-family="Inter, sans-serif" font-size="10" font-weight="500">Token / Component</text>
+      </g>
+
+      <!-- Node 3: User -->
+      <g transform="translate(510, 440)">
+        <circle cx="0" cy="0" r="24" fill="url(#userNodeGrad)" stroke="#808080" stroke-width="1.2" filter="url(#nodeShadow)"/>
+        <circle cx="0" cy="-2" r="3.5" fill="none" stroke="#808080" stroke-width="1" opacity="0.5"/>
+        <path d="M -5,5 Q 0,1 5,5" fill="none" stroke="#808080" stroke-width="1" opacity="0.5"/>
+        <text x="0" y="40" text-anchor="middle" fill="#606060" font-family="Inter, sans-serif" font-size="10" font-weight="500">Hybrid. Token layer?</text>
+      </g>
+
+      <!-- Node 4: AI -->
+      <g transform="translate(640, 555)">
+        <circle cx="0" cy="0" r="28" fill="url(#aiNodeGrad)" stroke="#606060" stroke-width="1.2" filter="url(#nodeShadow)"/>
+        <circle cx="0" cy="0" r="4" fill="none" stroke="#484848" stroke-width="1.5" opacity="0.6"/>
+        <path d="M -3,-3 L 0,3 L 3,-3" fill="none" stroke="#D4A574" stroke-width="1" opacity="0.4"/>
+        <text x="0" y="44" text-anchor="middle" fill="#606060" font-family="Inter, sans-serif" font-size="10" font-weight="500">Flat KV, primitives</text>
+      </g>
+
+      <!-- Node 5: User — branch point (hexagonal) -->
+      <g transform="translate(800, 685)">
+        <!-- Hexagonal branch point -->
+        <polygon points="0,-27 23.4,-13.5 23.4,13.5 0,27 -23.4,13.5 -23.4,-13.5" fill="url(#userNodeGrad)" stroke="#808080" stroke-width="1.3" filter="url(#nodeShadow)"/>
+        <circle cx="0" cy="-2" r="3.5" fill="none" stroke="#808080" stroke-width="1" opacity="0.5"/>
+        <path d="M -5,5 Q 0,1 5,5" fill="none" stroke="#808080" stroke-width="1" opacity="0.5"/>
+        <!-- Branch count badge -->
+        <g transform="translate(26, -18)">
+          <circle cx="0" cy="0" r="7" fill="var(--e4)" stroke="rgba(212, 168, 0, 0.3)" stroke-width="1"/>
+          <text x="0" y="3.5" text-anchor="middle" fill="#D4A800" font-family="Inter, sans-serif" font-size="8" font-weight="700">2</text>
+        </g>
+        <text x="0" y="44" text-anchor="middle" fill="#606060" font-family="Inter, sans-serif" font-size="10" font-weight="500">Motion system?</text>
+      </g>
+
+      <!-- Node 6: AI (main thread continuation, partially visible) -->
+      <g transform="translate(860, 820)" opacity="0.4">
+        <circle cx="0" cy="0" r="28" fill="url(#aiNodeGrad)" stroke="#484848" stroke-width="1" filter="url(#nodeShadow)"/>
+        <circle cx="0" cy="0" r="4" fill="none" stroke="#3D3A35" stroke-width="1.5" opacity="0.6"/>
+        <text x="0" y="44" text-anchor="middle" fill="#484848" font-family="Inter, sans-serif" font-size="10" font-weight="500">Intent, not values</text>
+      </g>
+
+      <!-- Child node above selected (in the branch) -->
+      <g transform="translate(1030, 430)" opacity="0.5">
+        <circle cx="0" cy="0" r="24" fill="url(#userNodeGrad)" stroke="#606060" stroke-width="1" filter="url(#nodeShadow)"/>
+        <circle cx="0" cy="-2" r="3.5" fill="none" stroke="#606060" stroke-width="1" opacity="0.5"/>
+        <path d="M -5,5 Q 0,1 5,5" fill="none" stroke="#606060" stroke-width="1" opacity="0.5"/>
+        <text x="0" y="40" text-anchor="middle" fill="#484848" font-family="Inter, sans-serif" font-size="10" font-weight="500">Keyframe composability?</text>
+      </g>
+
+      <!-- ═══════ SELECTED NODE (AI Response, branch) ═══════ -->
+      <g transform="translate(1040, 560)">
+        <!-- Outer selection glow -->
+        <circle cx="0" cy="0" r="36" fill="none" stroke="#D4A800" stroke-width="1" opacity="0.15" filter="url(#selectedGlow)"/>
+
+        <!-- Selection ring — animated dashes -->
+        <circle cx="0" cy="0" r="34" fill="none" stroke="#D4A800" stroke-width="1.2"
+                stroke-dasharray="8 6" opacity="0.5">
+          <animate attributeName="stroke-dashoffset" values="0;-40" dur="3s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- Warm glow halo -->
+        <circle cx="0" cy="0" r="32" fill="none" stroke="#D4A800" stroke-width="0.5" opacity="0.2">
+          <animate attributeName="opacity" values="0.15;0.3;0.15" dur="2.5s" repeatCount="indefinite"/>
+        </circle>
+
+        <!-- Node body -->
+        <circle cx="0" cy="0" r="28" fill="url(#aiNodeGrad)" stroke="#D4A800" stroke-width="2" filter="url(#nodeShadow)"/>
+
+        <!-- Inner detail -->
+        <circle cx="0" cy="0" r="4" fill="none" stroke="#D4A800" stroke-width="1.5" opacity="0.6"/>
+
+        <!-- Model mark (Anthropic) -->
+        <path d="M -3,-3 L 0,3 L 3,-3" fill="none" stroke="#D4A574" stroke-width="1.2" opacity="0.7"/>
+
+        <!-- Label -->
+        <text x="0" y="44" text-anchor="middle" fill="#D4A800" font-family="Inter, sans-serif" font-size="10" font-weight="600" opacity="0.8">Separate motion spec</text>
+      </g>
+    </g>
+  </svg>
+
+  <!-- Connection line from selected node to inspector panel -->
+  <svg class="connection-line" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <linearGradient id="connLineGrad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#D4A800" stop-opacity="0.3"/>
+        <stop offset="50%" stop-color="#D4A800" stop-opacity="0.12"/>
+        <stop offset="100%" stop-color="#D4A800" stop-opacity="0.0"/>
+      </linearGradient>
+    </defs>
+    <!-- Bezier from node right edge to panel left edge -->
+    <path d="M 1068,560 C 1180,560 1300,420 1540,420"
+          fill="none" stroke="url(#connLineGrad)" stroke-width="1" stroke-linecap="round"
+          stroke-dasharray="4 4" opacity="0.6">
+      <animate attributeName="stroke-dashoffset" values="0;-16" dur="2s" repeatCount="indefinite"/>
+    </path>
+    <!-- Small dot at the node attachment point -->
+    <circle cx="1068" cy="560" r="2" fill="#D4A800" opacity="0.4">
+      <animate attributeName="opacity" values="0.3;0.6;0.3" dur="2s" repeatCount="indefinite"/>
+    </circle>
+  </svg>
+</div>
+
+<!-- ═══════ INSPECTOR PANEL ═══════ -->
+<div class="inspector">
+  <div class="inspector-scroll">
+
+    <!-- Header -->
+    <div class="insp-header">
+      <div class="insp-type-badge">AI Response</div>
+      <div class="insp-timestamp">3/25/2026, 9:11 PM</div>
+      <div class="insp-model-pill">
+        <!-- Anthropic logomark approximation -->
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M13.5 4L7 20h3.2l1.3-3.3h5l1.3 3.3H21L14.5 4h-1zm-.5 9.8L15 8.3l2 5.5h-4z" fill="currentColor" opacity="0.7"/>
+        </svg>
+        <span>Claude Sonnet</span>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="insp-content">
+      <div class="insp-message">Motion tokens typically live in a separate file from design tokens. A dedicated motion spec with keyframe definitions, duration curves, and spring configurations gives you composability without polluting the core token namespace. Each motion token references a timing function and can be overridden per...</div>
+      <button class="insp-show-more">Show more</button>
+    </div>
+
+    <!-- Thinking -->
+    <div class="insp-thinking">
+      <div class="insp-section-header" id="thinkingToggle">
+        <span class="insp-section-label">Thinking</span>
+        <svg class="insp-chevron" id="thinkingChevron" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path d="M4.5 2.5L8 6L4.5 9.5"/>
+        </svg>
+      </div>
+      <div class="insp-thinking-body" id="thinkingBody">
+        <div class="insp-thinking-content">
+          Considering whether to recommend CSS custom properties or JS-based motion tokens. CSS approach is simpler but lacks spring physics. JS gives full control but adds bundle weight. Recommending separation because motion tokens have different authoring concerns than visual tokens -- they encode temporal behavior, not spatial.
+        </div>
+      </div>
+    </div>
+
+    <!-- Metadata -->
+    <div class="insp-metadata">
+      <div class="insp-section-header">
+        <span class="insp-section-label">Metadata</span>
+      </div>
+      <div class="insp-meta-grid">
+        <div class="insp-meta-row">
+          <span class="insp-meta-key">Tokens</span>
+          <span class="insp-meta-value">847</span>
+        </div>
+        <div class="insp-meta-row">
+          <span class="insp-meta-key">Depth</span>
+          <span class="insp-meta-value">12</span>
+        </div>
+        <div class="insp-meta-row">
+          <span class="insp-meta-key">Branch</span>
+          <span class="insp-meta-value">main</span>
+        </div>
+        <div class="insp-meta-row">
+          <span class="insp-meta-key">Rarity</span>
+          <span class="insp-meta-value insp-meta-value--rarity">
+            <span class="rarity-dot"></span>
+            Rare
+          </span>
+        </div>
+        <div class="insp-meta-row">
+          <span class="insp-meta-key">Children</span>
+          <span class="insp-meta-value">3</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="insp-actions">
+      <div class="insp-section-header">
+        <span class="insp-section-label">Actions</span>
+      </div>
+      <div class="insp-action-grid">
+        <button class="insp-action-pill">
+          <!-- Branch icon -->
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
+            <path d="M3.5 1.5v5a2 2 0 002 2H10"/>
+            <circle cx="3.5" cy="1.5" r="1.2" fill="none"/>
+            <circle cx="10" cy="8.5" r="1.2" fill="none"/>
+          </svg>
+          Branch
+        </button>
+        <button class="insp-action-pill insp-action-pill--hovered">
+          <!-- Clip icon -->
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
+            <rect x="2" y="2" width="8" height="8" rx="1.5"/>
+            <path d="M5 6h2M6 5v2"/>
+          </svg>
+          Clip
+        </button>
+        <button class="insp-action-pill">
+          <!-- Regenerate icon -->
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
+            <path d="M1.5 6A4.5 4.5 0 019.5 3"/>
+            <path d="M10.5 6A4.5 4.5 0 012.5 9"/>
+            <path d="M9.5 1v2h-2"/>
+            <path d="M2.5 11V9h2"/>
+          </svg>
+          Regenerate
+        </button>
+        <button class="insp-action-pill">
+          <!-- Compare icon -->
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round">
+            <path d="M6 2v8"/>
+            <path d="M3 4l-1 2 1 2"/>
+            <path d="M9 4l1 2-1 2"/>
+          </svg>
+          Compare
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════ BOTTOM BAR ═══════ -->
+<div class="bottom-bar">
+  <div class="input-wrap">
+    <!-- Model icon -->
+    <svg class="input-model-icon" viewBox="0 0 24 24" fill="none">
+      <path d="M13.5 4L7 20h3.2l1.3-3.3h5l1.3 3.3H21L14.5 4h-1zm-.5 9.8L15 8.3l2 5.5h-4z" fill="currentColor" opacity="0.5"/>
+    </svg>
+    <input class="input-field" placeholder="Continue the conversation..." readonly />
+    <span class="input-hint">Enter</span>
+  </div>
+</div>
+
+<script>
+// ── Thinking section toggle ──
+const thinkingToggle = document.getElementById('thinkingToggle');
+const thinkingChevron = document.getElementById('thinkingChevron');
+const thinkingBody = document.getElementById('thinkingBody');
+
+thinkingToggle.addEventListener('click', () => {
+  const isExpanded = thinkingBody.classList.contains('expanded');
+  thinkingBody.classList.toggle('expanded');
+  thinkingChevron.classList.toggle('rotated');
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0C0B09;
+  --foreground: #E1E1E1;
+  --accent: #DD0000;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: #DD000030;
+  color: #FFFFFF;
+}
+
+/* Scroll fade masks — premium scroll boundaries */
+.scroll-fade {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0px,
+    black 16px,
+    black calc(100% - 16px),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0px,
+    black 16px,
+    black calc(100% - 16px),
+    transparent 100%
+  );
+}
