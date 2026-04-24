@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dreamcacher
 
-## Getting Started
+A spatial conversation interface where AI thinking becomes visible.
 
-First, run the development server:
+Linear chat collapses the structure of real thinking — which is non-linear,
+spatial, accumulative, and visible. Dreamcacher restores that structure:
+conversations become navigable, branchable, persistent graphs.
+
+See [**PRODUCT.md**](./PRODUCT.md) for the full product spec — tiers, node
+taxonomy, interaction vocabulary, and architecture. Supporting design and
+research docs live in [`docs/`](./docs/).
+
+## Stack
+
+- Next.js 16 (App Router) · React 19 · TypeScript
+- Zustand stores + IndexedDB persistence
+- Custom SVG canvas with force-directed physics (off-main-thread worker)
+- OpenRouter-backed chat API (mock fallback when no key)
+
+## Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm dev       # http://localhost:3000
+pnpm build     # production build
+pnpm lint
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Environment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Optional — create `.env.local`:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+OPENROUTER_API_KEY=sk-or-...
+DEFAULT_MODEL=anthropic/claude-sonnet-4
+```
 
-## Learn More
+Without a key, the chat route streams mock responses so the UI works end-to-end.
 
-To learn more about Next.js, take a look at the following resources:
+> **Build gotcha:** `NODE_ENV=development` in the shell or `.env` breaks
+> `next build` via a Next 16 internal prerender bug ([#87719](https://github.com/vercel/next.js/issues/87719)).
+> Unset it before building.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Layout
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/
+├── app/                 Next.js App Router (layout, page, API routes, error pages)
+├── components/
+│   ├── canvas/          GraphCanvas — SVG renderer + interaction
+│   └── ui/              Inspector, MemoryShelf, FloatingUI, overlays
+├── stores/              Zustand stores (graph, session, memory, UI)
+├── lib/                 Physics, effects, theme, context builder, rate limiter
+└── types/               Shared type definitions
 
-## Deploy on Vercel
+docs/                    Design, visual, and strategy documentation
+PRODUCT.md               Product spec — read this first
+AGENTS.md                Notes for AI agents contributing to this repo
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Status
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Concept validated with working physics prototype. See `PRODUCT.md` for scope
+and `STRATEGY.md` for positioning.
