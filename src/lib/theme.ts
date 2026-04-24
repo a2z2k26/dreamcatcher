@@ -60,10 +60,17 @@ export const glass = {
   background: 'linear-gradient(180deg, rgba(26,24,22,0.92) 0%, rgba(19,18,15,0.88) 100%)',
   backdropFilter: 'blur(12px)',
   WebkitBackdropFilter: 'blur(12px)',
-  borderTop: '1px solid rgba(61,58,53,0.8)',       // E[7] at 80% — bright light catch
-  borderLeft: '1px solid rgba(44,42,38,0.4)',       // E[6] at 40%
-  borderRight: '1px solid rgba(44,42,38,0.3)',      // E[6] at 30%
-  borderBottom: '1px solid rgba(19,18,15,0.6)',     // E[2] at 60% — shadow edge
+  // Longhand per-side so callers can override borderTopColor etc. without
+  // conflicting with `borderTop` shorthand (React 19 flags mixed removal).
+  borderStyle: 'solid',
+  borderTopWidth: 1,
+  borderLeftWidth: 1,
+  borderRightWidth: 1,
+  borderBottomWidth: 1,
+  borderTopColor: 'rgba(61,58,53,0.8)',     // E[7] at 80% — bright light catch
+  borderLeftColor: 'rgba(44,42,38,0.4)',     // E[6] at 40%
+  borderRightColor: 'rgba(44,42,38,0.3)',    // E[6] at 30%
+  borderBottomColor: 'rgba(19,18,15,0.6)',   // E[2] at 60% — shadow edge
   boxShadow: [
     '0 1px 0 0 rgba(61,58,53,0.35) inset',         // inner top highlight — VISIBLE
     '0 -1px 0 0 rgba(0,0,0,0.15) inset',           // inner bottom shadow
@@ -78,10 +85,15 @@ export const glassElevated = {
   background: 'linear-gradient(180deg, rgba(30,28,25,0.94) 0%, rgba(22,20,18,0.91) 100%)',
   backdropFilter: 'blur(24px) saturate(1.3)',
   WebkitBackdropFilter: 'blur(24px) saturate(1.3)',
-  borderTop: '1px solid rgba(61,58,53,0.7)',
-  borderLeft: '1px solid rgba(44,42,38,0.5)',
-  borderRight: '1px solid rgba(44,42,38,0.4)',
-  borderBottom: '1px solid rgba(19,18,15,0.7)',
+  borderStyle: 'solid',
+  borderTopWidth: 1,
+  borderLeftWidth: 1,
+  borderRightWidth: 1,
+  borderBottomWidth: 1,
+  borderTopColor: 'rgba(61,58,53,0.7)',
+  borderLeftColor: 'rgba(44,42,38,0.5)',
+  borderRightColor: 'rgba(44,42,38,0.4)',
+  borderBottomColor: 'rgba(19,18,15,0.7)',
   boxShadow: [
     '0 1px 0 0 rgba(61,58,53,0.2) inset',
     '0 -1px 0 0 rgba(0,0,0,0.25) inset',
