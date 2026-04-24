@@ -27,50 +27,7 @@ import {
   getEntranceScale, getStreamingPulse, getShakeOffset,
   type EffectsState,
 } from '@/lib/effects';
-import type { EdgeType } from '@/types/graph';
-import type { ModelInfo } from '@/lib/models';
-
-// Resolve model provider key for per-faction SVG gradient selection
-function resolveProvider(model: ModelInfo | null): string | null {
-  if (!model) return null;
-  if (model.id.includes('anthropic/')) return 'anthropic';
-  if (model.id.includes('openai/')) return 'openai';
-  if (model.id.includes('google/')) return 'google';
-  
-  return null;
-}
-
-// 4-level LOD system with crossfade zones
-// LOD 0: < 25% — dots and lines only (topology)
-// LOD 1: 25-50% — shapes distinguishable (user/AI/clip/summary)
-// LOD 2: 50-75% — short labels, badges, streaming indicators
-// LOD 3: > 75% — full labels, model icons, all metadata
-const LOD_THRESHOLDS = [0.25, 0.50, 0.75] as const;
-const LOD_FADE_ZONE = 0.05; // 5% crossfade zone around each threshold
-
-function getLOD(scale: number): { level: number; fadeIn: number } {
-  for (let i = LOD_THRESHOLDS.length - 1; i >= 0; i--) {
-    const t = LOD_THRESHOLDS[i];
-    if (scale >= t + LOD_FADE_ZONE) return { level: i + 1, fadeIn: 1 };
-    if (scale >= t - LOD_FADE_ZONE) {
-      // In crossfade zone — interpolate
-      const progress = (scale - (t - LOD_FADE_ZONE)) / (2 * LOD_FADE_ZONE);
-      return { level: i + 1, fadeIn: progress };
-    }
-  }
-  return { level: 0, fadeIn: 1 };
-}
-
-// Per-edge-type rendering styles — reply is SOLID (primary thread), others dashed
-// Scaled up for visibility at new node sizes
-const EDGE_RENDER: Record<EdgeType, { stroke: string; dash: string; width: number; speed: number; glow: string; marker: string }> = {
-  reply:        { stroke: 'rgba(140,140,140,0.30)', dash: '6 4',  width: 1.5,  speed: 0.8, glow: '',  marker: '' },
-  branch:       { stroke: 'rgba(176,176,176,0.30)', dash: '6 4',  width: 1.5,  speed: 0.8, glow: '',  marker: '' },
-  regeneration: { stroke: `rgba(221,0,0,0.20)`,     dash: '6 4',  width: 1.5,  speed: 0.8, glow: '',  marker: '' },
-  summarizes:   { stroke: `${T.invisible}`,          dash: '6 4',  width: 1.0,  speed: 0.8, glow: '',  marker: '' },
-  clips_to:     { stroke: `${C.memory}30`,           dash: '6 4',  width: 1.0,  speed: 0.8, glow: '',  marker: '' },
-  references:   { stroke: `${T.ghost}25`,            dash: '6 4',  width: 1.0,  speed: 0.8, glow: '',  marker: '' },
-};
+import { getLOD, resolveProvider, EDGE_RENDER, esc, hexPath } from './canvas-geometry';
 
 export function GraphCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -1077,18 +1034,4 @@ export function GraphCanvas() {
       )}
     </div>
   );
-}
-
-function esc(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
-
-// Hexagon path for branch point nodes
-function hexPath(r: number): string {
-  const pts: string[] = [];
-  for (let i = 0; i < 6; i++) {
-    const angle = (Math.PI / 3) * i - Math.PI / 6; // flat-top hexagon
-    pts.push(`${r * Math.cos(angle)},${r * Math.sin(angle)}`);
-  }
-  return `M ${pts.join(' L ')} Z`;
 }
