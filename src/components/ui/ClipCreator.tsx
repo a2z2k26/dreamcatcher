@@ -18,20 +18,23 @@ export function ClipCreator() {
   const clearMultiSelect = useUIStore(s => s.clearMultiSelect);
   const [naming, setNaming] = useState(false);
   const [clipName, setClipName] = useState('');
+  const [prevSelSize, setPrevSelSize] = useState(selectedNodeIds.size);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Reset naming state when selection clears — derived during render
+  // (React docs: https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes)
+  if (prevSelSize !== selectedNodeIds.size) {
+    setPrevSelSize(selectedNodeIds.size);
+    if (selectedNodeIds.size === 0) {
+      setNaming(false);
+      setClipName('');
+    }
+  }
 
   // Focus input when naming starts
   useEffect(() => {
     if (naming && inputRef.current) inputRef.current.focus();
   }, [naming]);
-
-  // Reset naming state when selection clears
-  useEffect(() => {
-    if (selectedNodeIds.size === 0) {
-      setNaming(false);
-      setClipName('');
-    }
-  }, [selectedNodeIds.size]);
 
   if (selectedNodeIds.size < 2) return null;
 

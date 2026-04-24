@@ -10,6 +10,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useGraphStore } from '@/stores/graph-store';
 import { useUIStore } from '@/stores/ui-store';
+import { useMemoryStore } from '@/stores/memory-store';
 import { createSimulation, tickSimulation, wakeSimulation, type SimulationState } from '@/lib/simulation';
 import { createPhysicsBridge, type PhysicsBridge } from '@/lib/physics-bridge';
 import {
@@ -232,7 +233,7 @@ export function GraphCanvas() {
     // Build highlight set for branch visualization or path trace
     const BRANCH_LUMINANCE = [T.primary, T.secondary, T.tertiary, T.subtle];
     let highlightedNodes: Set<string> | null = null;
-    let branchColorMap: Record<string, string> = {};
+    const branchColorMap: Record<string, string> = {};
     if (highlightMode?.type === 'branches') {
       highlightedNodes = new Set<string>();
       highlightedNodes.add(highlightMode.branchPointId);
@@ -410,10 +411,11 @@ export function GraphCanvas() {
           }
         }
 
-        // Model icon inside (larger, faction-colored)
+        // Model icon inside — small (~14px), centered, faction-colored
         if (modelInfo && lod >= 2) {
           const iconOpacity = lod === 2 ? lodFade * 0.4 : 0.6;
-          s += `<g transform="translate(-7,-7) scale(0.58)"><path d="${modelInfo.icon}" fill="${modelColor}" opacity="${iconOpacity}"/></g>`;
+          // Source paths have ~65-68 unit viewBoxes; scale 0.22 → ~14-15px. Center by offsetting ~34*0.22 = 7.5.
+          s += `<g transform="translate(-7.5,-7.5) scale(0.22)"><path d="${modelInfo.icon}" fill="${modelColor}" opacity="${iconOpacity}"/></g>`;
         }
 
         // Streaming: single faction-colored dashed crawl on the node stroke
@@ -625,7 +627,6 @@ export function GraphCanvas() {
       }
 
       if (e.key === 'm' || e.key === 'M') {
-        const { useMemoryStore } = require('@/stores/memory-store');
         const { shelfOpen, setShelfOpen } = useMemoryStore.getState();
         setShelfOpen(!shelfOpen);
         return;
@@ -875,7 +876,6 @@ export function GraphCanvas() {
           if (node) {
             const path = useGraphStore.getState().getAncestralPath(dragNodeId);
             const contextSummary = path.slice(-3).map(n => `${n.role}: ${n.text.slice(0, 100)}`).join('\n');
-            const { useMemoryStore } = require('@/stores/memory-store');
             useMemoryStore.getState().addMemory({
               id: `mem-${Date.now()}`,
               name: node.label || node.text.slice(0, 40),

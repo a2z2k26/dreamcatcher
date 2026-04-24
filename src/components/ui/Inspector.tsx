@@ -1,5 +1,5 @@
 'use client';
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { E, T, C, ACCENT } from '@/lib/theme';
 import { ToolCardList } from './ToolCard';
 
@@ -24,7 +24,7 @@ export function Inspector() {
 
   const isErrorNode = node?.role === 'ai' && node.text.startsWith('[Error');
 
-  const handleRetry = useCallback(async () => {
+  const handleRetry = async () => {
     if (!node || !isErrorNode || retrying) return;
 
     const userNodeId = node.metadata.userNodeId;
@@ -84,7 +84,7 @@ export function Inspector() {
     }
 
     setRetrying(false);
-  }, [node, isErrorNode, retrying]);
+  };
 
   return (
     <aside

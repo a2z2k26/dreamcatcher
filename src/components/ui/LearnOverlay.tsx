@@ -35,15 +35,17 @@ export function LearnOverlay() {
   const [messages, setMessages] = useState<LearnMessage[]>([]);
   const [streaming, setStreaming] = useState(false);
   const [followUp, setFollowUp] = useState('');
+  const [prevLearnNodeId, setPrevLearnNodeId] = useState(learnNodeId);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const node = learnNodeId ? nodes.find(n => n.id === learnNodeId) : null;
 
-  // Reset when node changes
-  useEffect(() => {
+  // Reset when node changes — derived during render
+  if (prevLearnNodeId !== learnNodeId) {
+    setPrevLearnNodeId(learnNodeId);
     setMessages([]);
     setFollowUp('');
-  }, [learnNodeId]);
+  }
 
   // Auto-scroll
   useEffect(() => {

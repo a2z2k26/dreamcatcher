@@ -59,7 +59,7 @@ export function buildMessages(
 
   // Build messages with token awareness
   const messages: Message[] = [];
-  let tokenCount = estimateTokens(system);
+  const tokenCount = estimateTokens(system);
   const messageTokenBudget = TOKEN_BUDGET - SYSTEM_BUDGET;
 
   // Walk the path from the end (most recent = most important)

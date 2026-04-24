@@ -16,6 +16,7 @@ export function PathTrace() {
   const stepPathTrace = useUIStore(s => s.stepPathTrace);
   const exitPathTrace = useUIStore(s => s.exitPathTrace);
   const animateTo = useUIStore(s => s.animateTo);
+  const nodes = useGraphStore(s => s.nodes);
 
   // Keyboard: arrows to step, Escape to exit
   useEffect(() => {
@@ -50,7 +51,7 @@ export function PathTrace() {
 
   const { nodeIds, currentIndex } = pathTrace;
   const currentNodeId = nodeIds[currentIndex];
-  const currentNode = useGraphStore(s => s.nodes.find(n => n.id === currentNodeId));
+  const currentNode = nodes.find(n => n.id === currentNodeId);
   const total = nodeIds.length;
 
   return (

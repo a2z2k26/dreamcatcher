@@ -6,25 +6,27 @@
 // Source pattern: Claude Island's session list.
 // ═══════════════════════════════════════════════════════════════
 
+import { useState } from 'react';
 import { useGraphStore } from '@/stores/graph-store';
 import { useUIStore } from '@/stores/ui-store';
 import { E, T, C, ACCENT, glass } from '@/lib/theme';
 
-export function BranchPreview() {
-  const branchPreview = useUIStore(s => s.branchPreview);
+type BranchPreviewState = NonNullable<ReturnType<typeof useUIStore.getState>['branchPreview']>;
+
+// Inner component — mounts when popover opens, unmounts when it closes.
+// Snapshots Date.now() via a lazy useState initializer — one-time init is
+// React-19-pure (react-hooks/purity doesn't flag useState initializers).
+function BranchPreviewContent({ branchPreview }: { branchPreview: BranchPreviewState }) {
   const nodes = useGraphStore(s => s.nodes);
   const setActiveNode = useGraphStore(s => s.setActiveNode);
   const setSelectedNode = useUIStore(s => s.setSelectedNode);
   const animateTo = useUIStore(s => s.animateTo);
-
-  if (!branchPreview) return null;
+  const [now] = useState(() => Date.now());
 
   const { nodeId, x, y } = branchPreview;
   const branches = useGraphStore.getState().getBranchPaths(nodeId);
   const branchEntries = Object.entries(branches);
   if (branchEntries.length === 0) return null;
-
-  const now = Date.now();
 
   return (
     <div
@@ -100,6 +102,13 @@ export function BranchPreview() {
       })}
     </div>
   );
+}
+
+export function BranchPreview() {
+  const branchPreview = useUIStore(s => s.branchPreview);
+  if (!branchPreview) return null;
+  // Keyed so Date.now() snapshot refreshes each time a new popover opens
+  return <BranchPreviewContent key={branchPreview.nodeId} branchPreview={branchPreview} />;
 }
 
 function formatAgo(ms: number): string {
