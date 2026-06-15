@@ -34,7 +34,7 @@ export function resolveProvider(model: ModelInfo | null): string | null {
   return null;
 }
 
-// Per-edge-type rendering styles — reply is SOLID (primary thread), others dashed
+// Per-edge-type rendering styles — all connectors are dashed moving signal paths.
 export interface EdgeRenderStyle {
   readonly stroke: string;
   readonly dash: string;
@@ -45,12 +45,12 @@ export interface EdgeRenderStyle {
 }
 
 export const EDGE_RENDER: Record<EdgeType, EdgeRenderStyle> = {
-  reply:        { stroke: 'rgba(140,140,140,0.30)', dash: '6 4', width: 1.5, speed: 0.8, glow: '', marker: '' },
-  branch:       { stroke: 'rgba(176,176,176,0.30)', dash: '6 4', width: 1.5, speed: 0.8, glow: '', marker: '' },
-  regeneration: { stroke: 'rgba(221,0,0,0.20)',     dash: '6 4', width: 1.5, speed: 0.8, glow: '', marker: '' },
-  summarizes:   { stroke: T.invisible,              dash: '6 4', width: 1.0, speed: 0.8, glow: '', marker: '' },
-  clips_to:     { stroke: `${C.memory}30`,          dash: '6 4', width: 1.0, speed: 0.8, glow: '', marker: '' },
-  references:   { stroke: `${T.ghost}25`,           dash: '6 4', width: 1.0, speed: 0.8, glow: '', marker: '' },
+  reply:        { stroke: 'rgba(150,150,150,0.42)', dash: '9 6',       width: 1.65, speed: 1.05, glow: 'rgba(150,150,150,0.07)', marker: '' },
+  branch:       { stroke: 'rgba(176,176,176,0.40)', dash: '7 5',       width: 1.45, speed: 0.95, glow: 'rgba(176,176,176,0.045)', marker: '' },
+  regeneration: { stroke: 'rgba(150,150,150,0.24)', dash: '2 6',       width: 1.10, speed: 0.9, glow: '', marker: '' },
+  summarizes:   { stroke: `${T.invisible}E6`,       dash: '1 5',       width: 0.90, speed: 0.85, glow: '', marker: '' },
+  clips_to:     { stroke: `${C.memory}4D`,          dash: '8 4',       width: 1.00, speed: 0.9, glow: '', marker: '' },
+  references:   { stroke: `${T.ghost}42`,           dash: '6 2 2 2',   width: 0.95, speed: 0.9, glow: '', marker: '' },
 };
 
 // Escape text for safe SVG interpolation

@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Zustand Selector Equality Functions
+// Dreamcatcher — Zustand Selector Equality Functions
 // Prevents unnecessary re-renders during streaming by comparing
 // only content-relevant fields instead of reference equality.
 // Source pattern: Clui CC's custom equality functions.

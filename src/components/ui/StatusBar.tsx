@@ -1,7 +1,7 @@
 'use client';
 
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Status Bar
+// Dreamcatcher — Status Bar
 // Compact bar at the bottom showing model, node count, session
 // phase, and estimated context tokens.
 // Source pattern: Clui CC's StatusBar.

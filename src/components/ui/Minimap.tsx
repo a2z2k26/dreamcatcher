@@ -1,7 +1,7 @@
 'use client';
 
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Minimap
+// Dreamcatcher — Minimap
 // Fixed-position overview of all nodes with viewport indicator.
 // Uses canvas for performance, subscribes to ui-store transforms.
 // ═══════════════════════════════════════════════════════════════
@@ -105,6 +105,7 @@ export function Minimap() {
 
   return (
     <div
+      className="dc-minimap"
       style={{
         position: 'fixed',
         bottom: 16,

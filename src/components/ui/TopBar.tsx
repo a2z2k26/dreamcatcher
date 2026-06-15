@@ -12,7 +12,7 @@ export function TopBar() {
           DC
         </span>
         <span style={{ fontSize: 11, color: T.ghost, fontFamily: 'Inconsolata, monospace' }}>
-          Dreamcacher
+          Dreamcatcher
         </span>
       </div>
       <div className="flex items-center gap-1.5">

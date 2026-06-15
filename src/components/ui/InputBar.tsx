@@ -2,7 +2,7 @@
 import { E, T, C, ACCENT } from '@/lib/theme';
 
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Input Bar
+// Dreamcatcher — Input Bar
 // Type a message, hit Enter. Creates user node, calls Claude,
 // streams response into AI node. The conversation loop.
 // ═══════════════════════════════════════════════════════════════

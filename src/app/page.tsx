@@ -8,19 +8,19 @@ import { ClipCreator } from '@/components/ui/ClipCreator';
 import { PathTrace } from '@/components/ui/PathTrace';
 import { TimelineView } from '@/components/ui/TimelineView';
 import { SessionPill } from '@/components/ui/SessionPill';
-import { ShortcutsHelp } from '@/components/ui/ShortcutsHelp';
+import { CockpitChrome } from '@/components/ui/CockpitChrome';
 import { ExportOverlay } from '@/components/ui/ExportOverlay';
 import { HoverCard } from '@/components/ui/HoverCard';
 import { ToastProvider } from '@/components/ui/Toast';
 import { SearchBar } from '@/components/ui/SearchBar';
-import { Minimap } from '@/components/ui/Minimap';
 import { SessionInit } from '@/components/SessionInit';
 
 export default function Home() {
   return (
-    <div className="relative w-screen h-screen" style={{ fontFamily: "'Inter', system-ui, -apple-system, sans-serif" }}>
+    <div className="relative w-screen h-screen" style={{ fontFamily: 'var(--font-ui)' }}>
       <SessionInit />
       <GraphCanvas />
+      <CockpitChrome />
       <FloatingUI />
       <SessionPill />
       <Inspector />
@@ -30,11 +30,9 @@ export default function Home() {
       <ClipCreator />
       <PathTrace />
       <TimelineView />
-      <ShortcutsHelp />
       <ExportOverlay />
       <HoverCard />
       <SearchBar />
-      <Minimap />
       <ToastProvider />
     </div>
   );

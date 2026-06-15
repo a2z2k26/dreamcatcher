@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Physics Bridge
+// Dreamcatcher — Physics Bridge
 // Main thread ↔ Worker communication for force simulation.
 // Applies position updates from the worker to the main thread's
 // bodies record, which the canvas reads for rendering.

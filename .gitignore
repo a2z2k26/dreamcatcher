@@ -12,6 +12,12 @@
 
 # testing
 /coverage
+/artifacts/greenland
+/.serena
+
+# local design references
+/Dreamcatcher Design/
+/Red Stripe Design System/
 
 # next.js
 /.next/

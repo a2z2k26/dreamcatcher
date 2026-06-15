@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Force-Directed Graph Simulation
+// Dreamcatcher — Force-Directed Graph Simulation
 // Ported from Unit's simulation.ts + Editor/Component.ts
 //
 // Rules:

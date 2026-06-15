@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Chat API Route
+// Dreamcatcher — Chat API Route
 // Uses OpenRouter for model access. Falls back to mock if no key.
 // Set OPENROUTER_API_KEY in .env.local
 // ═══════════════════════════════════════════════════════════════

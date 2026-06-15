@@ -11,6 +11,9 @@ const eslintConfig = defineConfig([
     ".next/**",
     "out/**",
     "build/**",
+    "coverage/**",
+    "Dreamcatcher Design/**",
+    "Red Stripe Design System/**",
     "next-env.d.ts",
   ]),
 ]);

@@ -1,21 +1,19 @@
 'use client';
 
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Graph Canvas
+// Dreamcatcher — Graph Canvas
 // SVG infinite canvas with Unit-authentic force physics.
 // Uses imperative rAF loop reading from Zustand directly
 // (not via React re-renders — performance critical).
 // ═══════════════════════════════════════════════════════════════
 
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useState } from 'react';
 import { useGraphStore } from '@/stores/graph-store';
 import { useUIStore } from '@/stores/ui-store';
 import { useMemoryStore } from '@/stores/memory-store';
+import { showToast } from '@/components/ui/Toast';
 import { createSimulation, tickSimulation, wakeSimulation, type SimulationState } from '@/lib/simulation';
 import { createPhysicsBridge, type PhysicsBridge } from '@/lib/physics-bridge';
-import {
-  E, T, ACCENT, ACCENT_18, ACCENT_30, CANVAS_BG, GRID_COLOR,
-} from '@/lib/theme';
 import { ContextMenu } from '@/components/ui/ContextMenu';
 import {
   createEffects, tickEffects,
@@ -25,7 +23,40 @@ import {
 } from '@/lib/effects';
 import { renderSVG as renderSVGImpl } from './render';
 
+type DragDropZone = 'learn' | 'remember' | null;
+
+type RadialMenuState = {
+  nodeId: string;
+  x: number;
+  y: number;
+} | null;
+
+type CanvasAnimTarget = {
+  x: number;
+  y: number;
+  startTime: number;
+  duration: number;
+};
+
+type CanvasPanMotion = {
+  x: number;
+  y: number;
+  fromX: number;
+  fromY: number;
+  startTime: number;
+  target: CanvasAnimTarget | null;
+};
+
+const DROP_ZONE_WIDTH = 144;
+
+function getDragDropZone(screenX: number, screenY: number, height: number): DragDropZone {
+  if (screenX < 0 || screenX >= DROP_ZONE_WIDTH || screenY < 0 || screenY > height) return null;
+  return screenY < height / 2 ? 'learn' : 'remember';
+}
+
 export function GraphCanvas() {
+  const [dragZone, setDragZone] = useState<DragDropZone>(null);
+  const [radialMenu, setRadialMenu] = useState<RadialMenuState>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const gridRef = useRef<HTMLCanvasElement>(null);
@@ -38,15 +69,23 @@ export function GraphCanvas() {
   const selDashRef = useRef<number>(0);
   const timeRef = useRef<number>(0); // total elapsed time for oscillations
   const panRef = useRef({ isPanning: false, panSX: 0, panSY: 0 });
+  const panMotionRef = useRef<CanvasPanMotion>({ x: 0, y: 0, fromX: 0, fromY: 0, startTime: 0, target: null });
   const dragRef = useRef({ dragSX: 0, dragSY: 0, dragMoved: false, shiftKey: false });
   const deadEndsRef = useRef<ReadonlySet<string>>(new Set());
   const branchHoverRef = useRef<{ nodeId: string; timer: ReturnType<typeof setTimeout> } | null>(null);
   const edgeCreatedAtRef = useRef<Map<string, number>>(new Map());
+  const longPressRef = useRef<{ nodeId: string; timer: ReturnType<typeof setTimeout> } | null>(null);
 
   // Subscribe to store changes — wake sim, add entrance effects, track streaming
   useEffect(() => {
-    let prevNodeIds = new Set(useGraphStore.getState().nodes.map(n => n.id));
-    let prevEdgeCount = useGraphStore.getState().edges.length;
+    const initialState = useGraphStore.getState();
+    for (const node of initialState.nodes) {
+      if (node.role === 'ai' && !node.text) {
+        setStreaming(fxRef.current, node.id, true);
+      }
+    }
+    let prevNodeIds = new Set(initialState.nodes.map(n => n.id));
+    let prevEdgeCount = initialState.edges.length;
     const unsub = useGraphStore.subscribe((state) => {
       const currentIds = new Set(state.nodes.map(n => n.id));
       // Detect new nodes → add entrance effects
@@ -79,11 +118,11 @@ export function GraphCanvas() {
 
   // ── Imperative render functions (read from store directly) ──
 
-  function drawGrid() {
+  function drawGrid(transformOverride?: { scale: number; panX: number; panY: number }) {
     const canvas = gridRef.current;
     const container = containerRef.current;
     if (!canvas || !container) return;
-    const { scale, panX, panY } = useUIStore.getState();
+    const { scale, panX, panY } = transformOverride ?? useUIStore.getState();
     const W = container.clientWidth;
     const H = container.clientHeight;
     canvas.width = W * devicePixelRatio;
@@ -94,12 +133,13 @@ export function GraphCanvas() {
     if (!ctx) return;
     ctx.clearRect(0, 0, W * devicePixelRatio, H * devicePixelRatio);
     ctx.scale(devicePixelRatio, devicePixelRatio);
-    const gap = 20 * scale;
+    const gap = 24 * scale;
     if (gap < 6) { ctx.setTransform(1, 0, 0, 1, 0, 0); return; }
     const ox = ((panX % gap) + gap) % gap;
     const oy = ((panY % gap) + gap) % gap;
-    const r = Math.max(0.6, 0.8 * scale);
-    ctx.fillStyle = GRID_COLOR;
+    const r = Math.max(0.72, 0.92 * scale);
+    ctx.fillStyle = '#252320';
+    ctx.globalAlpha = Math.min(0.78, 0.44 + scale * 0.22);
     for (let x = ox; x < W; x += gap) {
       for (let y = oy; y < H; y += gap) {
         ctx.beginPath();
@@ -107,6 +147,7 @@ export function GraphCanvas() {
         ctx.fill();
       }
     }
+    ctx.globalAlpha = 1;
     ctx.setTransform(1, 0, 0, 1, 0, 0);
   }
 
@@ -121,6 +162,42 @@ export function GraphCanvas() {
       effects: fxRef.current,
     });
   }
+
+  const clearLongPress = useCallback(() => {
+    if (longPressRef.current) {
+      clearTimeout(longPressRef.current.timer);
+      longPressRef.current = null;
+    }
+  }, []);
+
+  const getNodeScreenPosition = useCallback((nodeId: string) => {
+    const container = containerRef.current;
+    const body = useGraphStore.getState().bodies[nodeId];
+    if (!container || !body) return null;
+    const { scale, panX, panY } = useUIStore.getState();
+    const rect = container.getBoundingClientRect();
+    const x = rect.left + body.x * scale + panX;
+    const y = rect.top + body.y * scale + panY;
+    return {
+      x: Math.min(Math.max(x, 98), window.innerWidth - 98),
+      y: Math.min(Math.max(y, 98), window.innerHeight - 98),
+    };
+  }, []);
+
+  const openRadialMenu = useCallback((nodeId: string) => {
+    const pos = getNodeScreenPosition(nodeId);
+    const body = useGraphStore.getState().bodies[nodeId];
+    if (body) {
+      body.fx = undefined;
+      body.fy = undefined;
+      body.hx = 0;
+      body.hy = 0;
+    }
+    bridgeRef.current?.dragEnd(nodeId);
+    useUIStore.getState().setDragNode(null);
+    setDragZone(null);
+    if (pos) setRadialMenu({ nodeId, x: pos.x, y: pos.y });
+  }, [getNodeScreenPosition]);
 
   // ── Physics bridge — initialize on mount ──
   useEffect(() => {
@@ -149,7 +226,7 @@ export function GraphCanvas() {
     bridge.init(bodies, edges);
 
     return () => bridge.dispose();
-  }, []);
+  }, [clearLongPress]);
 
   // ── Sync new nodes/edges to the bridge ──
   useEffect(() => {
@@ -176,7 +253,7 @@ export function GraphCanvas() {
       }
     });
     return unsub;
-  }, []);
+  }, [clearLongPress, openRadialMenu]);
 
   // ── Dead-end detection — 1Hz interval ──
   useEffect(() => {
@@ -184,7 +261,7 @@ export function GraphCanvas() {
       deadEndsRef.current = useGraphStore.getState().getDeadEndBranches();
     }, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [clearLongPress]);
 
   // ── Keyboard shortcuts ──
   useEffect(() => {
@@ -351,24 +428,40 @@ export function GraphCanvas() {
       const { animTarget } = useUIStore.getState();
       let currentPanX = panX;
       let currentPanY = panY;
+      const panMotion = panMotionRef.current;
       if (animTarget) {
-        const elapsed = now - animTarget.startTime;
+        if (panMotion.target !== animTarget) {
+          panMotion.target = animTarget;
+          panMotion.fromX = Number.isFinite(panMotion.x) ? panMotion.x : panX;
+          panMotion.fromY = Number.isFinite(panMotion.y) ? panMotion.y : panY;
+          panMotion.startTime = now;
+        }
+        const elapsed = now - panMotion.startTime;
         const t = Math.min(elapsed / animTarget.duration, 1);
-        const ease = 1 - Math.pow(1 - t, 3); // easeOutCubic
+        const ease = 1 - Math.pow(1 - t, 4); // easeOutQuart for smoother retargeting
         const container = containerRef.current;
         if (container) {
           const cx = container.clientWidth / 2;
           const cy = container.clientHeight / 2;
           const targetPanX = cx - animTarget.x * scale;
           const targetPanY = cy - animTarget.y * scale;
-          currentPanX = panX + (targetPanX - panX) * ease;
-          currentPanY = panY + (targetPanY - panY) * ease;
+          currentPanX = panMotion.fromX + (targetPanX - panMotion.fromX) * ease;
+          currentPanY = panMotion.fromY + (targetPanY - panMotion.fromY) * ease;
           if (t >= 1) {
+            panMotion.target = null;
+            panMotion.x = targetPanX;
+            panMotion.y = targetPanY;
             useUIStore.getState().setTransform(scale, targetPanX, targetPanY);
             useUIStore.setState({ animTarget: null });
           }
         }
+      } else {
+        panMotion.target = null;
+        currentPanX = panX;
+        currentPanY = panY;
       }
+      panMotion.x = currentPanX;
+      panMotion.y = currentPanY;
 
       // Apply screen shake offset to world transform
       const shake = getShakeOffset(fxRef.current, timeRef.current);
@@ -376,10 +469,8 @@ export function GraphCanvas() {
       if (world) {
         world.style.transform = `translate(${currentPanX + shake.x}px,${currentPanY + shake.y}px) scale(${scale})`;
       }
-      if (frameCount < 10 || hasContent) {
-        drawGrid();
-        renderSVG();
-      }
+      drawGrid({ scale, panX: currentPanX, panY: currentPanY });
+      renderSVG();
       if (!moved && frameCount >= 10) simRef.current.running = false;
     }
     rafRef.current = requestAnimationFrame(loop);
@@ -403,9 +494,16 @@ export function GraphCanvas() {
       body.hy = ((e.clientY - rect.top - panY) / scale) - body.y;
       body.fx = body.x;
       body.fy = body.y;
+      setDragZone(null);
+      setRadialMenu(null);
       useUIStore.getState().setDragNode(id);
       dragRef.current = { dragSX: e.clientX, dragSY: e.clientY, dragMoved: false, shiftKey: e.shiftKey };
       bridgeRef.current?.dragStart(id, body.x, body.y);
+      clearLongPress();
+      longPressRef.current = {
+        nodeId: id,
+        timer: setTimeout(() => openRadialMenu(id), 560),
+      };
       wakeSimulation(simRef.current);
       e.preventDefault();
       return;
@@ -413,7 +511,7 @@ export function GraphCanvas() {
 
     const { panX, panY } = useUIStore.getState();
     panRef.current = { isPanning: true, panSX: e.clientX - panX, panSY: e.clientY - panY };
-  }, []);
+  }, [clearLongPress, openRadialMenu]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     const container = containerRef.current;
@@ -433,10 +531,12 @@ export function GraphCanvas() {
       bridgeRef.current?.dragMove(dragNodeId, body.fx, body.fy);
       // Track screen position for hotspots
       dragScreenRef.current = { x: e.clientX, y: e.clientY };
+      setDragZone(getDragDropZone(e.clientX - rect.left, e.clientY - rect.top, rect.height));
       // Drag trail effect
       addDragTrail(fxRef.current, body.x, body.y);
       if (Math.abs(e.clientX - dragRef.current.dragSX) > 3 || Math.abs(e.clientY - dragRef.current.dragSY) > 3) {
         dragRef.current.dragMoved = true;
+        clearLongPress();
       }
       wakeSimulation(simRef.current);
       return;
@@ -487,9 +587,10 @@ export function GraphCanvas() {
         useUIStore.getState().setBranchPreview(null);
       }
     }
-  }, []);
+  }, [clearLongPress]);
 
   const handleMouseUp = useCallback(() => {
+    clearLongPress();
     const { dragNodeId } = useUIStore.getState();
     if (dragNodeId) {
       const { bodies } = useGraphStore.getState();
@@ -503,12 +604,12 @@ export function GraphCanvas() {
         const rect = container.getBoundingClientRect();
         const sx = dragScreenRef.current.x - rect.left;
         const sy = dragScreenRef.current.y - rect.top;
-        const ZONE = 80; // hotspot zone width in px
+        const dropZone = getDragDropZone(sx, sy, rect.height);
 
-        if (sx < ZONE && sy < rect.height / 2) {
+        if (dropZone === 'learn') {
           // Left edge, top half = Learn zone
           useUIStore.getState().openLearning(dragNodeId);
-        } else if (sx < ZONE && sy >= rect.height / 2) {
+        } else if (dropZone === 'remember') {
           // Left edge, bottom half = Remember zone
           const node = useGraphStore.getState().nodes.find(n => n.id === dragNodeId);
           if (node) {
@@ -539,13 +640,14 @@ export function GraphCanvas() {
         useGraphStore.getState().setActiveNode(dragNodeId);
       }
       useUIStore.getState().setDragNode(null);
+      setDragZone(null);
       wakeSimulation(simRef.current);
       return;
     }
     panRef.current.isPanning = false;
-  }, []);
+  }, [clearLongPress]);
 
-  const handleWheel = useCallback((e: React.WheelEvent) => {
+  const handleWheel = useCallback((e: WheelEvent) => {
     e.preventDefault();
     const { scale, panX, panY } = useUIStore.getState();
     const d = e.deltaY > 0 ? 0.94 : 1.06;
@@ -557,6 +659,13 @@ export function GraphCanvas() {
     useUIStore.getState().setTransform(ns, mx - (mx - panX) * (ns / scale), my - (my - panY) * (ns / scale));
     simRef.current.running = true;
   }, []);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    return () => container.removeEventListener('wheel', handleWheel);
+  }, [handleWheel]);
 
   const handleClick = useCallback((e: React.MouseEvent) => {
     // Add ripple at click position (in world coordinates)
@@ -586,7 +695,7 @@ export function GraphCanvas() {
     useUIStore.getState().openContextMenu(id, e.clientX, e.clientY);
   }, []);
 
-  // ── Touch long-press for context menu ──
+  // ── Touch long-press for radial actions ──
   const touchRef = useRef<{ timer: ReturnType<typeof setTimeout>; startX: number; startY: number; nodeId: string } | null>(null);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
@@ -596,11 +705,11 @@ export function GraphCanvas() {
     if (!nodeEl) return;
     const id = nodeEl.getAttribute('data-id')!;
     const timer = setTimeout(() => {
-      useUIStore.getState().openContextMenu(id, touch.clientX, touch.clientY);
+      openRadialMenu(id);
       touchRef.current = null;
     }, 500);
     touchRef.current = { timer, startX: touch.clientX, startY: touch.clientY, nodeId: id };
-  }, []);
+  }, [openRadialMenu]);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (!touchRef.current) return;
@@ -633,21 +742,19 @@ export function GraphCanvas() {
   return (
     <div
       ref={containerRef}
-      className="absolute inset-0 overflow-hidden"
-      style={{ background: CANVAS_BG, cursor: 'crosshair' }}
+      className="dc-observatory-canvas absolute inset-0 overflow-hidden"
+      style={{ cursor: 'crosshair' }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
-      onWheel={handleWheel}
       onClick={handleClick}
       onContextMenu={handleContextMenu}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+      <div className="dc-observatory-ember" />
       <canvas ref={gridRef} className="absolute inset-0 pointer-events-none" />
-      {/* Vignette removed per Andrew's feedback — clean canvas with dot grid only */}
-      {/* Noise removed per Andrew's feedback — dot grid + vignette is the canvas treatment */}
       <div
         ref={worldRef}
         className="absolute top-0 left-0"
@@ -660,49 +767,18 @@ export function GraphCanvas() {
           height="1"
         />
       </div>
+      <div className="dc-canvas-vignette" />
+      <div className="dc-canvas-grain" />
       {/* Canvas Hotspots — visible when dragging */}
-      {dragNodeId && (
-        <>
-          {/* Learn zone — left edge, top half */}
-          <div
-            className="pointer-events-none"
-            style={{
-              position: 'absolute', left: 0, top: 0, bottom: '50%', width: 80,
-              background: `linear-gradient(to right, ${ACCENT_18}, transparent)`,
-              borderRight: `1px solid ${ACCENT_30}`,
-              borderBottom: `1px solid ${E[5]}`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              transition: 'opacity 0.2s',
-            }}
-          >
-            <div style={{
-              writingMode: 'vertical-rl' as const, textOrientation: 'mixed' as const,
-              fontSize: 10, fontWeight: 600, letterSpacing: 2,
-              textTransform: 'uppercase' as const, color: `${ACCENT}60`,
-            }}>
-              LEARN
-            </div>
-          </div>
-          {/* Remember zone — left edge, bottom half */}
-          <div
-            className="pointer-events-none"
-            style={{
-              position: 'absolute', left: 0, top: '50%', bottom: 0, width: 80,
-              background: `linear-gradient(to right, ${E[3]}80, transparent)`,
-              borderRight: `1px solid ${E[6]}`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              transition: 'opacity 0.2s',
-            }}
-          >
-            <div style={{
-              writingMode: 'vertical-rl' as const, textOrientation: 'mixed' as const,
-              fontSize: 10, fontWeight: 600, letterSpacing: 2,
-              textTransform: 'uppercase' as const, color: T.ghost,
-            }}>
-              REMEMBER
-            </div>
-          </div>
-        </>
+      {dragNodeId && <DragDropZones activeZone={dragZone} />}
+
+      {radialMenu && (
+        <RadialNodeActions
+          nodeId={radialMenu.nodeId}
+          x={radialMenu.x}
+          y={radialMenu.y}
+          onClose={() => setRadialMenu(null)}
+        />
       )}
 
       {contextMenu && (
@@ -714,5 +790,212 @@ export function GraphCanvas() {
         />
       )}
     </div>
+  );
+}
+
+function DragDropZones({ activeZone }: { activeZone: DragDropZone }) {
+  return (
+    <div className="dc-drop-zones" aria-hidden="true">
+      <DragDropZonePanel kind="learn" active={activeZone === 'learn'} />
+      <div className="dc-drop-zone-divider" />
+      <DragDropZonePanel kind="remember" active={activeZone === 'remember'} />
+    </div>
+  );
+}
+
+function DragDropZonePanel({
+  kind,
+  active,
+}: {
+  kind: 'learn' | 'remember';
+  active: boolean;
+}) {
+  return (
+    <div className="dc-drop-zone" data-kind={kind} data-active={active ? 'true' : 'false'} title={kind === 'learn' ? 'Learn' : 'Remember'}>
+      <div className="dc-drop-zone-rail" />
+      <div className="dc-drop-zone-field">
+        <span />
+        <span />
+        <span />
+      </div>
+      <div className="dc-drop-zone-vertical-label">{kind === 'learn' ? 'EDUCATE' : 'REMEMBER'}</div>
+    </div>
+  );
+}
+
+function RadialNodeActions({
+  nodeId,
+  x,
+  y,
+  onClose,
+}: {
+  nodeId: string;
+  x: number;
+  y: number;
+  onClose: () => void;
+}) {
+  const node = useGraphStore(s => s.nodes.find(n => n.id === nodeId));
+  const actions = [
+    { id: 'branch', label: 'Branch', angle: -90 },
+    { id: 'learn', label: 'Learn', angle: -30 },
+    { id: 'save', label: 'Save', angle: 30 },
+    { id: 'inspect', label: 'Inspect', angle: 90 },
+    { id: 'copy', label: 'Copy', angle: 150 },
+    { id: 'more', label: 'More', angle: 210 },
+  ] as const;
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [onClose]);
+
+  const saveMemory = useCallback(() => {
+    if (!node) return;
+    const now = Date.now();
+    const path = useGraphStore.getState().getAncestralPath(nodeId);
+    const contextSummary = path.slice(-3).map(n => `${n.role}: ${n.text.slice(0, 100)}`).join('\n');
+    useMemoryStore.getState().addMemory({
+      id: `mem-${now}`,
+      name: node.label || node.text.slice(0, 40),
+      content: node.text,
+      context: contextSummary,
+      tags: [],
+      sourceNodeId: nodeId,
+      sourcePathNodeIds: path.map(n => n.id),
+      createdAt: now,
+      type: 'node' as const,
+    });
+    showToast('Saved to memory');
+  }, [node, nodeId]);
+
+  const runAction = (action: typeof actions[number]['id']) => {
+    if (!node) return;
+    const ui = useUIStore.getState();
+    const graph = useGraphStore.getState();
+    if (action === 'branch') {
+      graph.setActiveNode(nodeId);
+      ui.setSelectedNode(nodeId);
+      requestAnimationFrame(() => document.querySelector<HTMLInputElement>('.dc-input')?.focus());
+    }
+    if (action === 'learn') {
+      ui.openLearning(nodeId);
+    }
+    if (action === 'save') {
+      saveMemory();
+    }
+    if (action === 'inspect') {
+      ui.setSelectedNode(nodeId);
+    }
+    if (action === 'copy') {
+      void navigator.clipboard?.writeText(node.text).catch(() => undefined);
+      showToast('Copied to clipboard');
+    }
+    if (action === 'more') {
+      ui.openContextMenu(nodeId, x + 28, y - 28);
+    }
+    onClose();
+  };
+
+  if (!node) return null;
+
+  return (
+    <div className="dc-radial-overlay" onClick={onClose} onContextMenu={event => { event.preventDefault(); onClose(); }}>
+      <div className="dc-radial-center" style={{ left: x, top: y }}>
+        <span className="dc-radial-center-dot" />
+        <span className="dc-radial-center-label">{node.role}</span>
+      </div>
+      {actions.map((action, index) => {
+        const radians = (action.angle * Math.PI) / 180;
+        const radius = 78;
+        const buttonX = x + Math.cos(radians) * radius;
+        const buttonY = y + Math.sin(radians) * radius;
+        return (
+          <button
+            className="dc-radial-item"
+            data-action={action.id}
+            key={action.id}
+            type="button"
+            onClick={event => {
+              event.stopPropagation();
+              runAction(action.id);
+            }}
+            style={{
+              left: buttonX,
+              top: buttonY,
+              animationDelay: `${index * 18}ms`,
+            }}
+          >
+            <RadialIcon name={action.id} />
+            <span>{action.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function RadialIcon({ name }: { name: 'branch' | 'learn' | 'save' | 'inspect' | 'copy' | 'more' }) {
+  const common = {
+    viewBox: '0 0 24 24',
+    width: 15,
+    height: 15,
+    fill: 'none',
+    stroke: 'currentColor',
+    strokeWidth: 1.7,
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+    'aria-hidden': true,
+  };
+  if (name === 'branch') {
+    return (
+      <svg {...common}>
+        <path d="M6 4v5a5 5 0 0 0 5 5h7" />
+        <path d="M14 10l4 4-4 4" />
+        <path d="M6 20v-4" />
+      </svg>
+    );
+  }
+  if (name === 'learn') {
+    return (
+      <svg {...common}>
+        <path d="M4 5h6a3 3 0 0 1 3 3v11a4 4 0 0 0-4-3H4z" />
+        <path d="M20 5h-6a3 3 0 0 0-3 3v11a4 4 0 0 1 4-3h5z" />
+      </svg>
+    );
+  }
+  if (name === 'save') {
+    return (
+      <svg {...common}>
+        <path d="M12 3a6 6 0 0 1 6 6c0 2-1 3.3-2.2 4.5-.8.8-1.3 1.5-1.3 2.5v1.2h-5V16c0-1-.5-1.7-1.3-2.5C7 12.3 6 11 6 9a6 6 0 0 1 6-6z" />
+        <path d="M9 21h6" />
+      </svg>
+    );
+  }
+  if (name === 'inspect') {
+    return (
+      <svg {...common}>
+        <circle cx="11" cy="11" r="6" />
+        <path d="M16 16l4 4" />
+        <path d="M11 8v3l2 2" />
+      </svg>
+    );
+  }
+  if (name === 'copy') {
+    return (
+      <svg {...common}>
+        <rect x="8" y="8" width="10" height="10" rx="2" />
+        <path d="M6 14H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v1" />
+      </svg>
+    );
+  }
+  return (
+    <svg {...common}>
+      <circle cx="5" cy="12" r="1.4" />
+      <circle cx="12" cy="12" r="1.4" />
+      <circle cx="19" cy="12" r="1.4" />
+    </svg>
   );
 }

@@ -1,7 +1,7 @@
 'use client';
 
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Tool Call Card
+// Dreamcatcher — Tool Call Card
 // Compact, expandable card showing a tool call's name, input,
 // and output. Source pattern: Clui CC's ToolResultViews.
 // ═══════════════════════════════════════════════════════════════

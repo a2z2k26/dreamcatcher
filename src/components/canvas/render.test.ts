@@ -32,10 +32,10 @@ function setNodes(nodes: unknown[], edges: unknown[] = []) {
   useGraphStore.setState({
     // @ts-expect-error — bypass strict typing in tests for fixture brevity
     nodes,
-    // @ts-expect-error
+    // @ts-expect-error - test fixture edges are intentionally loose
     edges,
     bodies: Object.fromEntries(
-      // @ts-expect-error
+      // @ts-expect-error - test fixture nodes are intentionally loose
       nodes.map(n => [n.id, { x: 100, y: 100, vx: 0, vy: 0, ax: 0, ay: 0, fx: undefined, fy: undefined, hx: 0, hy: 0, r: 24 }]),
     ),
   });
@@ -78,8 +78,13 @@ describe('renderSVG', () => {
     const ctx = makeCtx();
     renderSVG(ctx);
     const html = (ctx.svg as unknown as FakeSVG).innerHTML;
-    expect(html).toContain('Start a conversation');
-    expect(html).toContain('>DC<');
+    expect(html).toContain('data-empty-state="dreamcatcher-seed"');
+    expect(html).toContain('data-empty-seed-core="true"');
+    expect(html).toContain('data-empty-seed-trace="true"');
+    expect(html).toContain('data-empty-title="true"');
+    expect(html).toContain('DREAMCATCHER');
+    expect(html).not.toContain('Begin a thread');
+    expect(html).not.toContain('a seed becomes a map');
   });
 
   it('renders nodes when graph has content', () => {
@@ -96,7 +101,7 @@ describe('renderSVG', () => {
     expect(html).toContain('data-id="u1"');
     expect(html).toContain('data-id="a1"');
     // Empty state should NOT appear once we have nodes
-    expect(html).not.toContain('Start a conversation');
+    expect(html).not.toContain('DREAMCATCHER');
   });
 
   it('escapes hostile node labels at LOD ≥ 2', () => {

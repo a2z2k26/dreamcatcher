@@ -56,6 +56,7 @@ interface UIState {
 
   // Timeline view
   timelineOpen: boolean;
+  timelineScrubTime: number | null;
 
   // Search
   searchQuery: string;
@@ -84,6 +85,7 @@ interface UIState {
   exitPathTrace: () => void;
   setBranchPreview: (preview: UIState['branchPreview']) => void;
   toggleTimeline: () => void;
+  setTimelineScrubTime: (time: number | null) => void;
   setSearchQuery: (query: string) => void;
   setSearchResults: (results: readonly string[]) => void;
   setSearchIndex: (index: number) => void;
@@ -108,6 +110,7 @@ export const useUIStore = create<UIState>((set, get) => ({
   pathTrace: null,
   branchPreview: null,
   timelineOpen: false,
+  timelineScrubTime: null,
   searchQuery: '',
   searchResults: [],
   searchIndex: 0,
@@ -153,7 +156,8 @@ export const useUIStore = create<UIState>((set, get) => ({
   },
   exitPathTrace: () => set({ pathTrace: null }),
   setBranchPreview: (preview) => set({ branchPreview: preview }),
-  toggleTimeline: () => set(s => ({ timelineOpen: !s.timelineOpen })),
+  toggleTimeline: () => set(s => ({ timelineOpen: !s.timelineOpen, timelineScrubTime: s.timelineOpen ? null : s.timelineScrubTime })),
+  setTimelineScrubTime: (time) => set({ timelineScrubTime: time }),
   setSearchQuery: (query) => set({ searchQuery: query }),
   setSearchResults: (results) => set({ searchResults: results }),
   setSearchIndex: (index) => set({ searchIndex: index }),

@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Context Builder
+// Dreamcatcher — Context Builder
 // Walks the graph from root to the active node and assembles
 // the messages[] array for the Claude API call.
 // Enhanced with sibling branch context, clip markers, and
@@ -18,7 +18,7 @@ function estimateTokens(text: string): number {
   return Math.ceil(text.length / 4);
 }
 
-const BASE_SYSTEM_PROMPT = `You are a helpful AI assistant in Dreamcacher, a spatial conversation interface. The user is having a branching conversation with you on an infinite canvas. Each of your responses becomes a node in a visual graph. Be concise and substantive — your responses will be displayed as nodes, so clarity matters more than length.`;
+const BASE_SYSTEM_PROMPT = `You are a helpful AI assistant in Dreamcatcher, a spatial conversation interface. The user is having a branching conversation with you on an infinite canvas. Each of your responses becomes a node in a visual graph. Be concise and substantive — your responses will be displayed as nodes, so clarity matters more than length.`;
 
 const TOKEN_BUDGET = 800_000; // Leave headroom from 1M context window
 const SYSTEM_BUDGET = 5_000;

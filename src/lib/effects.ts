@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Visual Effects System
+// Dreamcatcher — Visual Effects System
 // Manages transient visual effects: ripples, entrances, pulses.
 // All effects are tick-based and self-cleaning.
 // ═══════════════════════════════════════════════════════════════

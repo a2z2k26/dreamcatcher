@@ -1,7 +1,7 @@
 'use client';
 
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Floating UI Layer
+// Dreamcatcher — Floating UI Layer
 // All chrome floats on the canvas — no opaque bars.
 // Glass-effect panels that feel part of the environment.
 // ═══════════════════════════════════════════════════════════════
@@ -9,99 +9,16 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useGraphStore } from '@/stores/graph-store';
 import { useUIStore } from '@/stores/ui-store';
-import { MODELS, getModel } from '@/lib/models';
 import { buildMessages, buildLabel } from '@/lib/context-builder';
-import { E, T, C, ACCENT, glass } from '@/lib/theme';
+import { T, C, ACCENT, FF, R, heavyGlass, lightGlass } from '@/lib/theme';
 
-// Warm hover highlight
-const hoverBg = `${E[7]}60`;
+const subtleHoverBg = 'rgba(200, 200, 200, 0.04)';
 
 export function FloatingUI() {
   return (
     <div className="pointer-events-none" style={{ position: 'absolute', inset: 0, zIndex: 50 }}>
-      <TopControls />
       <CanvasTools />
       <FloatingInput />
-    </div>
-  );
-}
-
-// ── Top: Right-side controls (model selector + timeline toggle) ──
-// Session management moved to SessionPill component
-function TopControls() {
-  const [modelOpen, setModelOpen] = useState(false);
-  const selectedModelId = useUIStore(s => s.selectedModelId);
-  const setSelectedModel = useUIStore(s => s.setSelectedModel);
-  const model = getModel(selectedModelId);
-
-  return (
-    <div className="pointer-events-auto" style={{
-      position: 'absolute', top: 12, right: 12,
-      display: 'flex', alignItems: 'center', gap: 6,
-    }}>
-      {/* Timeline toggle */}
-      <button
-        onClick={() => useUIStore.getState().toggleTimeline()}
-        style={{
-          ...glass, borderRadius: 8, padding: '8px 12px',
-          display: 'flex', alignItems: 'center', gap: 8,
-          cursor: 'pointer', color: T.ghost, fontSize: 11,
-        }}
-        title="Toggle timeline (L)"
-      >
-        <svg viewBox="0 0 12 12" width={14} height={14} fill="none" stroke="currentColor" strokeWidth={1.2}>
-          <path d="M2 3h8M2 6h6M2 9h4" />
-        </svg>
-      </button>
-
-      {/* Model Selector */}
-      <div style={{ position: 'relative' }}>
-        <button
-          onClick={() => setModelOpen(!modelOpen)}
-          style={{
-            ...glass, borderRadius: 8, padding: '8px 16px',
-            display: 'flex', alignItems: 'center', gap: 8,
-            cursor: 'pointer', color: T.tertiary, fontSize: 13,
-          }}
-        >
-          <svg viewBox="0 0 24 24" width={18} height={18} fill={model.color}>
-            <path d={model.icon} />
-          </svg>
-          <span>{model.name}</span>
-          <svg viewBox="0 0 10 6" width={8} height={5} fill="none" stroke={T.ghost} strokeWidth={1.5}>
-            <path d="M1 1l4 4 4-4" />
-          </svg>
-        </button>
-
-        {modelOpen && (
-          <div style={{
-            ...glass, borderRadius: 8, padding: 4,
-            position: 'absolute', top: '100%', right: 0, marginTop: 4,
-            minWidth: 200, zIndex: 100,
-          }}>
-            {MODELS.map(m => (
-              <div
-                key={m.id}
-                onClick={() => { setSelectedModel(m.id); setModelOpen(false); }}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  padding: '10px 14px', borderRadius: 6, cursor: 'pointer',
-                  fontSize: 13, color: m.id === selectedModelId ? T.primary : T.tertiary,
-                  background: m.id === selectedModelId ? hoverBg : 'transparent',
-                }}
-                onMouseEnter={e => e.currentTarget.style.background = hoverBg}
-                onMouseLeave={e => e.currentTarget.style.background = m.id === selectedModelId ? hoverBg : 'transparent'}
-              >
-                <svg viewBox="0 0 24 24" width={16} height={16} fill={m.color}>
-                  <path d={m.icon} />
-                </svg>
-                <span>{m.name}</span>
-                <span style={{ marginLeft: 'auto', fontSize: 10, color: T.dim }}>{m.provider}</span>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
     </div>
   );
 }
@@ -109,9 +26,12 @@ function TopControls() {
 // ── Canvas Tools: floating toolbar ──
 function CanvasTools() {
   const selectedNodeId = useUIStore(s => s.selectedNodeId);
+  const inspectorOpen = useUIStore(s => s.inspectorOpen);
+  const pathTrace = useUIStore(s => s.pathTrace);
   const setActiveNode = useGraphStore(s => s.setActiveNode);
 
-  if (!selectedNodeId) return null;
+  if (!selectedNodeId || inspectorOpen || pathTrace) return null;
+  const shift = 0;
 
   const handleBranch = () => {
     setActiveNode(selectedNodeId);
@@ -120,13 +40,13 @@ function CanvasTools() {
   };
 
   return (
-    <div className="pointer-events-auto" style={{
-      position: 'absolute', bottom: 80, left: '50%', transform: 'translateX(-50%)',
+    <div className="pointer-events-auto dc-canvas-tools" style={{
+      position: 'absolute', bottom: 104, left: '50%', transform: `translateX(calc(-50% + ${shift}px))`,
       display: 'flex', gap: 4,
-      ...glass, borderRadius: 10, padding: 4,
+      transition: 'transform 250ms cubic-bezier(0.16, 1, 0.3, 1)',
+      ...lightGlass, borderRadius: R.toolPill, padding: 4,
     }}>
       <ToolBtn icon="M3.5 1.5v4.5a2 2 0 002 2H10" label="Branch" color={T.secondary} onClick={handleBranch} />
-      <ToolBtn icon="M3.5 3.5h6.5v6.5h-6.5z M2 8.5V2.5a1 1 0 011-1h6" label="Clip" color={T.tertiary} onClick={() => {}} />
       <ToolBtn icon="M6 4v2.5h2 M6 6a4 4 0 100 0" label="Inspect" color={T.subtle} onClick={() => {
         useUIStore.getState().setSelectedNode(selectedNodeId);
       }} />
@@ -137,15 +57,16 @@ function CanvasTools() {
 function ToolBtn({ icon, label, color, onClick }: { icon: string; label: string; color: string; onClick: () => void }) {
   return (
     <button
+      type="button"
       onClick={onClick}
       title={label}
       style={{
         display: 'flex', alignItems: 'center', gap: 8,
         padding: '8px 14px', borderRadius: 6,
         border: 'none', background: 'transparent',
-        color, cursor: 'pointer', fontSize: 12, fontFamily: 'inherit', fontWeight: 500,
+        color, cursor: 'pointer', fontSize: 11, fontFamily: FF.sans, fontWeight: 650,
       }}
-      onMouseEnter={e => e.currentTarget.style.background = hoverBg}
+      onMouseEnter={e => e.currentTarget.style.background = subtleHoverBg}
       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
     >
       <svg viewBox="0 0 12 12" width={16} height={16} fill="none" stroke="currentColor" strokeWidth={1.5}>
@@ -172,11 +93,13 @@ function FloatingInput() {
   const addNode = useGraphStore(s => s.addNode);
   const addEdge = useGraphStore(s => s.addEdge);
   const updateNodeText = useGraphStore(s => s.updateNodeText);
-  const updateNodeMetadata = useGraphStore(s => s.updateNodeMetadata);
   const setActiveNode = useGraphStore(s => s.setActiveNode);
   const getAncestralPath = useGraphStore(s => s.getAncestralPath);
   const getChildCount = useGraphStore(s => s.getChildCount);
   const selectedModelId = useUIStore(s => s.selectedModelId);
+  const inspectorOpen = useUIStore(s => s.inspectorOpen);
+  const pathTrace = useUIStore(s => s.pathTrace);
+  const timelineOpen = useUIStore(s => s.timelineOpen);
 
   const isBranching = activeNodeId ? getChildCount(activeNodeId) > 0 : false;
 
@@ -331,87 +254,173 @@ function FloatingInput() {
     streamedTextRef.current = '';
     setStreaming(false);
     inputRef.current?.focus();
-  }, [input, streaming, activeNodeId, selectedModelId, addNode, addEdge, updateNodeText, updateNodeMetadata, setActiveNode, getAncestralPath, getChildCount]);
+  }, [input, streaming, activeNodeId, selectedModelId, addNode, addEdge, updateNodeText, setActiveNode, getAncestralPath, getChildCount]);
 
-  const model = getModel(selectedModelId);
+  const rightInset = inspectorOpen ? 312 : 0;
+
+  if (pathTrace) return null;
 
   return (
-    <div className="pointer-events-auto" style={{
+    <div className="pointer-events-auto dc-floating-input" data-inspector-open={inspectorOpen ? 'true' : 'false'} style={{
       position: 'absolute',
-      bottom: 20,
-      left: '50%',
-      transform: 'translateX(-50%)',
-      transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-      width: focused || input ? 560 : 420,
+      left: 0,
+      right: rightInset,
+      bottom: timelineOpen ? 8 : 24,
+      height: 78,
+      zIndex: 71,
+      display: 'flex',
+      alignItems: 'center',
+      gap: 14,
+      padding: '0 20px',
+      pointerEvents: 'none',
+      background: 'linear-gradient(180deg, rgba(10,8,7,0) 0%, rgba(8,7,6,0.82) 62%)',
+      transform: 'translateY(0)',
+      transition: 'right 250ms cubic-bezier(0.16, 1, 0.3, 1), transform 250ms cubic-bezier(0.16, 1, 0.3, 1)',
     }}>
-      <div style={{
-        ...glass,
-        borderRadius: 12,
-        padding: focused ? '12px 20px' : '10px 16px',
-        display: 'flex', alignItems: 'center', gap: 12,
-        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
-        ...(focused ? {
-          borderTopColor: 'rgba(221,0,0,0.25)',
-          borderLeftColor: 'rgba(221,0,0,0.12)',
-          borderRightColor: 'rgba(221,0,0,0.12)',
-          borderBottomColor: 'rgba(221,0,0,0.08)',
-          boxShadow: [
-            '0 0 0 2px rgba(221,0,0,0.06)',
-            '0 0 16px -4px rgba(221,0,0,0.10)',
-            '0 4px 16px -2px rgba(0,0,0,0.5)',
-            '0 1px 3px 0 rgba(0,0,0,0.3)',
-          ].join(', '),
-        } : {}),
-      }}>
-        {/* Model indicator */}
-        <svg viewBox="0 0 24 24" width={18} height={18} fill={model.color} style={{ flexShrink: 0, opacity: 0.8 }}>
-          <path d={model.icon} />
-        </svg>
-
-        {isBranching && (
-          <span style={{ fontSize: 10, color: C.branch, fontWeight: 600, letterSpacing: 0.5, flexShrink: 0, fontFamily: "'Inconsolata', monospace" }}>
-            BRANCH
-          </span>
-        )}
-
-        <input
-          ref={inputRef}
-          className="dc-input"
+      <div style={{ flex: 1, maxWidth: 760, margin: '0 auto', pointerEvents: 'auto' }}>
+        <div
+          className="dc-input-capsule"
+          data-focused={focused ? 'true' : 'false'}
           style={{
-            flex: 1, background: 'transparent', border: 'none', outline: 'none',
-            fontSize: focused ? 14 : 13,
-            color: T.secondary,
-            transition: 'font-size 0.2s',
-          }}
-          placeholder={streaming ? 'Thinking...' : isBranching ? 'Branch from this point...' : 'Ask anything...'}
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => { if (e.key === 'Enter') sendMessage(); }}
-          onFocus={() => setFocused(true)}
-          onBlur={() => { if (!input) setFocused(false); }}
-          disabled={streaming}
-        />
-
-        {/* Send indicator / Stop button */}
-        {streaming ? (
-          <button
-            onClick={handleStop}
+          ...heavyGlass,
+          background: 'rgba(22,20,18,0.82)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          borderRadius: 14,
+          minHeight: 48,
+          padding: '0 8px 0 18px',
+          display: 'flex', alignItems: 'center', gap: 12,
+          fontFamily: FF.sans,
+          transition: 'all 260ms cubic-bezier(0.2, 0.9, 0.3, 1)',
+          position: 'relative',
+          borderTopColor: focused ? 'rgba(221,0,0,0.60)' : 'rgba(255,255,255,0.08)',
+          borderLeftColor: focused ? 'rgba(221,0,0,0.42)' : 'rgba(255,255,255,0.05)',
+          borderRightColor: focused ? 'rgba(221,0,0,0.34)' : 'rgba(255,255,255,0.045)',
+          borderBottomColor: focused ? 'rgba(221,0,0,0.30)' : 'rgba(0,0,0,0.42)',
+          boxShadow: focused
+            ? [
+                '0 0 0 1px rgba(221,0,0,0.24)',
+                '0 0 18px rgba(221,0,0,0.18)',
+                '0 8px 24px -4px rgba(0,0,0,0.7)',
+                'inset 0 1px 0 rgba(255,255,255,0.055)',
+                'inset 0 -1px 0 rgba(0,0,0,0.24)',
+              ].join(', ')
+            : [
+                '0 8px 24px -4px rgba(0,0,0,0.7)',
+                '0 2px 8px -1px rgba(0,0,0,0.4)',
+                'inset 0 1px 0 rgba(255,255,255,0.04)',
+              ].join(', '),
+        }}
+        >
+          {isBranching && (
+            <span style={{ fontSize: 10, color: C.branch, fontWeight: 700, letterSpacing: 0.5, flexShrink: 0, fontFamily: FF.mono }}>
+              BRANCH
+            </span>
+          )}
+          <span
+            aria-hidden="true"
             style={{
-              background: 'none', border: 'none', cursor: 'pointer',
-              fontSize: 11, color: ACCENT, fontFamily: "'Inconsolata', monospace",
-              padding: '2px 6px',
+              width: 8,
+              height: 8,
+              borderRadius: 9999,
+              background: '#E08542',
+              boxShadow: '0 0 9px rgba(224,133,66,0.56)',
+              flex: '0 0 auto',
             }}
-          >
-            Stop
-          </button>
-        ) : (
-          <span style={{
-            fontSize: 11, color: T.dim,
-            fontFamily: "'Inconsolata', monospace",
-          }}>
-            ↵
-          </span>
-        )}
+          />
+
+          <input
+            ref={inputRef}
+            className="dc-input"
+            style={{
+              flex: 1, background: 'transparent', border: 'none', outline: 'none',
+              height: 42,
+              minWidth: 0,
+              padding: 0,
+              fontSize: 14,
+              fontFamily: FF.sans,
+              fontWeight: 500,
+              color: T.primary,
+              transition: 'color 120ms ease',
+            }}
+            placeholder={streaming ? 'Thinking...' : isBranching ? 'Branch from this point...' : 'Ask anything...'}
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') sendMessage(); }}
+            onFocus={() => setFocused(true)}
+            onBlur={() => { if (!input) setFocused(false); }}
+            disabled={streaming}
+          />
+
+          {/* Send indicator / Stop button */}
+          {streaming ? (
+            <button
+              type="button"
+              onClick={handleStop}
+              style={{
+                width: 30,
+                height: 30,
+                minWidth: 30,
+                borderRadius: 15,
+                background: ACCENT,
+                border: 'none',
+                cursor: 'pointer',
+                color: '#fff',
+                padding: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 0 0 0.5px rgba(255,255,255,0.12), 0 2px 6px rgba(221,0,0,0.3)',
+              }}
+              title="Stop response"
+            >
+              <svg viewBox="0 0 12 12" width={10} height={10} fill="currentColor">
+                <rect x={3} y={3} width={6} height={6} rx={1} />
+              </svg>
+            </button>
+          ) : input.trim() ? (
+            <button
+              type="button"
+              onClick={sendMessage}
+              style={{
+                width: 30,
+                height: 30,
+                minWidth: 30,
+                borderRadius: 15,
+                background: ACCENT,
+                border: 'none',
+                color: '#0A0908',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                boxShadow: '0 0 14px rgba(221,0,0,0.5)',
+              }}
+              title="Send message"
+            >
+              <svg viewBox="0 0 12 12" width={13} height={13} fill="none" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" strokeLinejoin="round">
+                <path d="M6 10V2" />
+                <path d="M2.5 5.5 6 2l3.5 3.5" />
+              </svg>
+            </button>
+          ) : (
+            <span style={{
+              width: 30,
+              height: 30,
+              minWidth: 30,
+              borderRadius: 15,
+              background: 'rgba(255,255,255,0.055)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 12,
+              color: T.ghost,
+              fontFamily: FF.mono,
+            }}>
+              ↑
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );

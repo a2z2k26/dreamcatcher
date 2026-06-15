@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Theme System
+// Dreamcatcher — Theme System
 // Derived from Andrew's Bumba-Dark Zed theme.
 // Warm blacks, luminance hierarchy, single red accent.
 // 8-level elevation stack with amber/brown undertones.
@@ -21,20 +21,46 @@ export const E = {
 // ── Text / Luminance Hierarchy ──
 // No chromatic color — importance = brightness
 export const T = {
+  superHover: '#EEEEEE',  // hover-state label only
   primary:   '#E1E1E1',  // foreground, keywords
   secondary: '#C8C8C8',  // types, variables
   tertiary:  '#A8A8A8',  // properties, muted
   subtle:    '#808080',  // operators, low-importance
   ghost:     '#606060',  // comments, predictive
   dim:       '#404040',  // barely visible, hints
+  dimSection:'#505050',  // tertiary section labels
   invisible: '#2C2A26',  // borders that disappear
 } as const;
 
 // ── Accent — single color, used exclusively for attention ──
 export const ACCENT = '#DD0000';
+export const ACCENT_RETAINED = '#DD000066';    // has state, not current focus
+export const ACCENT_HISTORICAL = '#DD000040';  // mark in time
 export const ACCENT_30 = '#DD000030';  // selection, soft highlights
 export const ACCENT_50 = '#DD000050';  // stronger highlights
 export const ACCENT_18 = '#DD000018';  // very subtle backgrounds
+
+export function accentGlow(alpha: number): string {
+  return `rgba(221,0,0,${alpha})`;
+}
+
+// ── Namespaced off-palette permissions ──
+// Vendor colors are only for model/provider identity marks.
+export const VENDOR = {
+  anthropic: '#E08542',
+  openai:    '#4A8FE0',
+  google:    '#EA4335',
+} as const;
+
+// Semantic status colors must remain separate from vendor identity colors.
+export const STATUS = {
+  complete:  '#52C41A',
+  attention: '#FAAD14',
+  acute:     ACCENT,
+  financial: '#D4A574',
+} as const;
+
+export const FOCUS_BACKDROP = 'rgba(0, 0, 0, 0.73)';
 
 // ── Semantic (derived from accent or luminance) ──
 export const C = {
@@ -103,6 +129,82 @@ export const glassElevated = {
   ].join(', '),
 } as const;
 
+export const overlayGlass = {
+  background: 'linear-gradient(180deg, rgba(30,28,25,0.94) 0%, rgba(22,20,18,0.91) 100%)',
+  backdropFilter: 'blur(16px)',
+  WebkitBackdropFilter: 'blur(16px)',
+  borderStyle: 'solid',
+  borderTopWidth: 1,
+  borderLeftWidth: 1,
+  borderRightWidth: 1,
+  borderBottomWidth: 1,
+  borderTopColor: 'rgba(61,58,53,0.50)',
+  borderLeftColor: 'rgba(42,40,37,0.20)',
+  borderRightColor: 'rgba(42,40,37,0.20)',
+  borderBottomColor: 'rgba(42,40,37,0.20)',
+  borderRadius: 12,
+  boxShadow: '0 8px 24px rgba(0,0,0,0.40), 0 2px 8px rgba(0,0,0,0.20)',
+} as const;
+
+export const heavyGlass = {
+  background: 'linear-gradient(180deg, rgba(30,28,25,0.94) 0%, rgba(22,20,18,0.91) 100%)',
+  backdropFilter: 'blur(12px)',
+  WebkitBackdropFilter: 'blur(12px)',
+  borderStyle: 'solid',
+  borderTopWidth: 1,
+  borderLeftWidth: 1,
+  borderRightWidth: 1,
+  borderBottomWidth: 1,
+  borderTopColor: 'rgba(61,58,53,0.40)',
+  borderLeftColor: 'rgba(42,40,37,0.20)',
+  borderRightColor: 'rgba(42,40,37,0.20)',
+  borderBottomColor: 'rgba(42,40,37,0.25)',
+  borderRadius: 22,
+  boxShadow: '0 4px 16px rgba(0,0,0,0.27)',
+} as const;
+
+export const lightGlass = {
+  background: 'linear-gradient(180deg, rgba(30,28,25,0.91) 0%, rgba(22,20,18,0.88) 100%)',
+  backdropFilter: 'blur(12px)',
+  WebkitBackdropFilter: 'blur(12px)',
+  borderStyle: 'solid',
+  borderTopWidth: 1,
+  borderLeftWidth: 1,
+  borderRightWidth: 1,
+  borderBottomWidth: 1,
+  borderTopColor: 'rgba(61,58,53,0.40)',
+  borderLeftColor: 'rgba(42,40,37,0.20)',
+  borderRightColor: 'rgba(42,40,37,0.20)',
+  borderBottomColor: 'rgba(42,40,37,0.20)',
+  borderRadius: 20,
+  boxShadow: '0 4px 16px rgba(0,0,0,0.27)',
+} as const;
+
+export const luminousGlass = {
+  background: 'linear-gradient(180deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%), rgba(26,25,23,0.70)',
+  backdropFilter: 'blur(12px)',
+  WebkitBackdropFilter: 'blur(12px)',
+  borderStyle: 'solid',
+  borderTopWidth: 1,
+  borderLeftWidth: 1,
+  borderRightWidth: 1,
+  borderBottomWidth: 1,
+  borderTopColor: 'rgba(255,255,255,0.10)',
+  borderLeftColor: 'rgba(255,255,255,0.05)',
+  borderRightColor: 'rgba(255,255,255,0.05)',
+  borderBottomColor: 'rgba(255,255,255,0.05)',
+  borderRadius: 9999,
+  boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+} as const;
+
+export const inputFocusRing = {
+  boxShadow: [
+    '0 0 0 1px rgba(221,0,0,0.18)',
+    '0 0 12px rgba(221,0,0,0.18)',
+    '0 8px 24px rgba(0,0,0,0.36)',
+  ].join(', '),
+} as const;
+
 // ── Node colors ──
 // User nodes: brighter (they're your words)
 export const NODE_USER_FILL = E[4];         // warm dark fill
@@ -132,6 +234,14 @@ export const R = {
   lg:   14,    // floating panels, session pill open
   xl:   18,    // modals, overlays
   pill: 9999,  // status dots, pills
+  dense: 2,
+  inset: 4,
+  card: 8,
+  overlay: 12,
+  soft: 14,
+  innerPill: 16,
+  toolPill: 20,
+  inputPill: 22,
 } as const;
 
 // ── Type Scale ──
@@ -145,8 +255,10 @@ export const FS = {
 
 // ── Font Families ──
 export const FF = {
-  sans: "'Inter', system-ui, -apple-system, sans-serif",
-  mono: "'Inconsolata', monospace",
+  sans: "'Mulish', system-ui, -apple-system, sans-serif",
+  ui: "'Mulish', system-ui, -apple-system, sans-serif",
+  mono: "'iA Writer Mono S', 'Inconsolata', ui-monospace, 'SF Mono', Menlo, monospace",
+  data: "'iA Writer Mono S', 'Inconsolata', ui-monospace, 'SF Mono', Menlo, monospace",
 } as const;
 
 // ── Z-Index Stack ──

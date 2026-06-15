@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Physics Web Worker
+// Dreamcatcher — Physics Web Worker
 // Runs the force simulation off the main thread.
 // Receives bodies + edges, runs one tick, returns updated positions.
 // Pattern: Understand Anything's layout worker, adapted for

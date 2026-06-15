@@ -79,6 +79,52 @@ describe('graph-store actions', () => {
     expect(s.bodies).toEqual({});
     expect(s.activeNodeId).toBeNull();
   });
+
+  it('cleanupLayout spaces nodes by depth and pins clean layout anchors', () => {
+    const store = useGraphStore.getState();
+    store.addNode(userNode('u1', null, 1), { x: 500, y: -400 });
+    store.addNode(aiNode('a1', 'u1', 2), { x: -700, y: 200 });
+    store.addNode(userNode('u2', 'a1', 3), { x: 120, y: 900 });
+    store.addNode(userNode('branch', 'a1', 4), { x: 121, y: 901 });
+    store.addEdge(edge('e1', 'u1', 'a1'));
+    store.addEdge(edge('e2', 'a1', 'u2'));
+    store.addEdge(edge('e3', 'a1', 'branch', 'branch'));
+
+    useGraphStore.setState(state => ({
+      bodies: {
+        ...state.bodies,
+        u1: { ...state.bodies.u1, vx: 18, vy: -6, ax: 2, ay: 3, fx: 500, fy: -400, hx: 7, hy: 9 },
+      },
+    }));
+    const previousBody = useGraphStore.getState().bodies.u1;
+
+    const bounds = useGraphStore.getState().cleanupLayout();
+    const next = useGraphStore.getState();
+
+    expect(bounds).not.toBeNull();
+    expect(bounds!.width).toBeGreaterThan(300);
+    expect(next.positions.u1.x).toBeLessThan(next.positions.a1.x);
+    expect(next.positions.a1.x).toBeLessThan(next.positions.u2.x);
+    expect(next.positions.u2.y).not.toBe(next.positions.branch.y);
+    expect(next.bodies.u1).not.toBe(previousBody);
+    expect(next.bodies.u1).toMatchObject({
+      x: next.positions.u1.x,
+      y: next.positions.u1.y,
+      vx: 0,
+      vy: 0,
+      ax: 0,
+      ay: 0,
+      fx: next.positions.u1.x,
+      fy: next.positions.u1.y,
+      hx: 0,
+      hy: 0,
+      r: 24,
+    });
+  });
+
+  it('cleanupLayout returns null for an empty graph', () => {
+    expect(useGraphStore.getState().cleanupLayout()).toBeNull();
+  });
 });
 
 describe('getAncestralPath', () => {

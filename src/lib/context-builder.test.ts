@@ -28,7 +28,7 @@ describe('buildMessages', () => {
 
   it('includes base system prompt', () => {
     const { system } = buildMessages([userNode('u1', 'hi')]);
-    expect(system).toContain('Dreamcacher');
+    expect(system).toContain('Dreamcatcher');
     expect(system).toContain('spatial conversation');
   });
 

@@ -1,7 +1,7 @@
 'use client';
 
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Context Menu
+// Dreamcatcher — Context Menu
 // Right-click menu on nodes. Branch, regenerate, inspect, copy.
 // ═══════════════════════════════════════════════════════════════
 
@@ -9,8 +9,8 @@ import { useEffect, useRef } from 'react';
 import { useGraphStore } from '@/stores/graph-store';
 import { useUIStore } from '@/stores/ui-store';
 import { useMemoryStore } from '@/stores/memory-store';
-import { buildMessages, buildLabel } from '@/lib/context-builder';
-import { E, T, C, ACCENT, glassElevated } from '@/lib/theme';
+import { buildMessages } from '@/lib/context-builder';
+import { E, T, C, FF, FS, R, overlayGlass } from '@/lib/theme';
 import { showToast } from '@/components/ui/Toast';
 
 interface ContextMenuProps {
@@ -28,6 +28,7 @@ export function ContextMenu({ x, y, nodeId, onClose }: ContextMenuProps) {
   const node = useGraphStore(s => s.nodes.find(n => n.id === nodeId));
   const edgeCount = useGraphStore(s => s.edges.filter(e => e.from === nodeId).length);
   const isBranchPoint = edgeCount > 1;
+  const nodeKind = node?.role === 'ai' ? 'AI node' : node?.role === 'user' ? 'Your node' : 'Node';
 
   // Entry animation — mount at scale(0.95)/opacity:0, animate to 1
   const menuRef = useRef<HTMLDivElement>(null);
@@ -191,22 +192,107 @@ export function ContextMenu({ x, y, nodeId, onClose }: ContextMenuProps) {
 
   return (
     <div
+      className="dc-context-menu"
       ref={menuRef}
       style={{
         position: 'fixed',
         left: x,
         top: y,
         zIndex: 200,
-        ...glassElevated,
-        borderRadius: 12,
-        padding: 4,
-        minWidth: 200,
-        fontFamily: 'Inconsolata, monospace',
+        ...overlayGlass,
+        borderRadius: R.card,
+        padding: 5,
+        minWidth: 206,
+        fontFamily: FF.sans,
+        background:
+          'linear-gradient(180deg, rgba(30,28,25,0.98) 0%, rgba(19,18,15,0.96) 100%)',
+        borderTopColor: 'rgba(61,58,53,0.66)',
+        borderLeftColor: 'rgba(44,42,38,0.48)',
+        borderRightColor: 'rgba(44,42,38,0.40)',
+        borderBottomColor: 'rgba(8,7,6,0.78)',
+        boxShadow: [
+          '0 1px 0 rgba(225,225,225,0.05) inset',
+          '0 0 0 0.5px rgba(61,58,53,0.30)',
+          '0 18px 42px rgba(0,0,0,0.58)',
+          '0 2px 8px rgba(0,0,0,0.36)',
+        ].join(', '),
         opacity: 0,
         transform: 'scale(0.95)',
       }}
       onClick={e => e.stopPropagation()}
     >
+      <div
+        className="dc-context-menu-header"
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '18px minmax(0, 1fr) auto',
+          alignItems: 'center',
+          gap: 8,
+          padding: '5px 7px 9px',
+          marginBottom: 4,
+          borderBottom: `0.5px solid ${E[4]}`,
+        }}
+      >
+        <span
+          className="dc-context-menu-header-icon"
+          aria-hidden="true"
+          style={{
+            width: 18,
+            height: 18,
+            borderRadius: R.inset,
+            border: '0.5px solid rgba(176,176,176,0.26)',
+            background: 'rgba(176,176,176,0.05)',
+            color: C.branch,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <BranchIcon />
+        </span>
+        <span style={{ minWidth: 0 }}>
+          <span
+            style={{
+              display: 'block',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              color: T.secondary,
+              fontSize: 11,
+              fontWeight: 700,
+              lineHeight: 1.25,
+            }}
+          >
+            {node?.label || 'Node actions'}
+          </span>
+          <span
+            className="dc-context-menu-meta"
+            style={{
+              display: 'block',
+              marginTop: 2,
+              color: T.dim,
+              font: `700 8px ${FF.mono}`,
+              letterSpacing: 0.7,
+              textTransform: 'uppercase',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {nodeKind}
+          </span>
+        </span>
+        <span
+          className="dc-context-menu-count"
+          style={{
+            color: T.dim,
+            font: `700 9px ${FF.mono}`,
+            letterSpacing: 0.3,
+          }}
+        >
+          {edgeCount}
+        </span>
+      </div>
       <MenuItem
         icon={<BranchIcon />}
         label="Branch from here"
@@ -238,7 +324,7 @@ export function ContextMenu({ x, y, nodeId, onClose }: ContextMenuProps) {
           onClick={handleRegenerate}
         />
       )}
-      <div style={{ height: 1, background: E[5], margin: '4px 8px' }} />
+      <MenuDivider />
       <MenuItem
         icon={<MemoryIcon />}
         label="Save as memory"
@@ -246,7 +332,7 @@ export function ContextMenu({ x, y, nodeId, onClose }: ContextMenuProps) {
         accent
         accentColor={C.memory}
       />
-      <div style={{ height: 1, background: E[5], margin: '4px 8px' }} />
+      <MenuDivider />
       <MenuItem
         icon={<InspectIcon />}
         label="Inspect"
@@ -261,6 +347,18 @@ export function ContextMenu({ x, y, nodeId, onClose }: ContextMenuProps) {
   );
 }
 
+function MenuDivider() {
+  return (
+    <div
+      style={{
+        height: 0.5,
+        background: 'rgba(61,58,53,0.54)',
+        margin: '5px 7px',
+      }}
+    />
+  );
+}
+
 function MenuItem({ icon, label, onClick, accent, accentColor }: {
   icon: React.ReactNode;
   label: string;
@@ -271,27 +369,54 @@ function MenuItem({ icon, label, onClick, accent, accentColor }: {
   const c = accent ? (accentColor || C.branch) : T.secondary;
   const ic = accent ? (accentColor || C.branch) : T.ghost;
   return (
-    <div
+    <button
+      className="dc-context-menu-item"
+      type="button"
       onClick={onClick}
       style={{
         display: 'flex',
         alignItems: 'center',
-        gap: 8,
-        padding: '10px 14px',
-        borderRadius: 6,
-        fontSize: 12,
+        gap: 9,
+        width: '100%',
+        minHeight: 32,
+        padding: '7px 10px',
+        borderRadius: R.sm,
+        border: 'none',
+        background: 'transparent',
+        fontFamily: FF.sans,
+        fontSize: FS.body,
+        fontWeight: 650,
+        letterSpacing: 0,
+        lineHeight: 1,
         color: c,
         cursor: 'pointer',
-        transition: 'background 150ms ease',
+        transition: 'background 130ms ease, color 130ms ease',
       }}
-      onMouseEnter={e => (e.currentTarget.style.background = E[6])}
-      onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+      onMouseEnter={e => {
+        e.currentTarget.style.background = 'rgba(61,58,53,0.36)';
+        e.currentTarget.style.color = T.primary;
+      }}
+      onMouseLeave={e => {
+        e.currentTarget.style.background = 'transparent';
+        e.currentTarget.style.color = c;
+      }}
     >
-      <span style={{ width: 14, height: 14, display: 'flex', alignItems: 'center', color: ic }}>
+      <span
+        aria-hidden="true"
+        style={{
+          width: 15,
+          height: 15,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: ic,
+          opacity: accent ? 0.94 : 0.82,
+        }}
+      >
         {icon}
       </span>
-      {label}
-    </div>
+      <span style={{ flex: 1, textAlign: 'left' }}>{label}</span>
+    </button>
   );
 }
 
