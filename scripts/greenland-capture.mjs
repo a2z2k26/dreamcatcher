@@ -315,32 +315,35 @@ async function collectVisualChecks(page, viewport, scenario) {
       const title = seed?.querySelector('[data-empty-title="true"]');
       const text = document.querySelector('svg')?.textContent ?? '';
       if (!(seed instanceof SVGElement)) {
-        return { id: 'empty-state-dreamcatcher-seed', pass: false, detail: 'Missing dreamcatcher seed empty state' };
+        return { id: 'empty-state-dreamcatcher-title', pass: false, detail: 'Missing dreamcatcher empty state' };
       }
       const rect = seed.getBoundingClientRect();
-      const coreRect = core instanceof SVGElement ? core.getBoundingClientRect() : new DOMRect();
-      const traceRect = trace instanceof SVGElement ? trace.getBoundingClientRect() : new DOMRect();
+      const tagRect = tag instanceof SVGElement ? tag.getBoundingClientRect() : new DOMRect();
       const titleRect = title instanceof SVGElement ? title.getBoundingClientRect() : new DOMRect();
+      const titleStyle = title instanceof SVGElement ? getComputedStyle(title) : null;
       const pass = text.includes('DREAMCATCHER')
         && !text.includes('Begin a thread')
         && !text.includes('a seed becomes a map')
         && !text.includes('SEED 00')
-        && core instanceof SVGElement
-        && trace instanceof SVGElement
         && tag instanceof SVGElement
         && title instanceof SVGElement
-        && coreRect.width >= 40
-        && traceRect.width >= 120
-        && titleRect.width >= 160
+        && !(core instanceof SVGElement)
+        && !(trace instanceof SVGElement)
+        && titleRect.width >= 120
+        && titleRect.height <= 24
+        && titleStyle?.fill === 'rgb(221, 0, 0)'
+        && titleStyle?.fontFamily.toLowerCase().includes('mono')
+        && Number.parseFloat(titleStyle?.letterSpacing || '0') >= 4
+        && Number.parseFloat(titleStyle?.opacity || '0') <= 0.82
         && !text.includes('Press /')
         && rect.left >= 0
         && rect.right <= window.innerWidth
         && rect.top >= 46
         && rect.bottom <= window.innerHeight - 96;
       return {
-        id: 'empty-state-dreamcatcher-seed',
+        id: 'empty-state-dreamcatcher-title',
         pass,
-        detail: `left=${Math.round(rect.left)}; right=${Math.round(rect.right)}; top=${Math.round(rect.top)}; bottom=${Math.round(rect.bottom)}; core=${Math.round(coreRect.width)}x${Math.round(coreRect.height)}; trace=${Math.round(traceRect.width)}x${Math.round(traceRect.height)}; title=${Math.round(titleRect.width)}x${Math.round(titleRect.height)}; text=${text.replace(/\s+/g, ' ').trim()}`,
+        detail: `left=${Math.round(rect.left)}; right=${Math.round(rect.right)}; top=${Math.round(rect.top)}; bottom=${Math.round(rect.bottom)}; tag=${Math.round(tagRect.width)}x${Math.round(tagRect.height)}; title=${Math.round(titleRect.width)}x${Math.round(titleRect.height)}; fill=${titleStyle?.fill ?? 'missing'}; opacity=${titleStyle?.opacity ?? 'missing'}; text=${text.replace(/\s+/g, ' ').trim()}`,
       };
     }));
   }
@@ -365,24 +368,30 @@ async function collectVisualChecks(page, viewport, scenario) {
       const title = document.querySelector('.dc-hover-title');
       const preview = document.querySelector('.dc-hover-preview');
       const meta = document.querySelector('.dc-hover-meta');
+      const modelDot = document.querySelector('.dc-hover-model-dot');
       if (!(card instanceof HTMLElement)
         || !(rail instanceof HTMLElement)
         || !(kind instanceof HTMLElement)
         || !(title instanceof HTMLElement)
         || !(preview instanceof HTMLElement)
-        || !(meta instanceof HTMLElement)) {
+        || !(meta instanceof HTMLElement)
+        || !(modelDot instanceof HTMLElement)) {
         return { id: 'hover-card-red-stripe-preview', pass: false, detail: 'Missing hover card structure' };
       }
       const rect = card.getBoundingClientRect();
+      const railRect = rail.getBoundingClientRect();
       const railStyle = getComputedStyle(rail);
       const cardStyle = getComputedStyle(card);
       const kindStyle = getComputedStyle(kind);
       const titleStyle = getComputedStyle(title);
       const previewStyle = getComputedStyle(preview);
       const metaStyle = getComputedStyle(meta);
+      const dotStyle = getComputedStyle(modelDot);
       const broadRedFill = cardStyle.backgroundColor.includes('221') || cardStyle.backgroundImage.includes('221, 0, 0');
       const pass = railStyle.backgroundColor === 'rgb(221, 0, 0)'
-        && rail.getBoundingClientRect().width <= 3
+        && railRect.width <= 3
+        && railRect.height <= rect.height - 22
+        && dotStyle.backgroundColor !== 'rgb(221, 0, 0)'
         && !broadRedFill
         && kind.textContent?.trim() === 'AI'
         && title.textContent?.trim() === 'Needs exponential backoff'
@@ -401,7 +410,7 @@ async function collectVisualChecks(page, viewport, scenario) {
       return {
         id: 'hover-card-red-stripe-preview',
         pass,
-        detail: `bounds=${Math.round(rect.left)},${Math.round(rect.top)},${Math.round(rect.right)},${Math.round(rect.bottom)}; rail=${railStyle.backgroundColor}/${Math.round(rail.getBoundingClientRect().width)}; kind=${kind.textContent?.trim()}; title=${title.textContent?.trim()}; meta=${meta.textContent?.trim()}; broadRedFill=${broadRedFill}; radius=${cardStyle.borderTopLeftRadius}`,
+        detail: `bounds=${Math.round(rect.left)},${Math.round(rect.top)},${Math.round(rect.right)},${Math.round(rect.bottom)}; rail=${railStyle.backgroundColor}/${Math.round(railRect.width)}x${Math.round(railRect.height)}; dot=${dotStyle.backgroundColor}; kind=${kind.textContent?.trim()}; title=${title.textContent?.trim()}; meta=${meta.textContent?.trim()}; broadRedFill=${broadRedFill}; radius=${cardStyle.borderTopLeftRadius}`,
       };
     }));
   }
@@ -468,6 +477,30 @@ async function collectVisualChecks(page, viewport, scenario) {
     }));
   }
 
+  if (viewport.id === 'mobile' && scenario.id === 'showcase') {
+    checks.push(await page.evaluate(() => {
+      const pill = document.querySelector('.dc-session-pill[data-state="collapsed"]');
+      const title = pill?.querySelector('.dc-session-pill-title');
+      const statusWord = pill?.querySelector('.dc-session-pill-status-word');
+      const search = document.querySelector('.dc-search-button');
+      if (!(pill instanceof HTMLElement) || !(title instanceof HTMLElement) || !(search instanceof HTMLElement)) {
+        return { id: 'mobile-session-pill-title-room', pass: false, detail: 'Missing collapsed session pill/title/search button' };
+      }
+      const pillRect = pill.getBoundingClientRect();
+      const titleRect = title.getBoundingClientRect();
+      const searchRect = search.getBoundingClientRect();
+      const pass = !(statusWord instanceof HTMLElement)
+        && titleRect.width >= 110
+        && pillRect.right <= searchRect.left - 8
+        && title.textContent?.includes('WebSocket') === true;
+      return {
+        id: 'mobile-session-pill-title-room',
+        pass,
+        detail: `pill=${Math.round(pillRect.left)},${Math.round(pillRect.right)}; titleWidth=${Math.round(titleRect.width)}; searchLeft=${Math.round(searchRect.left)}; statusWord=${statusWord instanceof HTMLElement ? 'present' : 'hidden'}; title=${title.textContent?.trim()}`,
+      };
+    }));
+  }
+
   if (scenario.id === 'session-open') {
     checks.push(await page.evaluate(() => {
       const pill = document.querySelector('.dc-session-pill');
@@ -507,7 +540,7 @@ async function collectVisualChecks(page, viewport, scenario) {
         && rowStateStyle?.color === 'rgb(221, 0, 0)';
       return {
         id: 'session-selection-accent-rail',
-        pass: redRail && !redFill && newTextIsNeutral && newIconIsAccent && railRect.width >= 1.5 && railRect.width <= 2.5 && radius <= 8.5 && referenceSessionBits,
+        pass: redRail && !redFill && newTextIsNeutral && newIconIsAccent && railRect.width >= 1.5 && railRect.width <= 2.5 && radius >= 16 && radius <= 22 && referenceSessionBits,
         detail: `radius=${radius}; railWidth=${railRect.width}; railColor=${railStyle.backgroundColor}; rowBg=${style.backgroundImage.slice(0, 90)}; newColor=${newButtonStyle.color}; newIcon=${newButtonIcon.getAttribute('stroke')}; header=${header.textContent?.replace(/\s+/g, ' ').trim()}; commandMeta=${commandMeta?.textContent?.trim() ?? 'missing'}; rowMeta=${rowMeta?.textContent?.trim() ?? 'missing'}; state=${rowState?.textContent?.trim() ?? 'missing'}/${rowStateStyle?.color ?? 'missing'}`,
       };
     }));
@@ -631,6 +664,12 @@ async function collectVisualChecks(page, viewport, scenario) {
       const selectedOutline = rowStyle.borderColor !== 'rgba(0, 0, 0, 0)' && rowStyle.borderColor !== 'transparent';
       const railIsAccent = railStyle.backgroundColor === 'rgb(221, 0, 0)';
       const bgIsQuietActive = rowStyle.backgroundColor.startsWith('rgba(255, 255, 255, 0.05');
+      const mobileBounds = window.innerWidth > 640 || (
+        menuRect.left >= 12
+        && menuRect.right <= window.innerWidth - 12
+        && menuRect.top >= 54
+        && menuRect.bottom <= window.innerHeight - 96
+      );
       const referenceModelBits = header.textContent?.toLowerCase().includes('model')
         && menuRect.width >= 248
         && rowRect.height >= 44
@@ -639,8 +678,39 @@ async function collectVisualChecks(page, viewport, scenario) {
         && activeStyle?.color === 'rgb(221, 0, 0)';
       return {
         id: 'model-selection-accent-rail',
-        pass: !rowUsesProviderRail && !selectedOutline && railIsAccent && bgIsQuietActive && referenceModelBits,
-        detail: `menu=${Math.round(menuRect.width)}x${Math.round(menuRect.height)}; row=${Math.round(rowRect.width)}x${Math.round(rowRect.height)}; border=${rowStyle.borderLeftWidth} ${rowStyle.borderLeftColor}; background=${rowStyle.backgroundColor}; rail=${railStyle.backgroundColor}; dot=${dotStyle?.backgroundColor ?? 'missing'}; metaFont=${metaStyle?.fontFamily ?? 'missing'}; active=${active?.textContent?.trim() ?? 'missing'}/${activeStyle?.color ?? 'missing'}`,
+        pass: !rowUsesProviderRail && !selectedOutline && railIsAccent && bgIsQuietActive && referenceModelBits && mobileBounds,
+        detail: `menu=${Math.round(menuRect.left)},${Math.round(menuRect.top)} ${Math.round(menuRect.width)}x${Math.round(menuRect.height)}; row=${Math.round(rowRect.width)}x${Math.round(rowRect.height)}; border=${rowStyle.borderLeftWidth} ${rowStyle.borderLeftColor}; background=${rowStyle.backgroundColor}; rail=${railStyle.backgroundColor}; dot=${dotStyle?.backgroundColor ?? 'missing'}; metaFont=${metaStyle?.fontFamily ?? 'missing'}; active=${active?.textContent?.trim() ?? 'missing'}/${activeStyle?.color ?? 'missing'}; mobileBounds=${mobileBounds}`,
+      };
+    }));
+  }
+
+  if (scenario.id === 'drag-zones-open') {
+    checks.push(await page.evaluate(() => {
+      const zones = Array.from(document.querySelectorAll('.dc-drop-zone'));
+      const labels = Array.from(document.querySelectorAll('.dc-drop-zone-vertical-label'));
+      const activeZone = document.querySelector('.dc-drop-zone[data-active="true"]');
+      const activeRail = activeZone?.querySelector('.dc-drop-zone-rail');
+      if (zones.length !== 2 || labels.length !== 2 || !(activeZone instanceof HTMLElement) || !(activeRail instanceof HTMLElement)) {
+        return { id: 'drag-zone-soft-wordmarks', pass: false, detail: 'Missing drop zone panels, labels, or active rail' };
+      }
+      const zoneRects = zones.map(zone => zone instanceof HTMLElement ? zone.getBoundingClientRect() : new DOMRect());
+      const labelRects = labels.map(label => label instanceof HTMLElement ? label.getBoundingClientRect() : new DOMRect());
+      const labelStyles = labels.map(label => label instanceof HTMLElement ? getComputedStyle(label) : null);
+      const activeStyle = getComputedStyle(activeZone);
+      const railStyle = getComputedStyle(activeRail);
+      const labelText = labels.map(label => label.textContent?.trim()).join('|');
+      const redAlpha = Number.parseFloat(activeStyle.backgroundImage.match(/rgba\(221, 0, 0, ([\d.]+)\)/)?.[1] ?? '1');
+      const rotatedWordmarks = labelStyles.every(style => style?.writingMode === 'horizontal-tb')
+        && labelRects.every(rect => rect.height >= 58 && rect.width <= 24);
+      const softenedPanel = zoneRects.every(rect => Math.round(rect.width) <= 140)
+        && redAlpha > 0
+        && redAlpha <= 0.05
+        && railStyle.backgroundColor === 'rgb(221, 0, 0)'
+        && Math.round(Number.parseFloat(railStyle.width)) === 2;
+      return {
+        id: 'drag-zone-soft-wordmarks',
+        pass: labelText === 'EDUCATE|REMEMBER' && rotatedWordmarks && softenedPanel,
+        detail: `labels=${labelText}; labelRects=${labelRects.map(rect => `${Math.round(rect.width)}x${Math.round(rect.height)}`).join('|')}; zones=${zoneRects.map(rect => Math.round(rect.width)).join('|')}; redAlpha=${redAlpha}; rail=${railStyle.width}/${railStyle.backgroundColor}`,
       };
     }));
   }
@@ -964,6 +1034,37 @@ async function collectVisualChecks(page, viewport, scenario) {
     }));
   }
 
+  if (scenario.id === 'radial-open') {
+    checks.push(await page.evaluate(() => {
+      const overlay = document.querySelector('.dc-radial-overlay');
+      const center = document.querySelector('.dc-radial-center');
+      const sessionPill = document.querySelector('.dc-session-pill');
+      const items = Array.from(document.querySelectorAll('.dc-radial-item'));
+      if (!(overlay instanceof HTMLElement) || !(center instanceof HTMLElement) || items.length < 6) {
+        return { id: 'radial-actions-safe-bounds', pass: false, detail: 'Missing radial overlay/center/items' };
+      }
+      const centerRect = center.getBoundingClientRect();
+      const sessionRect = sessionPill instanceof HTMLElement ? sessionPill.getBoundingClientRect() : new DOMRect();
+      const itemRects = items.map(item => item instanceof HTMLElement ? item.getBoundingClientRect() : new DOMRect());
+      const inViewport = itemRects.every(rect => rect.left >= 6
+        && rect.right <= window.innerWidth - 6
+        && rect.top >= 54
+        && rect.bottom <= window.innerHeight - 24);
+      const clearOfSession = !(sessionPill instanceof HTMLElement) || itemRects.every(rect => (
+        rect.right < sessionRect.left - 4
+        || rect.left > sessionRect.right + 4
+        || rect.bottom < sessionRect.top - 4
+        || rect.top > sessionRect.bottom + 4
+      ));
+      const labels = items.map(item => item.textContent?.replace(/\s+/g, ' ').trim()).join('/');
+      return {
+        id: 'radial-actions-safe-bounds',
+        pass: inViewport && clearOfSession,
+        detail: `center=${Math.round(centerRect.left + centerRect.width / 2)},${Math.round(centerRect.top + centerRect.height / 2)}; bounds=${itemRects.map(rect => `${Math.round(rect.left)},${Math.round(rect.top)},${Math.round(rect.right)},${Math.round(rect.bottom)}`).join('|')}; session=${Math.round(sessionRect.left)},${Math.round(sessionRect.top)},${Math.round(sessionRect.right)},${Math.round(sessionRect.bottom)}; labels=${labels}`,
+      };
+    }));
+  }
+
   if (scenario.id === 'context-menu') {
     checks.push(await page.evaluate(() => {
       const panel = document.querySelector('.dc-context-menu');
@@ -1030,6 +1131,7 @@ async function collectVisualChecks(page, viewport, scenario) {
       const message = document.querySelector('.dc-toast-message');
       const icon = document.querySelector('.dc-toast-icon');
       const contextMenu = document.querySelector('.dc-context-menu');
+      const floatingInput = document.querySelector('.dc-floating-input');
       if (!(stack instanceof HTMLElement)
         || !(item instanceof HTMLElement)
         || !(rail instanceof HTMLElement)
@@ -1045,6 +1147,11 @@ async function collectVisualChecks(page, viewport, scenario) {
       const labelStyle = getComputedStyle(label);
       const messageStyle = getComputedStyle(message);
       const broadRedFill = itemStyle.backgroundColor.includes('221') || itemStyle.backgroundImage.includes('221, 0, 0');
+      const inputRect = floatingInput instanceof HTMLElement ? floatingInput.getBoundingClientRect() : null;
+      const mobileToastClearsInput = window.innerWidth > 640
+        || inputRect === null
+        || stackRect.bottom <= inputRect.top - 8;
+      const mobileToastIsCompact = window.innerWidth > 640 || stackRect.width <= 322;
       const pass = !(contextMenu instanceof HTMLElement)
         && railStyle.backgroundColor === 'rgb(221, 0, 0)'
         && rail.getBoundingClientRect().width <= 3
@@ -1058,11 +1165,13 @@ async function collectVisualChecks(page, viewport, scenario) {
         && itemRect.height <= 54
         && stackRect.left >= 12
         && stackRect.right <= window.innerWidth - 12
-        && stackRect.bottom <= window.innerHeight - 32;
+        && stackRect.bottom <= window.innerHeight - 32
+        && mobileToastClearsInput
+        && mobileToastIsCompact;
       return {
         id: 'toast-red-stripe-event-surface',
         pass,
-        detail: `message=${message.textContent?.trim()}; rail=${railStyle.backgroundColor}/${Math.round(rail.getBoundingClientRect().width)}; broadRedFill=${broadRedFill}; label=${labelStyle.color}/${labelStyle.fontFamily}; messageFont=${messageStyle.fontFamily}; bounds=${Math.round(stackRect.left)},${Math.round(stackRect.right)},${Math.round(stackRect.bottom)}; contextMenu=${contextMenu instanceof HTMLElement ? 'present' : 'closed'}`,
+        detail: `message=${message.textContent?.trim()}; rail=${railStyle.backgroundColor}/${Math.round(rail.getBoundingClientRect().width)}; broadRedFill=${broadRedFill}; label=${labelStyle.color}/${labelStyle.fontFamily}; messageFont=${messageStyle.fontFamily}; bounds=${Math.round(stackRect.left)},${Math.round(stackRect.right)},${Math.round(stackRect.bottom)}; inputTop=${inputRect ? Math.round(inputRect.top) : 'none'}; clearsInput=${mobileToastClearsInput}; compact=${mobileToastIsCompact}; contextMenu=${contextMenu instanceof HTMLElement ? 'present' : 'closed'}`,
       };
     }));
   }
@@ -1133,6 +1242,22 @@ async function collectVisualChecks(page, viewport, scenario) {
           id: 'mobile-timeline-chrome-bounds',
           pass,
           detail: `top=${Math.round(rect.top)}; bottom=${Math.round(rect.bottom)}; viewportHeight=${window.innerHeight}; left=${Math.round(rect.left)}`,
+        };
+      }));
+
+      checks.push(await page.evaluate(() => {
+        const activeRow = document.querySelector('.dc-timeline-row[data-active="true"]');
+        const scrubber = document.querySelector('.dc-timeline-scrubber');
+        if (!(activeRow instanceof HTMLElement) || !(scrubber instanceof HTMLElement)) {
+          return { id: 'mobile-timeline-active-row-clearance', pass: false, detail: 'Missing active timeline row or scrubber' };
+        }
+        const rowRect = activeRow.getBoundingClientRect();
+        const scrubberRect = scrubber.getBoundingClientRect();
+        const pass = rowRect.bottom <= scrubberRect.top - 8;
+        return {
+          id: 'mobile-timeline-active-row-clearance',
+          pass,
+          detail: `rowBottom=${Math.round(rowRect.bottom)}; scrubberTop=${Math.round(scrubberRect.top)}; gap=${Math.round(scrubberRect.top - rowRect.bottom)}`,
         };
       }));
     }

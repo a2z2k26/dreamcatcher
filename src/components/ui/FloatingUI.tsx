@@ -148,7 +148,14 @@ function FloatingInput() {
     const AI_OFFSET = 160;      // distance from user node to AI response
     let userPos: { x: number; y: number };
     if (!parentBody) {
-      userPos = { x: 400, y: 100 };
+      const canvas = document.querySelector<HTMLDivElement>('.dc-observatory-canvas');
+      const { scale, panX, panY } = useUIStore.getState();
+      userPos = canvas
+        ? {
+            x: (canvas.clientWidth / 2 - panX) / scale,
+            y: (canvas.clientHeight / 2 - panY) / scale,
+          }
+        : { x: 400, y: 100 };
     } else if (existingChildren === 0) {
       // First child: straight down
       userPos = { x: parentBody.x, y: parentBody.y + SPAWN_DISTANCE };
@@ -266,7 +273,7 @@ function FloatingInput() {
       left: 0,
       right: rightInset,
       bottom: timelineOpen ? 8 : 24,
-      height: 78,
+      height: 86,
       zIndex: 71,
       display: 'flex',
       alignItems: 'center',
@@ -277,7 +284,7 @@ function FloatingInput() {
       transform: 'translateY(0)',
       transition: 'right 250ms cubic-bezier(0.16, 1, 0.3, 1), transform 250ms cubic-bezier(0.16, 1, 0.3, 1)',
     }}>
-      <div style={{ flex: 1, maxWidth: 760, margin: '0 auto', pointerEvents: 'auto' }}>
+      <div style={{ flex: 1, maxWidth: 820, margin: '0 auto', pointerEvents: 'auto' }}>
         <div
           className="dc-input-capsule"
           data-focused={focused ? 'true' : 'false'}
@@ -286,10 +293,10 @@ function FloatingInput() {
           background: 'rgba(22,20,18,0.82)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
-          borderRadius: 14,
-          minHeight: 48,
-          padding: '0 8px 0 18px',
-          display: 'flex', alignItems: 'center', gap: 12,
+          borderRadius: 16,
+          minHeight: 56,
+          padding: '0 10px 0 20px',
+          display: 'flex', alignItems: 'center', gap: 14,
           fontFamily: FF.sans,
           transition: 'all 260ms cubic-bezier(0.2, 0.9, 0.3, 1)',
           position: 'relative',
@@ -334,10 +341,10 @@ function FloatingInput() {
             className="dc-input"
             style={{
               flex: 1, background: 'transparent', border: 'none', outline: 'none',
-              height: 42,
+              height: 48,
               minWidth: 0,
               padding: 0,
-              fontSize: 14,
+              fontSize: 15,
               fontFamily: FF.sans,
               fontWeight: 500,
               color: T.primary,
@@ -358,10 +365,10 @@ function FloatingInput() {
               type="button"
               onClick={handleStop}
               style={{
-                width: 30,
-                height: 30,
-                minWidth: 30,
-                borderRadius: 15,
+                width: 34,
+                height: 34,
+                minWidth: 34,
+                borderRadius: 17,
                 background: ACCENT,
                 border: 'none',
                 cursor: 'pointer',
@@ -383,10 +390,10 @@ function FloatingInput() {
               type="button"
               onClick={sendMessage}
               style={{
-                width: 30,
-                height: 30,
-                minWidth: 30,
-                borderRadius: 15,
+                width: 34,
+                height: 34,
+                minWidth: 34,
+                borderRadius: 17,
                 background: ACCENT,
                 border: 'none',
                 color: '#0A0908',
@@ -405,10 +412,10 @@ function FloatingInput() {
             </button>
           ) : (
             <span style={{
-              width: 30,
-              height: 30,
-              minWidth: 30,
-              borderRadius: 15,
+              width: 34,
+              height: 34,
+              minWidth: 34,
+              borderRadius: 17,
               background: 'rgba(255,255,255,0.055)',
               display: 'flex',
               alignItems: 'center',

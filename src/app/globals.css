@@ -223,22 +223,22 @@ input::placeholder {
 .dc-drop-zones {
   position: absolute;
   inset: 0 auto 0 0;
-  width: 144px;
+  width: 136px;
   pointer-events: none;
   z-index: 8;
-  opacity: 0.96;
+  opacity: 0.94;
 }
 
 .dc-drop-zone {
   position: absolute;
   left: 0;
-  width: 144px;
+  width: 136px;
   height: 50%;
   overflow: hidden;
   background:
-    linear-gradient(90deg, rgba(12, 11, 9, 0.74) 0%, rgba(19, 18, 15, 0.38) 52%, transparent 100%),
+    linear-gradient(90deg, rgba(12, 11, 9, 0.66) 0%, rgba(19, 18, 15, 0.30) 54%, transparent 100%),
     radial-gradient(90px 120px at 0% 50%, rgba(225, 225, 225, 0.035), transparent 72%);
-  border-right: 1px solid rgba(61, 58, 53, 0.18);
+  border-right: 1px solid rgba(61, 58, 53, 0.14);
   transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
 }
 
@@ -253,11 +253,11 @@ input::placeholder {
 
 .dc-drop-zone[data-active='true'] {
   background:
-    linear-gradient(90deg, rgba(221, 0, 0, 0.055) 0%, rgba(26, 24, 22, 0.42) 48%, transparent 100%),
-    radial-gradient(92px 126px at 0% 50%, rgba(221, 0, 0, 0.08), transparent 74%);
-  border-right-color: rgba(221, 0, 0, 0.12);
+    linear-gradient(90deg, rgba(221, 0, 0, 0.036) 0%, rgba(26, 24, 22, 0.34) 50%, transparent 100%),
+    radial-gradient(92px 126px at 0% 50%, rgba(221, 0, 0, 0.045), transparent 76%);
+  border-right-color: rgba(221, 0, 0, 0.09);
   box-shadow:
-    inset 14px 0 30px -22px rgba(221, 0, 0, 0.36),
+    inset 10px 0 28px -22px rgba(221, 0, 0, 0.24),
     inset 1px 0 0 rgba(255, 255, 255, 0.025);
 }
 
@@ -319,40 +319,52 @@ input::placeholder {
 
 .dc-drop-zone-vertical-label {
   position: absolute;
-  left: 21px;
+  left: 30px;
   top: 50%;
-  transform: translateY(-50%);
-  writing-mode: vertical-rl;
-  text-orientation: upright;
-  font: 800 11px var(--font-mono);
-  letter-spacing: 0.14em;
-  color: rgba(221, 0, 0, 0.68);
+  width: max-content;
+  transform: translate(-50%, -50%) rotate(-90deg);
+  transform-origin: center;
+  font: 700 11px var(--font-mono);
+  letter-spacing: 0.32em;
+  color: rgba(221, 0, 0, 0.60);
   text-transform: uppercase;
   transition: color 180ms ease, text-shadow 180ms ease, transform 180ms ease;
 }
 
 .dc-drop-zone[data-active='true'] .dc-drop-zone-vertical-label {
-  color: rgba(221, 0, 0, 0.96);
-  text-shadow: 0 0 10px rgba(221, 0, 0, 0.34);
-  transform: translate(5px, -50%);
+  color: rgba(221, 0, 0, 0.86);
+  text-shadow: 0 0 9px rgba(221, 0, 0, 0.22);
+  transform: translate(calc(-50% + 4px), -50%) rotate(-90deg);
 }
 
 .dc-drop-zone-divider {
   position: absolute;
   left: 0;
   top: 50%;
-  width: 144px;
+  width: 136px;
   height: 1px;
-  background: linear-gradient(90deg, rgba(221, 0, 0, 0.2), rgba(61, 58, 53, 0.52), transparent);
+  background: linear-gradient(90deg, rgba(221, 0, 0, 0.13), rgba(61, 58, 53, 0.38), transparent);
 }
 
 .dc-radial-overlay {
   position: fixed;
   inset: 0;
   z-index: 210;
-  background: rgba(0, 0, 0, 0.18);
-  backdrop-filter: blur(1.5px);
-  -webkit-backdrop-filter: blur(1.5px);
+  background: transparent;
+}
+
+.dc-radial-backdrop {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at var(--dc-radial-x) var(--dc-radial-y), rgba(221, 0, 0, 0.035) 0 44px, transparent 92px),
+    rgba(0, 0, 0, 0.34);
+  backdrop-filter: blur(3px) saturate(0.86);
+  -webkit-backdrop-filter: blur(3px) saturate(0.86);
+  mask-image: radial-gradient(circle at var(--dc-radial-x) var(--dc-radial-y), transparent 0 58px, rgba(0, 0, 0, 0.18) 72px, #000 116px);
+  -webkit-mask-image: radial-gradient(circle at var(--dc-radial-x) var(--dc-radial-y), transparent 0 58px, rgba(0, 0, 0, 0.18) 72px, #000 116px);
+  will-change: opacity;
 }
 
 .dc-radial-center {
@@ -364,6 +376,7 @@ input::placeholder {
   align-items: center;
   justify-content: center;
   pointer-events: none;
+  z-index: 1;
 }
 
 .dc-radial-center::before {
@@ -396,6 +409,7 @@ input::placeholder {
 
 .dc-radial-item {
   position: fixed;
+  z-index: 2;
   width: 50px;
   height: 50px;
   transform: translate(-50%, -50%);
@@ -405,6 +419,7 @@ input::placeholder {
     radial-gradient(circle at 38% 26%, rgba(225, 225, 225, 0.085), transparent 38%),
     linear-gradient(180deg, rgba(37, 35, 32, 0.96), rgba(19, 18, 15, 0.96));
   color: #A8A8A8;
+  will-change: transform, opacity, filter;
   box-shadow:
     0 1px 0 rgba(225, 225, 225, 0.06) inset,
     0 9px 22px -8px rgba(0, 0, 0, 0.78),
@@ -416,7 +431,6 @@ input::placeholder {
   gap: 3px;
   padding: 0;
   cursor: pointer;
-  animation: dc-radial-pop 220ms cubic-bezier(0.16, 1, 0.3, 1) both;
   transition: border-color 140ms ease, color 140ms ease, box-shadow 140ms ease, background 140ms ease;
 }
 
@@ -449,17 +463,6 @@ input::placeholder {
   border-color: rgba(221, 0, 0, 0.34);
 }
 
-@keyframes dc-radial-pop {
-  from {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.52);
-  }
-  to {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1);
-  }
-}
-
 @keyframes dc-radial-orbit {
   from {
     transform: rotate(0deg);
@@ -481,19 +484,19 @@ input::placeholder {
 .dc-session-pill::before {
   content: '';
   position: absolute;
-  inset: 0;
+  inset: 1px;
   pointer-events: none;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.055) 0%, transparent 18%),
-    radial-gradient(160px 90px at 50% 0%, rgba(255, 255, 255, 0.045), transparent 72%);
+    radial-gradient(180px 84px at 50% 2px, rgba(255, 255, 255, 0.028), transparent 74%);
   opacity: 0;
-  transition: opacity 220ms ease;
+  border-radius: inherit;
+  transition: opacity 150ms ease;
   z-index: 2;
 }
 
 .dc-session-pill[data-state='peek']::before,
 .dc-session-pill[data-state='open']::before {
-  opacity: 1;
+  opacity: 0.58;
 }
 
 .dc-cockpit-topbar {
@@ -605,6 +608,8 @@ input::placeholder {
 @media (prefers-reduced-motion: reduce) {
   .ds-red-pulse,
   .ds-red-sweep-track::after,
+  .dc-radial-backdrop,
+  .dc-radial-center::before,
   .dc-canvas-particle {
     animation: none !important;
   }
@@ -614,7 +619,7 @@ input::placeholder {
   .dc-session-pill {
     top: 12px !important;
     left: 12px !important;
-    width: min(240px, calc(100vw - 164px)) !important;
+    width: min(240px, calc(100vw - 214px)) !important;
     transform: none !important;
   }
 
@@ -667,6 +672,28 @@ input::placeholder {
   .dc-model-name,
   .dc-model-chevron {
     display: none !important;
+  }
+
+  .dc-model-menu {
+    position: fixed !important;
+    top: 58px !important;
+    left: 12px !important;
+    right: 12px !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-height: calc(100vh - 116px) !important;
+    overflow: auto !important;
+    border-radius: 14px !important;
+    z-index: 90 !important;
+  }
+
+  .dc-model-menu-header {
+    padding: 4px 8px 9px !important;
+  }
+
+  .dc-model-option {
+    min-height: 50px !important;
+    padding: 9px 10px 9px 14px !important;
   }
 
   .dc-floating-input {
@@ -851,9 +878,10 @@ input::placeholder {
 
   .dc-toast-stack {
     left: 12px !important;
-    right: 12px !important;
-    bottom: 42px !important;
-    max-width: none !important;
+    right: auto !important;
+    bottom: 124px !important;
+    width: min(320px, calc(100vw - 24px)) !important;
+    max-width: min(320px, calc(100vw - 24px)) !important;
   }
 
   .dc-toast-item {

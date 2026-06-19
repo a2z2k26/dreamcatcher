@@ -78,17 +78,19 @@ export function HoverCard() {
   const preview = lines.join('\n');
   const truncated = preview.length > 120 ? preview.slice(0, 120) + '...' : preview;
 
-  // Model name
-  const modelName = node.metadata.model
-    ? getModel(node.metadata.model).name
+  // Model identity
+  const modelInfo = node.metadata.model ? getModel(node.metadata.model) : null;
+  const modelName = modelInfo
+    ? modelInfo.name
     : node.role === 'user' ? 'User' : 'AI';
+  const modelColor = modelInfo?.color ?? (node.role === 'user' ? T.tertiary : ACCENT);
 
   // Timestamp
   const time = new Date(node.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   // Position: offset from cursor, clamp to viewport
-  const cardWidth = 276;
-  const cardHeight = 118;
+  const cardWidth = 286;
+  const cardHeight = 124;
   const offsetX = 12;
   const offsetY = 12;
   let left = x + offsetX;
@@ -124,8 +126,9 @@ export function HoverCard() {
         pointerEvents: 'none',
         ...glass,
         borderRadius: R.card,
-        padding: 10,
+        padding: '11px 12px 10px 14px',
         background: 'linear-gradient(180deg, rgba(30,28,25,0.96) 0%, rgba(19,18,15,0.93) 100%)',
+        boxShadow: '0 1px 0 rgba(255,255,255,0.045) inset, 0 14px 34px rgba(0,0,0,0.58)',
         overflow: 'hidden',
       }}
     >
@@ -135,12 +138,12 @@ export function HoverCard() {
         style={{
           position: 'absolute',
           left: 0,
-          top: 8,
-          bottom: 8,
+          top: 12,
+          bottom: 12,
           width: 2,
           borderRadius: 1,
           background: ACCENT,
-          boxShadow: `0 0 6px ${accentGlow(0.5)}`,
+          boxShadow: `0 0 5px ${accentGlow(0.26)}`,
         }}
       />
       <div
@@ -148,9 +151,9 @@ export function HoverCard() {
         style={{
           display: 'grid',
           gridTemplateColumns: 'auto minmax(0, 1fr) auto',
-          gap: 8,
+          gap: 7,
           alignItems: 'center',
-          marginBottom: 8,
+          marginBottom: 7,
         }}
       >
         <span
@@ -159,13 +162,13 @@ export function HoverCard() {
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width: 28,
-            height: 20,
-            borderRadius: 6,
-            border: `1px solid ${E[6]}`,
-            background: 'rgba(255,255,255,0.032)',
+            width: 27,
+            height: 18,
+            borderRadius: 5,
+            border: `0.5px solid ${E[6]}`,
+            background: 'rgba(200,200,200,0.04)',
             color: T.tertiary,
-            font: `700 9px ${FF.mono}`,
+            font: `700 8.5px ${FF.mono}`,
             textTransform: 'uppercase',
           }}
         >
@@ -180,7 +183,7 @@ export function HoverCard() {
             whiteSpace: 'nowrap',
             color: T.secondary,
             fontSize: 12,
-            fontWeight: 700,
+            fontWeight: 650,
           }}
         >
           {node.label || 'Node preview'}
@@ -189,7 +192,7 @@ export function HoverCard() {
           className="dc-hover-time"
           style={{
             color: T.dim,
-            font: `700 9px ${FF.mono}`,
+            font: `650 9px ${FF.mono}`,
             whiteSpace: 'nowrap',
           }}
         >
@@ -201,7 +204,7 @@ export function HoverCard() {
         style={{
           fontSize: 11,
           color: T.tertiary,
-          lineHeight: 1.45,
+          lineHeight: 1.48,
           whiteSpace: 'pre-wrap',
           overflow: 'hidden',
           maxHeight: 48,
@@ -215,7 +218,8 @@ export function HoverCard() {
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: 7,
+          justifyContent: 'space-between',
+          gap: 10,
           paddingTop: 7,
           borderTop: `0.5px solid ${E[5]}`,
           color: T.ghost,
@@ -224,8 +228,21 @@ export function HoverCard() {
           textTransform: 'uppercase',
         }}
       >
-        <span>{modelName}</span>
-        <span style={{ color: T.dim }}>·</span>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, minWidth: 0 }}>
+          <span
+            className="dc-hover-model-dot"
+            aria-hidden="true"
+            style={{
+              width: 5,
+              height: 5,
+              borderRadius: 9999,
+              background: modelColor,
+              boxShadow: `0 0 7px ${modelColor}66`,
+              flex: '0 0 auto',
+            }}
+          />
+          <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{modelName}</span>
+        </span>
         <span>{node.metadata.tokens ?? 0} tok</span>
       </div>
     </div>

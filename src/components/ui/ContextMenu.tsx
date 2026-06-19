@@ -10,7 +10,7 @@ import { useGraphStore } from '@/stores/graph-store';
 import { useUIStore } from '@/stores/ui-store';
 import { useMemoryStore } from '@/stores/memory-store';
 import { buildMessages } from '@/lib/context-builder';
-import { E, T, C, FF, FS, R, overlayGlass } from '@/lib/theme';
+import { T, C, FF, FS, R, overlayGlass } from '@/lib/theme';
 import { showToast } from '@/components/ui/Toast';
 
 interface ContextMenuProps {
@@ -201,11 +201,15 @@ export function ContextMenu({ x, y, nodeId, onClose }: ContextMenuProps) {
         zIndex: 200,
         ...overlayGlass,
         borderRadius: R.card,
-        padding: 5,
-        minWidth: 206,
+        padding: 6,
+        minWidth: 214,
         fontFamily: FF.sans,
         background:
-          'linear-gradient(180deg, rgba(30,28,25,0.98) 0%, rgba(19,18,15,0.96) 100%)',
+          [
+            'radial-gradient(circle at 18% 0%, rgba(225,225,225,0.055) 0%, rgba(225,225,225,0.018) 29%, transparent 58%)',
+            'linear-gradient(180deg, rgba(30,28,25,0.98) 0%, rgba(18,17,15,0.97) 100%)',
+          ].join(', '),
+        overflow: 'hidden',
         borderTopColor: 'rgba(61,58,53,0.66)',
         borderLeftColor: 'rgba(44,42,38,0.48)',
         borderRightColor: 'rgba(44,42,38,0.40)',
@@ -228,9 +232,11 @@ export function ContextMenu({ x, y, nodeId, onClose }: ContextMenuProps) {
           gridTemplateColumns: '18px minmax(0, 1fr) auto',
           alignItems: 'center',
           gap: 8,
-          padding: '5px 7px 9px',
-          marginBottom: 4,
-          borderBottom: `0.5px solid ${E[4]}`,
+          padding: '6px 7px 8px',
+          marginBottom: 5,
+          borderRadius: R.sm,
+          background: 'linear-gradient(180deg, rgba(61,58,53,0.16) 0%, rgba(61,58,53,0.035) 100%)',
+          borderBottom: '0.5px solid rgba(61,58,53,0.42)',
         }}
       >
         <span
@@ -240,12 +246,13 @@ export function ContextMenu({ x, y, nodeId, onClose }: ContextMenuProps) {
             width: 18,
             height: 18,
             borderRadius: R.inset,
-            border: '0.5px solid rgba(176,176,176,0.26)',
-            background: 'rgba(176,176,176,0.05)',
+            border: '0.5px solid rgba(176,176,176,0.22)',
+            background: 'rgba(176,176,176,0.045)',
             color: C.branch,
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
+            boxShadow: '0 1px 0 rgba(225,225,225,0.04) inset',
           }}
         >
           <BranchIcon />
@@ -257,7 +264,7 @@ export function ContextMenu({ x, y, nodeId, onClose }: ContextMenuProps) {
               overflow: 'hidden',
               textOverflow: 'ellipsis',
               whiteSpace: 'nowrap',
-              color: T.secondary,
+              color: T.primary,
               fontSize: 11,
               fontWeight: 700,
               lineHeight: 1.25,
@@ -288,6 +295,13 @@ export function ContextMenu({ x, y, nodeId, onClose }: ContextMenuProps) {
             color: T.dim,
             font: `700 9px ${FF.mono}`,
             letterSpacing: 0.3,
+            minWidth: 18,
+            height: 18,
+            borderRadius: R.inset,
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(176,176,176,0.035)',
           }}
         >
           {edgeCount}
@@ -354,6 +368,7 @@ function MenuDivider() {
         height: 0.5,
         background: 'rgba(61,58,53,0.54)',
         margin: '5px 7px',
+        opacity: 0.76,
       }}
     />
   );
@@ -379,7 +394,7 @@ function MenuItem({ icon, label, onClick, accent, accentColor }: {
         gap: 9,
         width: '100%',
         minHeight: 32,
-        padding: '7px 10px',
+        padding: '7px 8px',
         borderRadius: R.sm,
         border: 'none',
         background: 'transparent',
@@ -390,27 +405,33 @@ function MenuItem({ icon, label, onClick, accent, accentColor }: {
         lineHeight: 1,
         color: c,
         cursor: 'pointer',
-        transition: 'background 130ms ease, color 130ms ease',
+        transition: 'background 130ms ease, color 130ms ease, transform 150ms ease',
       }}
       onMouseEnter={e => {
         e.currentTarget.style.background = 'rgba(61,58,53,0.36)';
         e.currentTarget.style.color = T.primary;
+        e.currentTarget.style.transform = 'translateX(1px)';
       }}
       onMouseLeave={e => {
         e.currentTarget.style.background = 'transparent';
         e.currentTarget.style.color = c;
+        e.currentTarget.style.transform = 'translateX(0)';
       }}
     >
       <span
         aria-hidden="true"
         style={{
-          width: 15,
-          height: 15,
+          width: 18,
+          height: 18,
+          flex: '0 0 18px',
+          borderRadius: R.inset,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           color: ic,
           opacity: accent ? 0.94 : 0.82,
+          background: 'rgba(176,176,176,0.035)',
+          boxShadow: '0 0 0 0.5px rgba(176,176,176,0.12) inset',
         }}
       >
         {icon}

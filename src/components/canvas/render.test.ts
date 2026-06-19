@@ -79,8 +79,8 @@ describe('renderSVG', () => {
     renderSVG(ctx);
     const html = (ctx.svg as unknown as FakeSVG).innerHTML;
     expect(html).toContain('data-empty-state="dreamcatcher-seed"');
-    expect(html).toContain('data-empty-seed-core="true"');
-    expect(html).toContain('data-empty-seed-trace="true"');
+    expect(html).not.toContain('data-empty-seed-core="true"');
+    expect(html).not.toContain('data-empty-seed-trace="true"');
     expect(html).toContain('data-empty-title="true"');
     expect(html).toContain('DREAMCATCHER');
     expect(html).not.toContain('Begin a thread');
@@ -102,6 +102,19 @@ describe('renderSVG', () => {
     expect(html).toContain('data-id="a1"');
     // Empty state should NOT appear once we have nodes
     expect(html).not.toContain('DREAMCATCHER');
+  });
+
+  it('renders selected nodes with concentric motion rings', () => {
+    setNodes([
+      { id: 'u1', role: 'user', type: 'message', text: 'hi', label: 'hi', parentId: null, timestamp: 0, metadata: {} },
+    ]);
+    useUIStore.setState({ selectedNodeId: 'u1' });
+    const ctx = makeCtx({ selDash: 12, time: 1 });
+    renderSVG(ctx);
+    const html = (ctx.svg as unknown as FakeSVG).innerHTML;
+    expect(html).toContain('data-selected-node-rings="true"');
+    expect(html).toContain('stroke-dashoffset="8.64"');
+    expect(html).toContain('stroke-dashoffset="-5.5200000000000005"');
   });
 
   it('escapes hostile node labels at LOD ≥ 2', () => {

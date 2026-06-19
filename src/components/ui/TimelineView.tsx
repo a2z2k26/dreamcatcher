@@ -23,7 +23,9 @@ export function TimelineView() {
 
   // Get the full path from root → active node (computed, not via selector)
   const path = activeNodeId ? useGraphStore.getState().getAncestralPath(activeNodeId) : [];
-  const rightInset = viewportWidth > 0 && viewportWidth <= 640 ? 12 : 434;
+  const isMobileViewport = viewportWidth > 0 && viewportWidth <= 640;
+  const rightInset = isMobileViewport ? 12 : 434;
+  const timelineListBottomPad = isMobileViewport ? 230 : 8;
 
   useEffect(() => {
     const syncViewport = () => setViewportWidth(window.innerWidth);
@@ -37,7 +39,7 @@ export function TimelineView() {
     if (scrollRef.current && timelineOpen) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [path.length, timelineOpen]);
+  }, [path.length, timelineOpen, timelineListBottomPad]);
 
   return (
     <>
@@ -81,7 +83,7 @@ export function TimelineView() {
       </div>
 
       {/* Messages */}
-      <div ref={scrollRef} className="scroll-fade" style={{ flex: 1, overflowY: 'auto', padding: '8px 0' }}>
+      <div ref={scrollRef} className="scroll-fade" style={{ flex: 1, overflowY: 'auto', padding: `8px 0 ${timelineListBottomPad}px` }}>
         {path.length === 0 ? (
           <div style={{ padding: 20, textAlign: 'center', color: '#404040', fontSize: 11, lineHeight: 1.6 }}>
             Start a conversation to see it here as a linear thread. The timeline shows the path from root to the active node.
@@ -247,7 +249,7 @@ function TimelineScrubber({ open, nodes, activeNodeId, rightInset }: {
         position: 'fixed',
         left: 14,
         right: rightInset,
-        bottom: 108,
+        bottom: 124,
         zIndex: 72,
         ...glassElevated,
         borderRadius: R.lg,

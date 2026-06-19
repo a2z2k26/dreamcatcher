@@ -173,14 +173,15 @@ export function SessionPill() {
 
   // Dimensions per state
   const isMobileViewport = viewportWidth > 0 && viewportWidth <= 640;
-  const width = isMobileViewport
-    ? Math.max(296, viewportWidth - 24)
-    : WIDTH_BY_STATE[state];
-  const height = HEIGHT_BY_STATE[state];
   const isOpen = state === 'open';
   const isCollapsed = state === 'collapsed';
   const liveStatus = activeSession?.phase === 'streaming' || activeSession?.phase === 'waiting';
   const statusWord = activeSession?.phase === 'streaming' ? 'streaming' : activeSession?.phase === 'waiting' ? 'waiting' : null;
+  const showStatusWord = Boolean(statusWord && !(isMobileViewport && isCollapsed));
+  const width = isMobileViewport
+    ? Math.max(296, viewportWidth - 24)
+    : isCollapsed && !statusWord ? 372 : WIDTH_BY_STATE[state];
+  const height = HEIGHT_BY_STATE[state];
   const statusColor = phaseColor(activeSession?.phase);
   const notchBackground = activeSession?.phase === 'waiting'
     ? 'linear-gradient(180deg, #221C12 0%, #17120B 100%)'
@@ -205,7 +206,7 @@ export function SessionPill() {
         background: isCollapsed ? notchBackground : PANEL_BG,
         backdropFilter: isCollapsed ? 'blur(16px) saturate(1.14)' : 'blur(18px) saturate(1.18)',
         WebkitBackdropFilter: isCollapsed ? 'blur(16px) saturate(1.14)' : 'blur(18px) saturate(1.18)',
-        borderTop: isCollapsed ? '0.5px solid rgba(255,255,255,0.08)' : 'none',
+        borderTop: isCollapsed ? '0.5px solid rgba(61,58,53,0.40)' : '0.5px solid rgba(61,58,53,0.16)',
         borderRight: '0.5px solid rgba(255,255,255,0.06)',
         borderBottom: isCollapsed ? '0.5px solid rgba(61,58,53,0.62)' : '0.5px solid rgba(255,255,255,0.04)',
         borderLeft: '0.5px solid rgba(255,255,255,0.06)',
@@ -219,14 +220,14 @@ export function SessionPill() {
               '0 14px 34px -12px rgba(0,0,0,0.78)',
               activeSession?.phase === 'streaming' ? '0 0 24px rgba(221,0,0,0.32)' : '',
               activeSession?.phase === 'waiting' ? '0 0 18px rgba(250,173,20,0.16)' : '',
-              'inset 0 1px 0 rgba(255,255,255,0.08)',
+              'inset 0 1px 0 rgba(255,255,255,0.026)',
               'inset 0 -1px 0 rgba(0,0,0,0.28)',
             ].filter(Boolean).join(', ')
           : [
               '0 16px 36px rgba(0,0,0,0.62)',
               '0 5px 14px rgba(0,0,0,0.42)',
               '0 0 0 0.5px rgba(255,255,255,0.035) inset',
-              '0 1px 0 rgba(255,255,255,0.045) inset',
+              '0 1px 0 rgba(255,255,255,0.026) inset',
             ].join(', '),
         fontFamily: FF.sans,
         transition: NOTCH_TRANSITION,
@@ -247,9 +248,9 @@ export function SessionPill() {
           }
         }}
         style={{
-          display: 'flex', alignItems: 'center', gap: 8,
+          display: 'flex', alignItems: 'center', gap: isCollapsed ? 6 : 8,
           height: SESSION_HEADER_HEIGHT,
-          padding: isCollapsed ? '0 15px 0 20px' : '0 12px 0 17px',
+          padding: isCollapsed ? '0 8px 0 20px' : '0 10px 0 17px',
           cursor: 'pointer',
           background: isCollapsed
             ? [
@@ -264,23 +265,23 @@ export function SessionPill() {
       >
         <div className={liveStatus ? 'ds-red-pulse' : undefined} style={{
           width: isCollapsed ? 8 : 7, height: isCollapsed ? 8 : 7, borderRadius: '50%',
-          background: statusColor,
-          boxShadow: liveStatus ? `0 0 8px ${activeSession?.phase === 'streaming' ? 'rgba(221,0,0,0.75)' : 'rgba(250,173,20,0.72)'}` : 'none',
+          background: ACCENT,
+          boxShadow: liveStatus ? '0 0 8px rgba(221,0,0,0.75)' : 'none',
           transition: 'background 0.3s',
           flex: '0 0 auto',
         }} />
-        {statusWord && (
+        {showStatusWord && statusWord && (
           <>
-            <span style={{ font: `600 10px ${FF.mono}`, letterSpacing: 0.4, color: statusColor, flex: '0 0 auto' }}>
+            <span className="dc-session-pill-status-word" style={{ font: `600 10px ${FF.mono}`, letterSpacing: 0.4, color: statusColor, flex: '0 0 auto' }}>
               {statusWord}
             </span>
-            <span style={{ font: `400 11px ${FF.mono}`, color: T.dim, flex: '0 0 auto' }}>·</span>
+            <span className="dc-session-pill-status-separator" style={{ font: `400 11px ${FF.mono}`, color: T.dim, flex: '0 0 auto' }}>·</span>
           </>
         )}
-        <span style={{
+        <span className="dc-session-pill-title" style={{
           fontSize: isCollapsed ? 13 : 12, fontWeight: 650, color: isOpen ? T.primary : T.secondary, flex: 1,
           overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-          maxWidth: statusWord ? 260 : 292,
+          maxWidth: showStatusWord ? 260 : 292,
         }}>
           {activeSession?.name || 'No session'}
         </span>

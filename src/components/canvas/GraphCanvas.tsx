@@ -7,7 +7,9 @@
 // (not via React re-renders — performance critical).
 // ═══════════════════════════════════════════════════════════════
 
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useEffect, useRef, useCallback, useState, type CSSProperties } from 'react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 import { useGraphStore } from '@/stores/graph-store';
 import { useUIStore } from '@/stores/ui-store';
 import { useMemoryStore } from '@/stores/memory-store';
@@ -22,6 +24,8 @@ import {
   type EffectsState,
 } from '@/lib/effects';
 import { renderSVG as renderSVGImpl } from './render';
+
+gsap.registerPlugin(useGSAP);
 
 type DragDropZone = 'learn' | 'remember' | null;
 
@@ -48,6 +52,11 @@ type CanvasPanMotion = {
 };
 
 const DROP_ZONE_WIDTH = 144;
+const RADIAL_MENU_RADIUS = 78;
+const RADIAL_ITEM_RADIUS = 25;
+const RADIAL_MENU_MARGIN = 12;
+const RADIAL_TOP_SAFE = 58;
+const RADIAL_BOTTOM_SAFE = 24;
 
 function getDragDropZone(screenX: number, screenY: number, height: number): DragDropZone {
   if (screenX < 0 || screenX >= DROP_ZONE_WIDTH || screenY < 0 || screenY > height) return null;
@@ -178,9 +187,12 @@ export function GraphCanvas() {
     const rect = container.getBoundingClientRect();
     const x = rect.left + body.x * scale + panX;
     const y = rect.top + body.y * scale + panY;
+    const inset = RADIAL_MENU_RADIUS + RADIAL_ITEM_RADIUS + RADIAL_MENU_MARGIN;
+    const minY = RADIAL_TOP_SAFE + inset;
+    const maxY = Math.max(minY, window.innerHeight - RADIAL_BOTTOM_SAFE - inset);
     return {
-      x: Math.min(Math.max(x, 98), window.innerWidth - 98),
-      y: Math.min(Math.max(y, 98), window.innerHeight - 98),
+      x: Math.min(Math.max(x, inset), window.innerWidth - inset),
+      y: Math.min(Math.max(y, minY), maxY),
     };
   }, []);
 
@@ -834,6 +846,7 @@ function RadialNodeActions({
   y: number;
   onClose: () => void;
 }) {
+  const radialRef = useRef<HTMLDivElement>(null);
   const node = useGraphStore(s => s.nodes.find(n => n.id === nodeId));
   const actions = [
     { id: 'branch', label: 'Branch', angle: -90 },
@@ -851,6 +864,69 @@ function RadialNodeActions({
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [onClose]);
+
+  useGSAP(() => {
+    const root = radialRef.current;
+    if (!root) return;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reducedMotion) return;
+
+    const backdrop = root.querySelector<HTMLElement>('.dc-radial-backdrop');
+    const center = root.querySelector<HTMLElement>('.dc-radial-center');
+    const dot = root.querySelector<HTMLElement>('.dc-radial-center-dot');
+    const items = gsap.utils.toArray<HTMLElement>(root.querySelectorAll('.dc-radial-item'));
+
+    const timeline = gsap.timeline({
+      defaults: { ease: 'power3.out' },
+    });
+
+    if (backdrop) {
+      timeline.fromTo(backdrop, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.18 }, 0);
+    }
+
+    if (center) {
+      timeline.fromTo(
+        center,
+        { autoAlpha: 0, scale: 0.86 },
+        { autoAlpha: 1, scale: 1, duration: 0.26 },
+        0.02,
+      );
+    }
+
+    timeline.fromTo(
+      items,
+      {
+        autoAlpha: 0,
+        scale: 0.62,
+        x: (_index: number, target: Element) => {
+          const rect = target.getBoundingClientRect();
+          return x - (rect.left + rect.width / 2);
+        },
+        y: (_index: number, target: Element) => {
+          const rect = target.getBoundingClientRect();
+          return y - (rect.top + rect.height / 2);
+        },
+        filter: 'blur(2px)',
+      },
+      {
+        autoAlpha: 1,
+        scale: 1,
+        x: 0,
+        y: 0,
+        filter: 'blur(0px)',
+        duration: 0.34,
+        stagger: { each: 0.028, from: 'start' },
+      },
+      0.08,
+    );
+
+    if (dot) {
+      timeline
+        .fromTo(dot, { scale: 0.72 }, { scale: 1, duration: 0.28, ease: 'power2.out' }, 0.06)
+        .to(dot, { scale: 1.18, duration: 0.18, ease: 'sine.out', yoyo: true, repeat: 1 }, 0.2);
+    }
+  }, { scope: radialRef, dependencies: [nodeId, x, y], revertOnUpdate: true });
 
   const saveMemory = useCallback(() => {
     if (!node) return;
@@ -902,14 +978,24 @@ function RadialNodeActions({
   if (!node) return null;
 
   return (
-    <div className="dc-radial-overlay" onClick={onClose} onContextMenu={event => { event.preventDefault(); onClose(); }}>
+    <div
+      ref={radialRef}
+      className="dc-radial-overlay"
+      style={{
+        '--dc-radial-x': `${x}px`,
+        '--dc-radial-y': `${y}px`,
+      } as CSSProperties}
+      onClick={onClose}
+      onContextMenu={event => { event.preventDefault(); onClose(); }}
+    >
+      <div className="dc-radial-backdrop" aria-hidden="true" />
       <div className="dc-radial-center" style={{ left: x, top: y }}>
         <span className="dc-radial-center-dot" />
         <span className="dc-radial-center-label">{node.role}</span>
       </div>
-      {actions.map((action, index) => {
+      {actions.map((action) => {
         const radians = (action.angle * Math.PI) / 180;
-        const radius = 78;
+        const radius = RADIAL_MENU_RADIUS;
         const buttonX = x + Math.cos(radians) * radius;
         const buttonY = y + Math.sin(radians) * radius;
         return (
@@ -925,7 +1011,6 @@ function RadialNodeActions({
             style={{
               left: buttonX,
               top: buttonY,
-              animationDelay: `${index * 18}ms`,
             }}
           >
             <RadialIcon name={action.id} />

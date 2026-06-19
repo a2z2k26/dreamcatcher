@@ -5,7 +5,8 @@
 // Simple text toasts in bottom-left. Appear, fade after 2s.
 // ═══════════════════════════════════════════════════════════════
 
-import { useSyncExternalStore } from 'react';
+import { useEffect, useRef, useSyncExternalStore } from 'react';
+import gsap from 'gsap';
 import { ACCENT, E, T, accentGlow, glass } from '@/lib/theme';
 
 interface ToastEntry {
@@ -48,11 +49,45 @@ export function showToast(message: string) {
 
 export function ToastProvider() {
   const currentToasts = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  const stackRef = useRef<HTMLDivElement>(null);
+  const lastAnimatedToastIdRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const latestToast = currentToasts[currentToasts.length - 1];
+    if (!latestToast || lastAnimatedToastIdRef.current === latestToast.id) return;
+    lastAnimatedToastIdRef.current = latestToast.id;
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const item = stackRef.current?.querySelector<HTMLElement>(`[data-toast-id="${latestToast.id}"]`);
+    if (!item) return;
+
+    const icon = item.querySelector<HTMLElement>('.dc-toast-icon');
+    const timeline = gsap.timeline();
+    timeline.fromTo(
+      item,
+      { autoAlpha: 0, y: 8, scale: 0.965, filter: 'blur(2px)' },
+      { autoAlpha: 1, y: 0, scale: 1, filter: 'blur(0px)', duration: 0.26, ease: 'power3.out' },
+    );
+    if (icon) {
+      timeline.fromTo(
+        icon,
+        { scale: 0.78, rotation: -8 },
+        { scale: 1, rotation: 0, duration: 0.28, ease: 'power3.out' },
+        0.05,
+      );
+    }
+
+    return () => {
+      timeline.kill();
+    };
+  }, [currentToasts]);
 
   if (currentToasts.length === 0) return null;
 
   return (
     <div
+      ref={stackRef}
       className="dc-toast-stack"
       style={{
         position: 'fixed',
@@ -69,6 +104,7 @@ export function ToastProvider() {
       {currentToasts.map(t => (
         <div
           className="dc-toast-item"
+          data-toast-id={t.id}
           key={t.id}
           style={{
             ...glass,

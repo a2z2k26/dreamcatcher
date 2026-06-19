@@ -102,8 +102,31 @@ function buildDefs(): string {
   s += `<radialGradient id="glow-stream-anthropic"><stop offset="0%" stop-color="#E08542" stop-opacity="0.1"/><stop offset="100%" stop-color="#E08542" stop-opacity="0"/></radialGradient>`;
   s += `<radialGradient id="glow-stream-openai"><stop offset="0%" stop-color="#4A8FE0" stop-opacity="0.1"/><stop offset="100%" stop-color="#4A8FE0" stop-opacity="0"/></radialGradient>`;
   s += `<radialGradient id="glow-stream-google"><stop offset="0%" stop-color="#EA4335" stop-opacity="0.1"/><stop offset="100%" stop-color="#EA4335" stop-opacity="0"/></radialGradient>`;
-  // Ambient node aura
-  s += `<radialGradient id="node-aura"><stop offset="30%" stop-color="${E[7]}" stop-opacity="0.12"/><stop offset="100%" stop-color="${E[7]}" stop-opacity="0"/></radialGradient>`;
+  // Ambient model-node aura. Keep provider identity, but feather it heavily.
+  s += `<radialGradient id="node-model-aura-neutral" cx="50%" cy="50%" r="68%">`;
+  s += `<stop offset="0%" stop-color="${E[7]}" stop-opacity="0.16"/>`;
+  s += `<stop offset="46%" stop-color="${E[7]}" stop-opacity="0.04"/>`;
+  s += `<stop offset="74%" stop-color="${E[7]}" stop-opacity="0.012"/>`;
+  s += `<stop offset="100%" stop-color="${E[7]}" stop-opacity="0"/>`;
+  s += `</radialGradient>`;
+  s += `<radialGradient id="node-model-aura-anthropic" cx="50%" cy="50%" r="68%">`;
+  s += `<stop offset="0%" stop-color="#E08542" stop-opacity="0.24"/>`;
+  s += `<stop offset="46%" stop-color="#E08542" stop-opacity="0.055"/>`;
+  s += `<stop offset="74%" stop-color="#E08542" stop-opacity="0.018"/>`;
+  s += `<stop offset="100%" stop-color="#E08542" stop-opacity="0"/>`;
+  s += `</radialGradient>`;
+  s += `<radialGradient id="node-model-aura-openai" cx="50%" cy="50%" r="68%">`;
+  s += `<stop offset="0%" stop-color="#4A8FE0" stop-opacity="0.22"/>`;
+  s += `<stop offset="46%" stop-color="#4A8FE0" stop-opacity="0.05"/>`;
+  s += `<stop offset="74%" stop-color="#4A8FE0" stop-opacity="0.016"/>`;
+  s += `<stop offset="100%" stop-color="#4A8FE0" stop-opacity="0"/>`;
+  s += `</radialGradient>`;
+  s += `<radialGradient id="node-model-aura-google" cx="50%" cy="50%" r="68%">`;
+  s += `<stop offset="0%" stop-color="#EA4335" stop-opacity="0.22"/>`;
+  s += `<stop offset="46%" stop-color="#EA4335" stop-opacity="0.05"/>`;
+  s += `<stop offset="74%" stop-color="#EA4335" stop-opacity="0.016"/>`;
+  s += `<stop offset="100%" stop-color="#EA4335" stop-opacity="0"/>`;
+  s += `</radialGradient>`;
   // Node drop shadow
   s += `<filter id="node-shadow" x="-50%" y="-50%" width="200%" height="200%">`;
   s += `<feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="rgba(0,0,0,0.72)"/>`;
@@ -119,6 +142,12 @@ function buildDefs(): string {
   return s;
 }
 
+function prefersReducedMotion(): boolean {
+  return typeof window !== 'undefined'
+    && typeof window.matchMedia === 'function'
+    && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 export function renderSVG(ctx: RenderContext): void {
   const { svg, container, selDash, time, deadEnds, edgeCreatedAt, effects } = ctx;
   if (!svg) return;
@@ -131,6 +160,7 @@ export function renderSVG(ctx: RenderContext): void {
   const { level: lod, fadeIn: lodFade } = getLOD(scale);
   const nodeById = new Map(nodes.map(node => [node.id, node]));
   const timelineCutoff = timelineOpen ? timelineScrubTime : null;
+  const reducedMotion = prefersReducedMotion();
 
   let s = buildDefs();
 
@@ -172,50 +202,9 @@ export function renderSVG(ctx: RenderContext): void {
   if (nodes.length === 0 && container) {
     const cx = (container.clientWidth / 2 - ui.panX) / scale;
     const cy = (container.clientHeight / 2 - ui.panY) / scale;
-    const breathe = 0.76 + 0.035 * Math.sin(time * 0.8);
-    const orbitA = (time * 18) % 360;
-    const orbitB = (time * -13) % 360;
-    const orbitC = (time * 9) % 360;
-    const orbitD = (time * -24) % 360;
-    const orbitDotA = orbitA * Math.PI / 180;
-    const orbitDotB = orbitB * Math.PI / 180;
-    const orbitDotC = orbitC * Math.PI / 180;
-    const orbitDotD = orbitD * Math.PI / 180;
-    const dotAx = Math.cos(orbitDotA) * 118;
-    const dotAy = -48 + Math.sin(orbitDotA) * 118;
-    const dotBx = Math.cos(orbitDotB) * 86;
-    const dotBy = -48 + Math.sin(orbitDotB) * 86;
-    const dotCx = Math.cos(orbitDotC) * 66;
-    const dotCy = -48 + Math.sin(orbitDotC) * 66;
-    const dotDx = Math.cos(orbitDotD) * 48;
-    const dotDy = -48 + Math.sin(orbitDotD) * 48;
-    s += `<g data-empty-state="dreamcatcher-seed" transform="translate(${cx},${cy})" opacity="${breathe}">`;
-    s += `<circle cx="0" cy="-48" r="150" fill="${ACCENT}" opacity="0.018"/>`;
-    s += `<circle cx="0" cy="-48" r="132" fill="${E[4]}" opacity="0.024"/>`;
-    s += `<g data-empty-seed-trace="true" opacity="0.82">`;
-    s += `<circle cx="0" cy="-48" r="118" fill="none" stroke="${ACCENT}" stroke-width="0.74" stroke-linecap="round" stroke-dasharray="7 18" stroke-dashoffset="${-(time * 28)}" opacity="0.28"/>`;
-    s += `<circle cx="0" cy="-48" r="102" fill="none" stroke="${ACCENT}" stroke-width="0.58" stroke-linecap="round" stroke-dasharray="1 17" stroke-dashoffset="${time * 17}" opacity="0.22"/>`;
-    s += `<circle cx="0" cy="-48" r="86" fill="none" stroke="${ACCENT}" stroke-width="0.86" stroke-linecap="round" stroke-dasharray="5 12" stroke-dashoffset="${-(time * 22)}" opacity="0.5"/>`;
-    s += `<circle cx="0" cy="-48" r="72" fill="none" stroke="${ACCENT}" stroke-width="0.64" stroke-linecap="round" stroke-dasharray="12 20" stroke-dashoffset="${time * 30}" opacity="0.28"/>`;
-    s += `<circle cx="0" cy="-48" r="58" fill="none" stroke="${ACCENT}" stroke-width="0.7" stroke-linecap="round" stroke-dasharray="2 10" stroke-dashoffset="${time * 18}" opacity="0.34"/>`;
-    s += `<circle cx="0" cy="-48" r="42" fill="none" stroke="${ACCENT}" stroke-width="0.62" stroke-linecap="round" stroke-dasharray="1 13" stroke-dashoffset="${-(time * 13)}" opacity="0.25"/>`;
-    s += `<circle cx="${dotAx}" cy="${dotAy}" r="2.5" fill="${ACCENT}" opacity="0.38"/>`;
-    s += `<circle cx="${dotBx}" cy="${dotBy}" r="2.2" fill="${ACCENT}" opacity="0.46"/>`;
-    s += `<circle cx="${dotCx}" cy="${dotCy}" r="1.8" fill="${ACCENT}" opacity="0.32"/>`;
-    s += `<circle cx="${dotDx}" cy="${dotDy}" r="1.55" fill="${ACCENT}" opacity="0.28"/>`;
-    s += `</g>`;
-    s += `<g data-empty-seed-core="true">`;
-    s += `<circle cx="0" cy="-48" r="54" fill="${ACCENT}" opacity="0.035"/>`;
-    s += `<circle cx="0" cy="-48" r="38" fill="${E[2]}" stroke="${E[6]}" stroke-width="0.75" opacity="0.62"/>`;
-    s += `<circle cx="0" cy="-48" r="26" fill="url(#node-user-fill)" stroke="${T.ghost}" stroke-width="1.05" opacity="0.9"/>`;
-    s += `<circle cx="-7" cy="-57" r="10" fill="url(#node-user-spec)" opacity="0.5"/>`;
-    s += `<circle cx="0" cy="-48" r="10.5" fill="${ACCENT}" opacity="0.32"/>`;
-    s += `<circle cx="0" cy="-48" r="4.7" fill="${ACCENT}" opacity="0.82"/>`;
-    s += `<circle cx="-1.4" cy="-50.2" r="1.4" fill="#fff6e8" opacity="0.55"/>`;
-    s += `<circle cx="0" cy="-48" r="31" fill="none" stroke="${ACCENT}" stroke-width="0.8" opacity="0.34"/>`;
-    s += `</g>`;
+    s += `<g data-empty-state="dreamcatcher-seed" transform="translate(${cx},${cy})">`;
     s += `<g data-empty-seed-tag="true">`;
-    s += `<text data-empty-title="true" x="0" y="86" text-anchor="middle" fill="${T.tertiary}" font-family="'Mulish',system-ui,sans-serif" font-size="16" font-weight="700" letter-spacing="5.2" opacity="0.66">DREAMCATCHER</text>`;
+    s += `<text data-empty-title="true" x="0" y="0" text-anchor="middle" dominant-baseline="middle" fill="${ACCENT}" font-family="'iA Writer Mono S','Inconsolata',ui-monospace,'SF Mono',Menlo,monospace" font-size="13" font-weight="500" letter-spacing="5.4" opacity="0.78">DREAMCATCHER</text>`;
     s += `</g>`;
     s += `</g>`;
   }
@@ -335,9 +324,10 @@ export function renderSVG(ctx: RenderContext): void {
       const strokeColor = isSel ? ACCENT : isHov ? T.secondary : NODE_AI_STROKE;
       const fillId = providerKey ? `node-ai-fill-${providerKey}` : 'node-ai-fill';
       const hotCoreId = providerKey ? `node-hot-core-${providerKey}` : 'node-hot-core-neutral';
+      const auraId = providerKey ? `node-model-aura-${providerKey}` : 'node-model-aura-neutral';
       const isActivePathNode = activePath.has(n.id);
-      const auraOpacity = isSel ? 0.22 : streamPulse !== null ? 0.18 : isActivePathNode ? 0.11 : 0.055;
-      s += `<circle cx="0" cy="0" r="${r * (isSel ? 2.08 : streamPulse !== null ? 1.94 : 1.66)}" fill="${modelColor}" opacity="${auraOpacity}"/>`;
+      const auraOpacity = isSel ? 0.95 : streamPulse !== null ? 0.72 : isActivePathNode ? 0.5 : 0.34;
+      s += `<circle cx="0" cy="0" r="${r * (isSel ? 2.28 : streamPulse !== null ? 2.12 : 1.92)}" fill="url(#${auraId})" opacity="${auraOpacity}"/>`;
 
       if (isBranchPoint) {
         const shape = hexPath(r);
@@ -383,16 +373,20 @@ export function renderSVG(ctx: RenderContext): void {
     }
 
     if (lod >= 2) {
-      const labelOpacity = lod === 2 ? lodFade : 1;
       const label = lod === 2
         ? n.label.slice(0, 14) + (n.label.length > 14 ? '..' : '')
         : n.label;
       const isActivePathLabel = activePath.has(n.id);
-      const labelColor = isSel ? T.primary : isActivePathLabel ? T.tertiary : n.role === 'user' ? T.subtle : T.ghost;
-      const labelWeight = isSel || isActivePathLabel ? 600 : 400;
+      const isCurrentLabel = n.id === activeHeadId;
+      const isLabelEmphasized = isSel || isCurrentLabel;
+      const isLabelContext = !isLabelEmphasized && isActivePathLabel;
+      const labelColor = isLabelEmphasized ? T.primary : isLabelContext ? T.tertiary : n.role === 'user' ? T.ghost : T.dimSection;
+      const labelWeight = isLabelEmphasized ? 650 : isLabelContext ? 520 : 380;
+      const baseLabelOpacity = isLabelEmphasized ? 1 : isLabelContext ? 0.78 : 0.56;
+      const labelOpacity = (lod === 2 ? lodFade : 1) * baseLabelOpacity;
       const labelWidth = Math.min(176, Math.max(42, label.length * 6.4 + 14));
-      if (isSel || isActivePathLabel) {
-        s += `<rect x="${-labelWidth / 2}" y="${r + 7}" width="${labelWidth}" height="18" rx="3" fill="${E[1]}" opacity="${isSel ? 0.72 : 0.46}" stroke="${isSel ? ACCENT : E[5]}" stroke-width="0.5"/>`;
+      if (isLabelEmphasized) {
+        s += `<rect x="${-labelWidth / 2}" y="${r + 7}" width="${labelWidth}" height="18" rx="3" fill="${E[1]}" opacity="0.58" stroke="${E[5]}" stroke-width="0.5"/>`;
       }
       s += `<text x="0" y="${r + 20}" text-anchor="middle" fill="${labelColor}" font-family="'iA Writer Mono S',Inconsolata,monospace" font-size="11" font-weight="${labelWeight}" letter-spacing="0.03em" opacity="${labelOpacity}">${esc(label)}</text>`;
       if (streamPulse !== null && n.role === 'ai') {
@@ -431,10 +425,19 @@ export function renderSVG(ctx: RenderContext): void {
   if (selectedNodeId) {
     const body = bodies[selectedNodeId];
     if (body) {
-      s += `<circle cx="${body.x}" cy="${body.y}" r="${body.r + 24}" fill="url(#glow-select-halo)"/>`;
-      s += `<circle cx="${body.x}" cy="${body.y}" r="${body.r + 6}" fill="none" stroke="${ACCENT}" stroke-width="1.5" opacity="0.7"/>`;
-      const breathR = body.r + 12 + 3 * Math.sin(time * 3);
-      s += `<circle cx="${body.x}" cy="${body.y}" r="${breathR}" fill="none" stroke="${ACCENT}" stroke-width="0.6" opacity="0.15"/>`;
+      const pulse = reducedMotion ? 0 : 0.5 + 0.5 * Math.sin(time * 2.15);
+      const breathR = reducedMotion ? body.r + 12 : body.r + 12 + 2.4 * Math.sin(time * 2.1);
+      const outerR = reducedMotion ? body.r + 17 : body.r + 17 + 1.5 * Math.sin(time * 1.55 + 1.2);
+      const primaryDash = `${Math.max(4.5, body.r * 0.28)} ${Math.max(7, body.r * 0.54)}`;
+      const secondaryDash = `${Math.max(2.2, body.r * 0.11)} ${Math.max(6.2, body.r * 0.44)}`;
+      const primaryOffset = reducedMotion ? 0 : selDash * 0.72;
+      const secondaryOffset = reducedMotion ? 0 : -selDash * 0.46;
+      s += `<g data-selected-node-rings="true" class="dc-selected-node-rings">`;
+      s += `<circle cx="${body.x}" cy="${body.y}" r="${body.r + 25}" fill="url(#glow-select-halo)" opacity="${reducedMotion ? 0.78 : 0.72 + pulse * 0.14}"/>`;
+      s += `<circle cx="${body.x}" cy="${body.y}" r="${body.r + 6}" fill="none" stroke="${ACCENT}" stroke-width="1.45" opacity="0.72"/>`;
+      s += `<circle cx="${body.x}" cy="${body.y}" r="${breathR}" fill="none" stroke="${ACCENT}" stroke-width="0.96" stroke-linecap="round" stroke-dasharray="${primaryDash}" stroke-dashoffset="${primaryOffset}" opacity="${0.42 + pulse * 0.18}"/>`;
+      s += `<circle cx="${body.x}" cy="${body.y}" r="${outerR}" fill="none" stroke="${ACCENT}" stroke-width="0.64" stroke-linecap="round" stroke-dasharray="${secondaryDash}" stroke-dashoffset="${secondaryOffset}" opacity="${0.24 + pulse * 0.1}"/>`;
+      s += `</g>`;
     }
   }
 
