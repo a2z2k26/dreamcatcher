@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Memory Types
+// Dreamcatcher — Memory Types
 // Memories are knowledge artifacts extracted from conversations.
 // ═══════════════════════════════════════════════════════════════
 

@@ -1,6 +1,6 @@
 # Docs
 
-Supporting research, specs, and reviews for Dreamcacher. The product spec
+Supporting research, specs, and reviews for Dreamcatcher. The product spec
 and strategy documents live at the repo root (`../PRODUCT.md`, `../STRATEGY.md`).
 
 ## Layout

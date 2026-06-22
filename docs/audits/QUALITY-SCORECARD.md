@@ -1,4 +1,4 @@
-# Dreamcacher Quality Scorecard
+# Dreamcatcher Quality Scorecard
 
 A weighted rubric for evaluating design quality across ten dimensions. Score the application at any milestone to track progress from prototype to premium product.
 
@@ -43,7 +43,7 @@ A weighted rubric for evaluating design quality across ten dimensions. Score the
 
 **Research basis**: Nielsen Norman Group eyetracking studies identify four dominant scanning patterns (F-pattern, Z-pattern, layer-cake, spotted) that users adopt based on the strength of visual hierarchy. When hierarchy is weak, users default to F-pattern scanning and miss content in the lower-right quadrant. When hierarchy is strong, users follow the designer's intended path. Lindgaard et al. (2006) demonstrated that aesthetic judgments -- driven heavily by hierarchy -- form within 50 milliseconds.
 
-**Dreamcacher-specific concerns**: The spatial canvas demands a clear distinction between primary objects (nodes), secondary objects (edges), and tertiary chrome (panels, input bar, status). The node LOD system is a form of programmatic hierarchy. The challenge is maintaining hierarchy when 50+ nodes, 4 panels, and 6 floating elements coexist.
+**Dreamcatcher-specific concerns**: The spatial canvas demands a clear distinction between primary objects (nodes), secondary objects (edges), and tertiary chrome (panels, input bar, status). The node LOD system is a form of programmatic hierarchy. The challenge is maintaining hierarchy when 50+ nodes, 4 panels, and 6 floating elements coexist.
 
 ### What 1/10 looks like
 
@@ -70,7 +70,7 @@ Three unmistakable levels visible within 500ms of exposure. Primary: the node yo
 
 **Research basis**: Research on information density in interfaces (Paulwallas, 2024; Envylabs) establishes that "busy" or "cluttered" reactions indicate failed hierarchy rather than excessive content. Dense UIs work when they use consistent micro-spacing (4-8px grid) and clear grouping. Progressive disclosure -- showing high-level data with drill-down to detail -- is the primary strategy for managing density in data-heavy applications. Edward Tufte's data-ink ratio principle: maximize the proportion of ink devoted to communicating data, minimize non-data ink.
 
-**Dreamcacher-specific concerns**: The canvas must handle 1-200 nodes without feeling empty (1 node) or chaotic (200 nodes). Panels display metadata-rich content (model name, token count, timestamps, tool calls, reasoning chains) that can overwhelm a 320px-wide panel. The LOD system is the architectural answer to density on the canvas; the panels need their own density management.
+**Dreamcatcher-specific concerns**: The canvas must handle 1-200 nodes without feeling empty (1 node) or chaotic (200 nodes). Panels display metadata-rich content (model name, token count, timestamps, tool calls, reasoning chains) that can overwhelm a 320px-wide panel. The LOD system is the architectural answer to density on the canvas; the panels need their own density management.
 
 ### What 1/10 looks like
 
@@ -97,7 +97,7 @@ The canvas surface dynamically adjusts perceived density through the LOD system 
 
 **Research basis**: Jakob Nielsen's response time thresholds: 100ms for feeling instantaneous, 1 second for maintaining flow without special feedback, 10 seconds as the attention limit requiring a progress indicator. Research on haptic and visual feedback latency (Immersion, 2015) shows that feedback delays over 100ms degrade task performance. GitLab's UX Scorecard grades experiences where "users can still finish but take longer" as C-grade and "users may abandon" as D-grade -- both typically caused by missing or delayed feedback.
 
-**Dreamcacher-specific concerns**: The UX audit identified six actions with POOR or no feedback: save as memory (no confirmation), copy text (no confirmation), regeneration (no auto-pan), clip saved (no confirmation), node drag to hotspot (ambiguous), session deletion (no confirmation dialog). The branching flow and primary chat flow have GOOD feedback. The gap is entirely in secondary actions.
+**Dreamcatcher-specific concerns**: The UX audit identified six actions with POOR or no feedback: save as memory (no confirmation), copy text (no confirmation), regeneration (no auto-pan), clip saved (no confirmation), node drag to hotspot (ambiguous), session deletion (no confirmation dialog). The branching flow and primary chat flow have GOOD feedback. The gap is entirely in secondary actions.
 
 ### What 1/10 looks like
 
@@ -124,7 +124,7 @@ Every action produces proportional feedback. Primary actions (send message, bran
 
 **Research basis**: WCAG 2.2 Level AA requires 4.5:1 contrast ratio for normal text and 3:1 for large text (18px+ or 14px bold). The emerging APCA (Accessible Perceptual Contrast Algorithm) for WCAG 3 goes further, accounting for font weight and polarity -- particularly relevant for dark mode, where bright text on very dark backgrounds can pass WCAG 2 but cause halation. Optimal line height is 1.5x font size (WCAG recommendation). Line length should not exceed 80 characters for body text. Type scale ratios (1:1.25 minor third, 1:1.333 perfect fourth) create predictable, harmonious size relationships.
 
-**Dreamcacher-specific concerns**: The current implementation uses Inconsolata monospace everywhere, with a size range of 8-13px (5px spread). This is a 1:1.6 ratio from smallest to largest -- barely perceptible. The VISUAL-CRITIQUE identified zero typographic hierarchy: no variation in typeface, weight distribution, or meaningful scale. The prescription is a dual-font system (Inter for UI/reading, Inconsolata for data/metadata) with a 10-20px range (1:2 ratio).
+**Dreamcatcher-specific concerns**: The current implementation uses Inconsolata monospace everywhere, with a size range of 8-13px (5px spread). This is a 1:1.6 ratio from smallest to largest -- barely perceptible. The VISUAL-CRITIQUE identified zero typographic hierarchy: no variation in typeface, weight distribution, or meaningful scale. The prescription is a dual-font system (Inter for UI/reading, Inconsolata for data/metadata) with a 10-20px range (1:2 ratio).
 
 ### What 1/10 looks like
 
@@ -151,7 +151,7 @@ Two complementary typefaces: a humanist sans-serif (Inter/Geist) for reading and
 
 **Research basis**: Design token systems (documented by Nathan Curtis, EightShapes; Carbon Design System; Fluent 2) establish a three-tier model: primitive tokens (raw hex values in a scale), semantic tokens (intent-based aliases like `surface-critical` or `text-subtle`), and component tokens (element-specific overrides). Color consistency research (UXPin, 2024) shows that systematic token usage creates visual continuity across products and enables reliable dark mode implementation. InVision's design maturity research found that organizations at Level 4+ ("Infused") use token systems; organizations at Levels 1-2 use ad-hoc hex values.
 
-**Dreamcacher-specific concerns**: The design direction specifies a luminance-only hierarchy (warm-black elevation scale E[0]-E[7], neutral text scale T.primary through T.dim) with a single chromatic accent (#DD0000 red) used exclusively for attention. Per-model faction colors (amber, green, yellow, orange) are permitted inside model-related surfaces. The VISUAL-CRITIQUE found violations: #0066FF blue on Branch buttons, #8B5CF6 purple in Memory Shelf and Clip tool, #FFCC00 yellow in Learn mode and ripple effects. These are placeholder developer colors with no semantic justification.
+**Dreamcatcher-specific concerns**: The design direction specifies a luminance-only hierarchy (warm-black elevation scale E[0]-E[7], neutral text scale T.primary through T.dim) with a single chromatic accent (#DD0000 red) used exclusively for attention. Per-model faction colors (amber, green, yellow, orange) are permitted inside model-related surfaces. The VISUAL-CRITIQUE found violations: #0066FF blue on Branch buttons, #8B5CF6 purple in Memory Shelf and Clip tool, #FFCC00 yellow in Learn mode and ripple effects. These are placeholder developer colors with no semantic justification.
 
 ### What 1/10 looks like
 
@@ -178,7 +178,7 @@ Every color in the application traces to a named token in `theme.ts`. Zero orpha
 
 **Research basis**: Wayfinding research (MIT, NNg, Passini) identifies five components of spatial orientation: placemaking (understanding the environment), orientation (knowing your position), navigation (moving purposefully), labeling (identifying elements), and search (finding specific content). For node-based canvas interfaces specifically, Lynch's "imageability" concept applies: the quality that makes a space memorable and navigable depends on landmarks, paths, edges, districts, and nodes. Eye-tracking research on Figma Canvas and similar spatial tools shows that users anchor to the largest or most visually distinct object, then navigate outward.
 
-**Dreamcacher-specific concerns**: The canvas is an infinite pan-and-zoom surface with no fixed landmarks. A 200-node graph can spread across a large area. The user needs to understand: which node they are replying to (active node), which node they are inspecting (selected node), the shape of the conversation (topology), and where branches diverge. The session pill provides session-level context. The minimap does not exist. Path trace provides thread-level wayfinding. The LOD system helps by simplifying distant nodes.
+**Dreamcatcher-specific concerns**: The canvas is an infinite pan-and-zoom surface with no fixed landmarks. A 200-node graph can spread across a large area. The user needs to understand: which node they are replying to (active node), which node they are inspecting (selected node), the shape of the conversation (topology), and where branches diverge. The session pill provides session-level context. The minimap does not exist. Path trace provides thread-level wayfinding. The LOD system helps by simplifying distant nodes.
 
 ### What 1/10 looks like
 
@@ -203,9 +203,9 @@ At any zoom level, the user can answer three questions without moving: (1) Where
 
 **Definition**: The design quality and strategic effectiveness of screens, panels, and components when they contain no user data. Empty states are the product's first impression and its primary onboarding surface -- they communicate what the tool does, invite the user to act, and prevent the disorientation of encountering a void.
 
-**Research basis**: Nielsen Norman Group's guidelines for empty states in complex applications (2023) identify three types: informational (explaining the container is empty), action-focused (urging the user toward a filling action), and celebratory (communicating that emptiness is positive, e.g., inbox zero). Smashing Magazine's user onboarding research established the "two parts instruction, one part delight" principle. The UX audit identified the canvas empty state as the single most critical onboarding gap in Dreamcacher.
+**Research basis**: Nielsen Norman Group's guidelines for empty states in complex applications (2023) identify three types: informational (explaining the container is empty), action-focused (urging the user toward a filling action), and celebratory (communicating that emptiness is positive, e.g., inbox zero). Smashing Magazine's user onboarding research established the "two parts instruction, one part delight" principle. The UX audit identified the canvas empty state as the single most critical onboarding gap in Dreamcatcher.
 
-**Dreamcacher-specific concerns**: The application has 9 surfaces that can be empty: canvas (zero nodes), Inspector (no selection), Timeline (no messages), Memory Shelf (no memories), Learn Overlay (no mode selected), Path Trace (not active), Clip Creator (fewer than 2 selected), Branch Preview (no branch hovered), Session Pill (no session). Currently, only the Memory Shelf has a meaningful empty state ("No memories saved yet. Right-click a node > Save as memory"). The canvas -- the primary surface that every user sees first -- is a blank void.
+**Dreamcatcher-specific concerns**: The application has 9 surfaces that can be empty: canvas (zero nodes), Inspector (no selection), Timeline (no messages), Memory Shelf (no memories), Learn Overlay (no mode selected), Path Trace (not active), Clip Creator (fewer than 2 selected), Branch Preview (no branch hovered), Session Pill (no session). Currently, only the Memory Shelf has a meaningful empty state ("No memories saved yet. Right-click a node > Save as memory"). The canvas -- the primary surface that every user sees first -- is a blank void.
 
 ### What 1/10 looks like
 
@@ -231,7 +231,7 @@ The empty canvas is alive. A subtle monogram breathes at center (scale oscillati
 
 **Research basis**: Disney's 12 animation principles mapped to UI (anticipation, follow-through, slow-in/slow-out, staging) provide the quality baseline. Microsoft Fluent 2's motion system and Apple's Human Interface Guidelines both define motion as a tool for communicating spatial relationships, state changes, and cause-effect. NNg's research on animation in UX (2020) identifies purposeful animation as animation that helps the user understand what changed, where it came from, and what it means. The key distinction: decorative animation (adds delight but no information) vs. functional animation (communicates state, spatial relationships, or causality).
 
-**Dreamcacher-specific concerns**: The current motion inventory is uneven. Nodes have entrance animations (spring physics, good). Streaming nodes pulse (good). Edges appear instantly (bad -- no draw-on animation). Panels slide in with translateX but have no content stagger and no opacity transition. The context menu pops in with no animation. Hover states are instant (inline style changes with no CSS transition). The disconnect between the animated canvas and the static panels creates a split-personality feel.
+**Dreamcatcher-specific concerns**: The current motion inventory is uneven. Nodes have entrance animations (spring physics, good). Streaming nodes pulse (good). Edges appear instantly (bad -- no draw-on animation). Panels slide in with translateX but have no content stagger and no opacity transition. The context menu pops in with no animation. Hover states are instant (inline style changes with no CSS transition). The disconnect between the animated canvas and the static panels creates a split-personality feel.
 
 ### What 1/10 looks like
 
@@ -258,7 +258,7 @@ Every state change is animated at a duration and easing appropriate to its purpo
 
 **Research basis**: WCAG 2.2 Level AA requires: 4.5:1 contrast for normal text, 3:1 for large text and UI components. All functionality available via keyboard. Focus indicators not hidden by overlapping elements. Interactive targets at least 24x24 CSS pixels (with spacing exceptions). Focus traps in modal dialogs. Reduced-motion support. The APCA algorithm (WCAG 3 draft) adds nuance for dark mode: bright text on very dark backgrounds can pass WCAG 2 ratio checks while causing halation -- APCA accounts for font weight and polarity.
 
-**Dreamcacher-specific concerns**: The application has zero explicit accessibility work currently. No ARIA labels on icon-only buttons (timeline toggle, memory shelf toggle, model selector). No focus trap in modal overlays (LearnOverlay, ShortcutsHelp). No keyboard navigation for the context menu (mouse-only). Known contrast failures: T.dim (#404040) on E[1] (#0C0B09) = approximately 2.3:1 (fails AA). T.ghost (#606060) on E[1] = approximately 3.6:1 (marginally passes for large text only). Several interactive elements fall below the 24x24px target minimum (CanvasTools buttons, SessionPill delete button, PathTrace arrows).
+**Dreamcatcher-specific concerns**: The application has zero explicit accessibility work currently. No ARIA labels on icon-only buttons (timeline toggle, memory shelf toggle, model selector). No focus trap in modal overlays (LearnOverlay, ShortcutsHelp). No keyboard navigation for the context menu (mouse-only). Known contrast failures: T.dim (#404040) on E[1] (#0C0B09) = approximately 2.3:1 (fails AA). T.ghost (#606060) on E[1] = approximately 3.6:1 (marginally passes for large text only). Several interactive elements fall below the 24x24px target minimum (CanvasTools buttons, SessionPill delete button, PathTrace arrows).
 
 ### What 1/10 looks like
 
@@ -286,7 +286,7 @@ Full WCAG 2.2 AA conformance. Every interactive element has an aria-label. Tab o
 
 **Research basis**: Lindgaard et al. (2006) demonstrated that visual appeal assessments form within 50 milliseconds and correlate highly with assessments made after 500ms of exposure. Google research (Tuch et al., 2012) confirmed that visual complexity and prototypicality are the two primary drivers of first-impression aesthetic judgments. Through the halo effect, positive first impressions increase perceived credibility, usability, and willingness to overlook minor issues. Negative first impressions persist even when subsequent experience is positive -- the anchoring effect of the first moment is difficult to overcome.
 
-**Dreamcacher-specific concerns**: The first-impression window is particularly critical for Dreamcacher because the spatial-conversation paradigm is unfamiliar. Users arriving from linear chat interfaces (ChatGPT, Claude) will judge the product within milliseconds and either lean in ("this is something different and interesting") or recoil ("this is confusing and unfinished"). The canvas atmosphere, node materials, glass panel treatment, and empty state design collectively form the first impression. The design direction -- "petri dish in a bio-tech lab, precious specimens under glass" -- is a strong, distinctive vision that must be visually evident in the first moment.
+**Dreamcatcher-specific concerns**: The first-impression window is particularly critical for Dreamcatcher because the spatial-conversation paradigm is unfamiliar. Users arriving from linear chat interfaces (ChatGPT, Claude) will judge the product within milliseconds and either lean in ("this is something different and interesting") or recoil ("this is confusing and unfinished"). The canvas atmosphere, node materials, glass panel treatment, and empty state design collectively form the first impression. The design direction -- "petri dish in a bio-tech lab, precious specimens under glass" -- is a strong, distinctive vision that must be visually evident in the first moment.
 
 ### What 1/10 looks like
 
@@ -299,7 +299,7 @@ The screen loads and the user pauses. The warm-black canvas has depth -- not fla
 ### How to test
 
 1. **50ms flash test**: Show a screenshot for 50 milliseconds (use presentation software with timed slides). Ask the viewer: "Did that look professional, amateur, or neutral?" Repeat with 5 viewers. Professional should be the majority response.
-2. **Competitive lineup**: Place a Dreamcacher screenshot alongside screenshots of Linear, Raycast, ChatGPT, and a generic Bootstrap dashboard. Ask 5 people to rank them by perceived quality. Dreamcacher should place in the top 3.
+2. **Competitive lineup**: Place a Dreamcatcher screenshot alongside screenshots of Linear, Raycast, ChatGPT, and a generic Bootstrap dashboard. Ask 5 people to rank them by perceived quality. Dreamcatcher should place in the top 3.
 3. **Emotional response**: Show the application to 5 people for 5 seconds each. Ask each to write one word describing their reaction. Target words: "sleek," "interesting," "clean," "dark," "futuristic." Red-flag words: "confusing," "empty," "boring," "unfinished," "broken."
 4. **"Would you screenshot this?" test**: An informal but telling metric. After 10 minutes of use, would the user screenshot the interface to share with a colleague or on social media? Premium products get screenshotted. Forgettable products do not.
 

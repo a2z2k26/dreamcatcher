@@ -1,6 +1,6 @@
-# Dreamcacher Guiding Principles
+# Dreamcatcher Guiding Principles
 
-Design quality checklist for a spatial conversation interface with graph-based navigation, multi-panel layout, and canvas-based interactions. Every principle below was extracted from peer-reviewed research, practitioner literature, and pattern libraries specific to the domains Dreamcacher occupies. Each one is a rule that governs future design decisions -- not aspirational, enforced.
+Design quality checklist for a spatial conversation interface with graph-based navigation, multi-panel layout, and canvas-based interactions. Every principle below was extracted from peer-reviewed research, practitioner literature, and pattern libraries specific to the domains Dreamcatcher occupies. Each one is a rule that governs future design decisions -- not aspirational, enforced.
 
 Last updated: 2026-03-25
 
@@ -12,7 +12,7 @@ Last updated: 2026-03-25
 
 **Rule**: The canvas must expand in every direction as content is added, never constraining the user to predetermined dimensions.
 
-**Why it matters**: An infinite canvas grows with the user's thinking rather than constraining it to a predetermined format. Dreamcacher conversations are non-linear explorations -- a fixed viewport would force artificial boundaries on what is inherently unbounded.
+**Why it matters**: An infinite canvas grows with the user's thinking rather than constraining it to a predetermined format. Dreamcatcher conversations are non-linear explorations -- a fixed viewport would force artificial boundaries on what is inherently unbounded.
 
 **How to measure**: No node placement attempt hits an artificial boundary. Pan and zoom remain smooth at 60fps with 500+ visible nodes. Users never report "running out of space."
 
@@ -62,7 +62,7 @@ Last updated: 2026-03-25
 
 **Rule**: Show the minimum graph structure needed for the current task, revealing detail on demand through zoom, hover, selection, and expansion.
 
-**Why it matters**: Overcrowding can be managed through progressive disclosure, giving "detail on demand" controlled by interactive zooming, filtering, and clustering. Dreamcacher graphs will grow to hundreds of nodes. Showing everything at once makes the graph unreadable; hiding everything makes it useless. The answer is layers of detail gated by user intent.
+**Why it matters**: Overcrowding can be managed through progressive disclosure, giving "detail on demand" controlled by interactive zooming, filtering, and clustering. Dreamcatcher graphs will grow to hundreds of nodes. Showing everything at once makes the graph unreadable; hiding everything makes it useless. The answer is layers of detail gated by user intent.
 
 **How to measure**: Default view of a 200-node conversation is readable without scrolling the node list. Hover reveals metadata within 150ms. Expand/collapse of branches completes in under 300ms with animation.
 
@@ -86,7 +86,7 @@ Last updated: 2026-03-25
 
 **Rule**: Every color in the graph must map to a semantic dimension (speaker, depth, branch state, recency) and be distinguishable by colorblind users.
 
-**Why it matters**: The choice of colors can significantly impact the effectiveness of a graph, and colors should be selected based on principles of color theory and with consideration for color blindness. Dreamcacher's five semantic colors (defined in the design DNA) exist for a reason: they are data channels, not paint.
+**Why it matters**: The choice of colors can significantly impact the effectiveness of a graph, and colors should be selected based on principles of color theory and with consideration for color blindness. Dreamcatcher's five semantic colors (defined in the design DNA) exist for a reason: they are data channels, not paint.
 
 **How to measure**: Removing all color still allows graph comprehension via shape and position alone. Protanopia/deuteranopia simulation shows no information loss. No more than 5 categorical hues in simultaneous use.
 
@@ -98,7 +98,7 @@ Last updated: 2026-03-25
 
 **Rule**: The user must be able to see where a conversation branches, how long those branches are, where they merge, and the full flow structure at a glance.
 
-**Why it matters**: An editor needs to let the user view the structure of the conversation as a whole. Branching dialogue is difficult enough when viewed one line at a time; seeing the flow, where it branches, how long those branches are, where they merge, is necessary to good craft. Dreamcacher's entire value proposition is making conversation structure visible.
+**Why it matters**: An editor needs to let the user view the structure of the conversation as a whole. Branching dialogue is difficult enough when viewed one line at a time; seeing the flow, where it branches, how long those branches are, where they merge, is necessary to good craft. Dreamcatcher's entire value proposition is making conversation structure visible.
 
 **How to measure**: In a 5-branch conversation, a new user can identify all branch points within 10 seconds. Branch depth is visually distinguishable up to 6 levels.
 
@@ -112,7 +112,7 @@ Last updated: 2026-03-25
 
 **Rule**: Background surfaces must use dark grays or warm near-blacks, never pure #000000.
 
-**Why it matters**: Avoid pure black (#000000) backgrounds, which create harsh contrasts. Instead use dark grays or navy tones. Pure black with pure white text creates a stark contrast that increases eye strain over extended sessions. Dreamcacher is a sustained-use tool -- users will stare at this canvas for hours.
+**Why it matters**: Avoid pure black (#000000) backgrounds, which create harsh contrasts. Instead use dark grays or navy tones. Pure black with pure white text creates a stark contrast that increases eye strain over extended sessions. Dreamcatcher is a sustained-use tool -- users will stare at this canvas for hours.
 
 **How to measure**: No background surface in the application uses #000000. Primary background luminance is between 8-15% (e.g., #141414-#262626). White text passes WCAG AA (4.5:1) contrast against the darkest surface.
 
@@ -186,7 +186,7 @@ Last updated: 2026-03-25
 
 **Rule**: Undo/redo must be tree-structured, not stack-structured, matching the branching nature of the conversation graph itself.
 
-**Why it matters**: In most applications the stored history is linear, meaning that after doing a few undos, if you perform a new action, all previous redos are lost. Graphs or trees can be used for non-linear undo/redo, allowing branching histories. Dreamcacher already models conversation as a tree -- the undo system should mirror this mental model rather than fighting it.
+**Why it matters**: In most applications the stored history is linear, meaning that after doing a few undos, if you perform a new action, all previous redos are lost. Graphs or trees can be used for non-linear undo/redo, allowing branching histories. Dreamcatcher already models conversation as a tree -- the undo system should mirror this mental model rather than fighting it.
 
 **How to measure**: Undoing past a branch point does not destroy the branch. History tree is inspectable via a panel or shortcut. All operations (node creation, deletion, edge modification, branch, clip) are undoable.
 
@@ -212,7 +212,7 @@ Last updated: 2026-03-25
 
 **Rule**: All transitions must use easing curves that match physical metaphors (spring for snapping, ease-out for settling, ease-in-out for repositioning). Linear easing is banned for user-facing motion.
 
-**Why it matters**: Easing gives animation a natural and organic feel. By choosing the right easing function, you create animations that are natural and engaging. Dreamcacher's force-directed simulation already speaks the language of physics -- springs, attraction, friction. UI transitions should speak the same language.
+**Why it matters**: Easing gives animation a natural and organic feel. By choosing the right easing function, you create animations that are natural and engaging. Dreamcatcher's force-directed simulation already speaks the language of physics -- springs, attraction, friction. UI transitions should speak the same language.
 
 **How to measure**: Every CSS/JS transition uses a named easing function from the design system. No `linear` timing in user-facing animations. Spring-based animations use consistent mass/stiffness/damping values from a shared config.
 
@@ -250,7 +250,7 @@ Last updated: 2026-03-25
 
 **Rule**: When a user navigates deep into a conversation branch, a persistent breadcrumb or path indicator must show the route from root to current focus.
 
-**Why it matters**: Non-linear conversation flows allow discussion to take various routes during the conversation including moving backward or steering toward another topic. Without a visible trail, users lose track of how they arrived at the current node, which undermines Dreamcacher's Decision Transparency tier.
+**Why it matters**: Non-linear conversation flows allow discussion to take various routes during the conversation including moving backward or steering toward another topic. Without a visible trail, users lose track of how they arrived at the current node, which undermines Dreamcatcher's Decision Transparency tier.
 
 **How to measure**: Breadcrumb updates within 100ms of focus change. Clicking any breadcrumb segment navigates to that node and centers the view. Path from root is always visible, even at maximum branch depth.
 
@@ -264,7 +264,7 @@ Last updated: 2026-03-25
 
 **Rule**: Side panels (inspector, chat input, history, settings) must never obscure the canvas unless explicitly invoked, and must collapse to a minimal state by default.
 
-**Why it matters**: 20% of cognitive capacity is lost on each context switch. Interrupted tasks take twice as long and contain twice as many errors. Panels that fight the canvas for attention fragment the user's focus on the spatial model that is Dreamcacher's core value.
+**Why it matters**: 20% of cognitive capacity is lost on each context switch. Interrupted tasks take twice as long and contain twice as many errors. Panels that fight the canvas for attention fragment the user's focus on the spatial model that is Dreamcatcher's core value.
 
 **How to measure**: Canvas occupies at least 60% of viewport width at all times. Panels collapse to icon-only rail at widths below 1200px. Opening/closing a panel does not cause canvas content to reflow or jump.
 
@@ -302,7 +302,7 @@ Last updated: 2026-03-25
 
 **Rule**: Nodes, edges, and labels outside the current viewport must not be rendered to the DOM or painted to canvas.
 
-**Why it matters**: Virtualization -- rendering only viewport contents -- prevents performance issues during rapid interaction. Layering items using multiple canvas elements is an optimization technique where only changing layers require frequent updates. Dreamcacher graphs will grow unboundedly; rendering all 500 nodes when 30 are visible is a performance tax that compounds.
+**Why it matters**: Virtualization -- rendering only viewport contents -- prevents performance issues during rapid interaction. Layering items using multiple canvas elements is an optimization technique where only changing layers require frequent updates. Dreamcatcher graphs will grow unboundedly; rendering all 500 nodes when 30 are visible is a performance tax that compounds.
 
 **How to measure**: DOM element count stays proportional to visible nodes, not total nodes. Frame time stays under 16ms during pan/zoom with 1000+ total nodes. Memory usage does not grow linearly with off-screen node count.
 
@@ -352,7 +352,7 @@ Last updated: 2026-03-25
 
 **Rule**: Offer a pre-built sample conversation graph that demonstrates branching, clips, and decision transparency so users can explore before committing.
 
-**Why it matters**: Providing pre-built content allows new users to get started quickly, letting them dive in and learn about primary features and functions with sample data while being able to tinker and delete content without serious consequences. Dreamcacher's value is invisible until the graph has structure -- showing structure immediately communicates the product's purpose.
+**Why it matters**: Providing pre-built content allows new users to get started quickly, letting them dive in and learn about primary features and functions with sample data while being able to tinker and delete content without serious consequences. Dreamcatcher's value is invisible until the graph has structure -- showing structure immediately communicates the product's purpose.
 
 **How to measure**: Sample graph is one click to load. Sample demonstrates all three MVP tiers (Backtrack, Clip and Spawn, Decision Transparency). Sample can be dismissed or deleted without friction.
 
@@ -378,7 +378,7 @@ Last updated: 2026-03-25
 
 **Rule**: When the operating system `prefers-reduced-motion` flag is set, all ambient animations (orbit rings, particle fields, breathing auras, edge pulses) must stop, and transitions must complete instantly.
 
-**Why it matters**: WCAG 2.2 standards require respecting user preferences for motion reduction. Dreamcacher's rarity system includes multiple layers of ambient animation -- these are delightful for most users but can trigger vestibular discomfort or seizures for others. The rarity system must degrade gracefully to static visual treatments.
+**Why it matters**: WCAG 2.2 standards require respecting user preferences for motion reduction. Dreamcatcher's rarity system includes multiple layers of ambient animation -- these are delightful for most users but can trigger vestibular discomfort or seizures for others. The rarity system must degrade gracefully to static visual treatments.
 
 **How to measure**: `prefers-reduced-motion: reduce` media query is checked and respected globally. All ambient animations cease. Transitions complete in under 100ms. No information is lost when animation is disabled -- rarity is still communicated via static visual cues (stroke weight, glow opacity, color).
 

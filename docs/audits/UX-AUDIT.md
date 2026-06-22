@@ -1,4 +1,4 @@
-# Dreamcacher UX Audit
+# Dreamcatcher UX Audit
 
 **Date**: 2026-03-25
 **Reviewer**: UX Research (Bumba Agent Team)
@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-Dreamcacher has a well-conceived spatial metaphor and a rich feature set that covers branching, clipping, memory, path tracing, learning, and session management. The underlying architecture is sound — clean state management, LOD-aware rendering, and thoughtful visual hierarchy.
+Dreamcatcher has a well-conceived spatial metaphor and a rich feature set that covers branching, clipping, memory, path tracing, learning, and session management. The underlying architecture is sound — clean state management, LOD-aware rendering, and thoughtful visual hierarchy.
 
 The critical gaps are all about surfacing what already exists. The application drops a first-time user onto a blank canvas with zero guidance, hides its most powerful features behind right-click and keyboard shortcuts that have no visual affordance, and provides minimal feedback when key actions succeed or fail. The result is a tool that rewards the expert who learns its vocabulary but punishes the newcomer who doesn't know the vocabulary exists.
 
@@ -34,7 +34,7 @@ There is no onboarding, no tooltip, no welcome message, no empty-state illustrat
 
 ### Analysis
 
-The blank canvas communicates nothing about the spatial paradigm. A user coming from ChatGPT or Claude will type into the input bar, get a response, and see it appear as two dots connected by a line. They will have no mental model for why this is a graph instead of a chat thread, and no reason to explore branching, clipping, or path tracing. The entire value proposition of Dreamcacher — that conversations are explorable, branchable, and spatially navigable — is invisible until the user accidentally discovers it.
+The blank canvas communicates nothing about the spatial paradigm. A user coming from ChatGPT or Claude will type into the input bar, get a response, and see it appear as two dots connected by a line. They will have no mental model for why this is a graph instead of a chat thread, and no reason to explore branching, clipping, or path tracing. The entire value proposition of Dreamcatcher — that conversations are explorable, branchable, and spatially navigable — is invisible until the user accidentally discovers it.
 
 The `LearnOverlay` component, which is one of the most differentiated features, is only accessible via right-click context menu on AI nodes. There is no hint anywhere in the UI that this feature exists.
 
@@ -45,7 +45,7 @@ The `LearnOverlay` component, which is one of the most differentiated features, 
 | F1 | CRITICAL | Add a first-run experience. On the first session (detect via localStorage or session count), show a brief (~3 step) contextual walkthrough: (1) "Type here to start a conversation" pointing at the input, (2) "Right-click any response to branch, learn, or save" with a visual hint, (3) "Your conversation grows as a graph you can explore" with an illustration of a branched graph. Dismiss on first message sent. |
 | F2 | HIGH | Add a canvas empty state. When the graph has zero nodes, render a centered illustration or text on the canvas itself — something like "Start a conversation below. It grows into a graph you can branch and explore." This replaces the blank void. |
 | F3 | HIGH | Show the keyboard shortcuts hint on first load. A small, dismissible badge near the input like "Press ? for shortcuts" that disappears after the user dismisses it or after first use. |
-| F4 | MEDIUM | Add a "What is Dreamcacher?" link or tooltip in the session pill's open state. One sentence: "Spatial conversations you can branch, save, and trace." |
+| F4 | MEDIUM | Add a "What is Dreamcatcher?" link or tooltip in the session pill's open state. One sentence: "Spatial conversations you can branch, save, and trace." |
 
 ---
 
@@ -366,7 +366,7 @@ The real cognitive load concern is conceptual, not visual: the user needs to und
 | C3 | CanvasTools could use progressive disclosure |
 | B3 | Regeneration needs auto-pan (duplicate of I1) |
 | B4 | Memory Shelf toggle should pulse when a new memory is saved while closed |
-| F4 | No "What is Dreamcacher?" explanation in the session manager |
+| F4 | No "What is Dreamcatcher?" explanation in the session manager |
 
 ### LOW
 
@@ -442,4 +442,4 @@ TIMELINE:
   - Top-right toggle button
 ```
 
-File path: `/Users/az/Desktop/Code  - Node Based Design System/dreamcacher/UX-AUDIT.md`
+File path: `/Users/az/Desktop/Code  - Node Based Design System/dreamcatcher/UX-AUDIT.md`

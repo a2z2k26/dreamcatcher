@@ -1,4 +1,4 @@
-# Dreamcacher Accessibility Guidelines
+# Dreamcatcher Accessibility Guidelines
 
 Accessibility standards for a dark-mode spatial conversation interface built on SVG canvas, floating glass panels, keyboard shortcuts, and a warm luminance-only palette.
 
@@ -28,7 +28,7 @@ Target: WCAG 2.2 Level AA. Level AAA where achievable without compromising the d
 
 All text and interactive elements must meet WCAG 2.2 contrast minimums against their backgrounds. Dark mode introduces specific challenges: halation (white text bleeding on dark backgrounds), iris dilation causing readability loss for users with astigmatism (~50% of the population), and reduced distinguishability between elevation levels.
 
-### Why This Matters for Dreamcacher
+### Why This Matters for Dreamcatcher
 
 The warm black palette (E[0] `#080706` through E[7] `#3D3A35`) with luminance-only text hierarchy (T.primary `#E1E1E1` through T.dim `#404040`) is the entire visual language. There is no color-based hierarchy to fall back on. If a luminance step fails contrast, the information it carries becomes invisible.
 
@@ -107,9 +107,9 @@ Update the following locations:
 
 SVG content must be perceivable by assistive technologies. Canvas-based (HTML `<canvas>`) elements are opaque to screen readers. Interactive SVG elements need programmatic names, roles, and state descriptions.
 
-### Why This Matters for Dreamcacher
+### Why This Matters for Dreamcatcher
 
-The entire conversation graph -- nodes, edges, selection state, branch points, streaming indicators -- lives inside an SVG element rendered imperatively via `innerHTML`. Screen readers cannot parse this content. A blind user currently experiences Dreamcacher as: an input field, some buttons, and silence where the graph should be.
+The entire conversation graph -- nodes, edges, selection state, branch points, streaming indicators -- lives inside an SVG element rendered imperatively via `innerHTML`. Screen readers cannot parse this content. A blind user currently experiences Dreamcatcher as: an input field, some buttons, and silence where the graph should be.
 
 ### Rules
 
@@ -123,7 +123,7 @@ The entire conversation graph -- nodes, edges, selection state, branch points, s
 >
 ```
 
-**R2.2 (Must-Have):** Provide a parallel non-visual representation of the graph. This is the single most impactful accessibility feature for Dreamcacher. Implement a screen-reader-only tree view that mirrors the graph structure.
+**R2.2 (Must-Have):** Provide a parallel non-visual representation of the graph. This is the single most impactful accessibility feature for Dreamcatcher. Implement a screen-reader-only tree view that mirrors the graph structure.
 
 ```html
 <!-- Visually hidden, announced by screen readers -->
@@ -186,9 +186,9 @@ The sr-only tree should be a React component that reads from `useGraphStore` and
 
 All functionality must be operable via keyboard alone. No keyboard traps. Logical tab order. Arrow key navigation within composite widgets.
 
-### Why This Matters for Dreamcacher
+### Why This Matters for Dreamcatcher
 
-Dreamcacher is a spatial interface where the primary interaction is clicking/dragging nodes on a canvas. Without keyboard support, the entire graph becomes inaccessible to keyboard-only users, screen reader users, and users with motor disabilities who use switch devices.
+Dreamcatcher is a spatial interface where the primary interaction is clicking/dragging nodes on a canvas. Without keyboard support, the entire graph becomes inaccessible to keyboard-only users, screen reader users, and users with motor disabilities who use switch devices.
 
 ### Current Keyboard Support
 
@@ -241,7 +241,7 @@ Navigation model (graph-aware, not grid):
 - Model selector dropdown: Escape must close (not currently implemented -- dropdown opens on click but has no Escape handler)
 - Inspector panel: Escape must close when focused
 
-**R3.4 (Must-Have):** Add a skip-to-content link as the first focusable element. For Dreamcacher, "content" is the floating input -- the primary action.
+**R3.4 (Must-Have):** Add a skip-to-content link as the first focusable element. For Dreamcatcher, "content" is the floating input -- the primary action.
 
 ```html
 <a href="#dc-input" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[999]"
@@ -317,7 +317,7 @@ function useCanvasKeyboard(canvasRef: RefObject<HTMLDivElement>) {
 
 Focus must be visible, predictable, and managed programmatically during dynamic UI changes. WCAG 2.4.7 (Focus Visible, AA) and 2.4.13 (Focus Appearance, AAA) define minimum requirements.
 
-### Why This Matters for Dreamcacher
+### Why This Matters for Dreamcatcher
 
 The floating UI architecture means panels slide in/out, modals appear, context menus open at cursor position, and the canvas captures all pointer events. Without intentional focus management, keyboard users lose their place constantly.
 
@@ -438,9 +438,9 @@ function useFocusTrap(containerRef: RefObject<HTMLElement>, isOpen: boolean) {
 
 Respect `prefers-reduced-motion`. WCAG 2.3.3 (Animation from Interactions, AAA) requires that motion triggered by interaction can be disabled. No content should flash more than 3 times per second (WCAG 2.3.1, A).
 
-### Why This Matters for Dreamcacher
+### Why This Matters for Dreamcatcher
 
-Dreamcacher uses extensive animation: physics simulation (continuous node movement), entrance animations, streaming pulse effects, breathing selection rings, dash-offset animations on edges, panel slide transitions, ripple effects, drag trails, and canvas panning. For users with vestibular disorders, this much motion can trigger nausea, dizziness, and migraines.
+Dreamcatcher uses extensive animation: physics simulation (continuous node movement), entrance animations, streaming pulse effects, breathing selection rings, dash-offset animations on edges, panel slide transitions, ripple effects, drag trails, and canvas panning. For users with vestibular disorders, this much motion can trigger nausea, dizziness, and migraines.
 
 ### Current Animation Inventory
 
@@ -557,9 +557,9 @@ export function tickEffects(state: EffectsState, dt: number, reduced: boolean): 
 
 Color must not be the sole means of conveying information (WCAG 1.4.1, A). All information conveyed by color must also be available through other means: shape, pattern, position, label, or icon.
 
-### Why This Matters for Dreamcacher
+### Why This Matters for Dreamcatcher
 
-Dreamcacher uses a luminance-only palette with a single red accent. This is actually advantageous for color blind users -- luminance differences are preserved across all forms of color blindness. However, there are specific risks:
+Dreamcatcher uses a luminance-only palette with a single red accent. This is actually advantageous for color blind users -- luminance differences are preserved across all forms of color blindness. However, there are specific risks:
 
 1. **Red accent (`#DD0000`):** Protanopia (red-blind) users see this as very dark -- nearly black against E[1]. The accent becomes invisible.
 2. **Model-branded colors:** Anthropic amber (`#D4A574`), OpenAI green (`#10A37F`), Google blue (`#4285F4`), Qwen indigo (`#6366F1`) are used to distinguish AI providers. Under deuteranopia, the amber and green become indistinguishable.
@@ -608,16 +608,16 @@ Regeneration edges need a more distinct dash pattern or a marker shape different
 
 Dynamic content changes must be announced. Interactive elements must have accessible names. The application structure must be navigable by landmark roles.
 
-### Why This Matters for Dreamcacher
+### Why This Matters for Dreamcatcher
 
-Dreamcacher is a highly dynamic interface: nodes appear during streaming, the graph layout shifts continuously, panels open and close, and the canvas pans. Without ARIA live regions and proper labeling, screen reader users miss all dynamic content.
+Dreamcatcher is a highly dynamic interface: nodes appear during streaming, the graph layout shifts continuously, panels open and close, and the canvas pans. Without ARIA live regions and proper labeling, screen reader users miss all dynamic content.
 
 ### Rules
 
 **R7.1 (Must-Have):** Add ARIA landmark roles to the page structure.
 
 ```html
-<main aria-label="Dreamcacher conversation workspace">
+<main aria-label="Dreamcatcher conversation workspace">
   <section aria-label="Conversation graph" role="application">
     <!-- Canvas + sr-only tree -->
   </section>
@@ -782,7 +782,7 @@ const minHitR = Math.max(body.r * scale, 12); // 24px diameter minimum
 
 Use semantic HTML elements. Apply ARIA only when native semantics are insufficient. Never use ARIA to override correct native semantics.
 
-### Why This Matters for Dreamcacher
+### Why This Matters for Dreamcatcher
 
 The current implementation uses `<div>` for most interactive elements (menu items, selectable options, toolbar buttons) and inline styles for all visual treatment. This is common in canvas-heavy applications but results in a flat, unlabeled accessibility tree.
 
@@ -842,7 +842,7 @@ The current implementation uses `<div>` for most interactive elements (menu item
 **R9.6 (Nice-to-Have):** Heading hierarchy. Currently no headings exist in the application. For screen reader navigation, add visually hidden headings:
 
 ```html
-<h1 class="sr-only">Dreamcacher - Spatial Conversation Interface</h1>
+<h1 class="sr-only">Dreamcatcher - Spatial Conversation Interface</h1>
 <!-- In Inspector: -->
 <h2 class="sr-only">Node Inspector</h2>
 <!-- In Timeline: -->

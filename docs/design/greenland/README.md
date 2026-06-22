@@ -1,6 +1,6 @@
 # Green-Land Frontend Design Loop
 
-Green-Land is the design improvement loop for Dreamcacher. It keeps the app in a green state while specialist agents push the frontend closer to the Dreamcatcher and Red Stripe design references.
+Green-Land is the design improvement loop for Dreamcatcher. It keeps the app in a green state while specialist agents push the frontend closer to the Dreamcatcher and Red Stripe design references.
 
 The loop has four promises:
 

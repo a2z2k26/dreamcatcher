@@ -77,7 +77,7 @@ Warp reimagined the terminal as a modern IDE and brought design rigor to the dar
 
 **Accent-first hierarchy.** The tab indicator and block selection are the loudest visual elements — they use the accent color at full saturation. Everything else is subordinate. This creates an immediate focal point: you always know where you are and what you're operating on. The accent areas "pop" while the surrounding UI recedes.
 
-**Proportional + monospace pairing.** Warp uses Roboto (proportional) for UI chrome and monospace for terminal content. This is the same split Linear makes with Inter + monospace, and Dreamcacher's critique already identified. The pattern is universal among best-in-class dark tools: proportional for human-readable UI, monospace for data.
+**Proportional + monospace pairing.** Warp uses Roboto (proportional) for UI chrome and monospace for terminal content. This is the same split Linear makes with Inter + monospace, and Dreamcatcher's critique already identified. The pattern is universal among best-in-class dark tools: proportional for human-readable UI, monospace for data.
 
 ---
 
@@ -107,13 +107,13 @@ Figma's dark mode is instructive specifically because it handles a canvas interf
 
 ### 8. Obsidian — Knowledge Graph Dark
 
-Obsidian's graph view and canvas are the closest analogues to Dreamcacher's spatial model.
+Obsidian's graph view and canvas are the closest analogues to Dreamcatcher's spatial model.
 
 **WebGL graph, CSS chrome.** The graph view is rendered via canvas/WebGL, with CSS variables bridged to WebGL colors. Theme-dependent styling requires `.theme-dark` or `.theme-light` class prefixes. This hybrid approach (WebGL for performance, CSS for theming) is the standard for node-graph interfaces at scale.
 
 **Minimal theme philosophy.** The Minimal theme (by Kepano) is the most popular Obsidian theme and demonstrates the power of restraint: customizable colors and fonts, but the default is extreme simplicity. Dark surfaces, clear typography, no decoration. The canvas nodes are plain rectangles with content, differentiated only by subtle border color and a slight background tint.
 
-**Plugin-driven visual enhancement.** Advanced Canvas and Extended Graph plugins add styling options — custom node shapes, colors, borders, arrows. The base experience is deliberately plain; richness is opt-in. For Dreamcacher, this suggests: the base node should be beautiful by default, with the rarity system as progressive enhancement.
+**Plugin-driven visual enhancement.** Advanced Canvas and Extended Graph plugins add styling options — custom node shapes, colors, borders, arrows. The base experience is deliberately plain; richness is opt-in. For Dreamcatcher, this suggests: the base node should be beautiful by default, with the rarity system as progressive enhancement.
 
 ---
 
@@ -121,7 +121,7 @@ Obsidian's graph view and canvas are the closest analogues to Dreamcacher's spat
 
 Railway's dashboard is a standout dark UI in the DevOps space.
 
-**The graph-as-dashboard.** Railway visualizes infrastructure as a spatial graph — services as nodes, connections as edges. This is directly analogous to Dreamcacher's conversation graph. Their nodes are rectangular cards with rounded corners, slightly elevated (lighter background), with colored left-edge accents indicating service type.
+**The graph-as-dashboard.** Railway visualizes infrastructure as a spatial graph — services as nodes, connections as edges. This is directly analogous to Dreamcatcher's conversation graph. Their nodes are rectangular cards with rounded corners, slightly elevated (lighter background), with colored left-edge accents indicating service type.
 
 **Status through color temperature.** Healthy services have cool-neutral backgrounds. Deploying services gain a warm amber tint. Failed services show a red accent. The color temperature shift is more effective than changing a status badge because it affects the entire node, creating an ambient mood shift visible at any zoom level.
 
@@ -198,9 +198,9 @@ Saturated colors on dark backgrounds vibrate. A `#0066FF` blue that looks crisp 
 - Warm grays (amber/brown undertone) feel organic, premium, crafted. Good for creative tools and spatial interfaces.
 - Neutral grays feel corporate, safe, unremarkable.
 
-For Dreamcacher's bio-tech / petri-dish metaphor, warm undertones are correct. The current Bumba-Dark palette (`#0C0B09` through `#3D3A35`) with its amber shifts is the right family.
+For Dreamcatcher's bio-tech / petri-dish metaphor, warm undertones are correct. The current Bumba-Dark palette (`#0C0B09` through `#3D3A35`) with its amber shifts is the right family.
 
-**Single accent rule.** The best dark interfaces use one chromatic accent color and derive all other differentiation from luminance. Linear's purple, Raycast's blue, Vercel's... nothing (they use luminance only). Dreamcacher's red accent (`#DD0000`) is correct but should appear desaturated in ambient uses (glows, halos) and at full saturation only for critical states (error, active streaming).
+**Single accent rule.** The best dark interfaces use one chromatic accent color and derive all other differentiation from luminance. Linear's purple, Raycast's blue, Vercel's... nothing (they use luminance only). Dreamcatcher's red accent (`#DD0000`) is correct but should appear desaturated in ambient uses (glows, halos) and at full saturation only for critical states (error, active streaming).
 
 ---
 
@@ -320,7 +320,7 @@ Canvas-based interfaces operate under different constraints than traditional lay
 
 The best dark interfaces use accent color with surgical precision. The hierarchy:
 
-**Tier 1 — Chromatic accent (full color).** Used for: active selection rings, focus indicators, primary action buttons, streaming/loading states, error states. This is the ONLY place pure accent color appears. In Dreamcacher's case: `#DD0000` (red) at 60-100% opacity.
+**Tier 1 — Chromatic accent (full color).** Used for: active selection rings, focus indicators, primary action buttons, streaming/loading states, error states. This is the ONLY place pure accent color appears. In Dreamcatcher's case: `#DD0000` (red) at 60-100% opacity.
 
 **Tier 2 — Ambient accent (very low opacity).** Used for: hover backgrounds, subtle highlights, the glow around selected elements, focus halos. Same hue as Tier 1 but at 5-15% opacity, creating a tinted area rather than a colored element.
 
@@ -607,9 +607,9 @@ h1, h2, h3 {
 
 ---
 
-## Part IV: Synthesis for Dreamcacher
+## Part IV: Synthesis for Dreamcatcher
 
-### What Dreamcacher Should Adopt
+### What Dreamcatcher Should Adopt
 
 **From Linear:**
 - LCH/OKLCH color space for all color definitions. No more hex for theme colors.
@@ -646,9 +646,9 @@ h1, h2, h3 {
 - Status communicated through ambient visual change, not just badges. A streaming node should shift the light in its region.
 - Material contrast (matte, satin, glass, metal, ember) as a differentiation vocabulary.
 
-### What Dreamcacher Should NOT Adopt
+### What Dreamcatcher Should NOT Adopt
 
-- Vercel's total absence of color. Dreamcacher is a spatial creative tool, not a dashboard. It needs warmth and personality.
+- Vercel's total absence of color. Dreamcatcher is a spatial creative tool, not a dashboard. It needs warmth and personality.
 - The generic glassmorphism trend (uniform blur, uniform border, uniform opacity). Every glass surface should be tuned to its context.
 - Bounce animations or elastic springs. The tool should feel precise and grounded, not playful.
 - Pure black (`#000000`) anywhere. Always use the warm near-black (`oklch(0.05+ 0.005 70)`).

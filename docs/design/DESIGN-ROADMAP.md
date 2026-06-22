@@ -1,4 +1,4 @@
-# Dreamcacher Design Roadmap
+# Dreamcatcher Design Roadmap
 
 **Author**: Design Chief (Forty Thieves)
 **Date**: 2026-03-25
@@ -322,7 +322,7 @@ When AI is streaming a response, the current signals are: node pulse on canvas, 
 
 ### 4C. Branch Creation Ceremony
 
-Branching is Dreamcacher's signature interaction. It deserves a moment.
+Branching is Dreamcatcher's signature interaction. It deserves a moment.
 
 **Deliverables**:
 
@@ -444,7 +444,7 @@ The UX audit's single most critical finding: users land on a blank canvas with z
 - Set `dc-onboarded` in localStorage after step 3 completes or is dismissed
 - A "?" button visible in the top-left or near the session pill that opens ShortcutsHelp. Currently the only way to access ShortcutsHelp is pressing "?" -- which requires knowing it exists.
 
-**Definition of done**: A first-time user who has never seen Dreamcacher can send a message, discover branching, and understand the spatial metaphor within their first 60 seconds. The walkthrough is non-intrusive and disappears permanently after completion.
+**Definition of done**: A first-time user who has never seen Dreamcatcher can send a message, discover branching, and understand the spatial metaphor within their first 60 seconds. The walkthrough is non-intrusive and disappears permanently after completion.
 
 ### 5F. Accessibility Pass
 

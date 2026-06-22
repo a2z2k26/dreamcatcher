@@ -107,7 +107,7 @@ export function ExportOverlay() {
     const sessions = useSessionStore.getState().sessions;
     const activeSessionId = useSessionStore.getState().activeSessionId;
     const session = sessions.find(s => s.id === activeSessionId);
-    const sessionName = session?.name ?? 'dreamcacher-export';
+    const sessionName = session?.name ?? 'dreamcatcher-export';
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
     const base = `${sanitizeFilename(sessionName)}_${timestamp}`;
 

@@ -1,4 +1,4 @@
-# Dreamcacher
+# Dreamcatcher
 
 **A spatial conversation interface where AI thinking becomes visible.**
 
@@ -190,7 +190,7 @@ Context Budget (1M window)
 ---
 
 ## Open Questions
-1. ~~**Name**~~ — **Dreamcacher**
+1. ~~**Name**~~ — **Dreamcatcher**
 2. **Standalone vs embedded** — own product, or feature inside existing AI tool?
 3. **Summary strategy** — auto-summarize branches at what threshold? User-triggered or automatic?
 4. **Clip format** — becomes system prompt? Pre-filled history? Compressed summary?

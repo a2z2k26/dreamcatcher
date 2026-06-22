@@ -1,9 +1,9 @@
-# Dreamcacher Visual Manifesto
+# Dreamcatcher Visual Manifesto
 ## From polished prototype to collectible artifact
 
 The previous audit brought the nodes from flat circles to dimensional objects. The glass went from CSS tutorial to multi-layer treatment. The canvas gained atmosphere. Good. But "good" is where most products stop and never become memorable.
 
-What follows is the next elevation: taking every visual surface and treating it with the obsession of a game studio building rare item cards, the precision of a Swiss watchmaker finishing a movement nobody will ever see, and the atmosphere of a Ridley Scott establishing shot. The goal is not "looks nice." The goal is that when someone sees Dreamcacher for the first time, they pause. They lean in. They feel like they discovered something that was built by people who care more than they should.
+What follows is the next elevation: taking every visual surface and treating it with the obsession of a game studio building rare item cards, the precision of a Swiss watchmaker finishing a movement nobody will ever see, and the atmosphere of a Ridley Scott establishing shot. The goal is not "looks nice." The goal is that when someone sees Dreamcatcher for the first time, they pause. They lean in. They feel like they discovered something that was built by people who care more than they should.
 
 ---
 
@@ -210,7 +210,7 @@ This leverages the proven cinematic technique of warming color temperature as th
 
 ## III. GLASS EVOLUTION — From Frosted to Living
 
-The current glass treatments are solid. The directional borders, the inner highlights, the shadow stacks — all correct. But glass in Dreamcacher should not be static. It should feel like a material that responds to the environment.
+The current glass treatments are solid. The directional borders, the inner highlights, the shadow stacks — all correct. But glass in Dreamcatcher should not be static. It should feel like a material that responds to the environment.
 
 ### Animated Grain
 
@@ -725,7 +725,7 @@ This creates a barely visible "field line" between cursor and node as you approa
 
 ## VIII. MOTION PRINCIPLES
 
-Every animated element in Dreamcacher should follow these timing rules:
+Every animated element in Dreamcatcher should follow these timing rules:
 
 ### Timing Taxonomy
 
@@ -836,7 +836,7 @@ This manifesto describes the ceiling. Not everything ships at once. Here is the 
 
 ## X. WHAT THIS ACHIEVES
 
-After all five phases, someone opening Dreamcacher for the first time sees:
+After all five phases, someone opening Dreamcatcher for the first time sees:
 
 A dark, warm canvas that breathes — micro-particles drift lazily, grid dots scatter organically, a vignette follows the conversation's center of mass. The nodes are not uniform: shallow questions are clean and quiet, deep threads shimmer with orbiting particles, branch points have faint satellite rings, starred discoveries glow with warm amber undertones.
 

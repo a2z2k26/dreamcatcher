@@ -1,6 +1,6 @@
-# Dreamcacher Design System v2.0
+# Dreamcatcher Design System v2.0
 
-The definitive design reference for Dreamcacher -- a spatial conversation interface where AI conversations become navigable, branchable, persistent graphs rendered as nodes on a dark canvas. Every token, every value, every use case. If an engineer reads this, they build every visual surface without asking a single question.
+The definitive design reference for Dreamcatcher -- a spatial conversation interface where AI conversations become navigable, branchable, persistent graphs rendered as nodes on a dark canvas. Every token, every value, every use case. If an engineer reads this, they build every visual surface without asking a single question.
 
 ---
 
@@ -8,7 +8,7 @@ The definitive design reference for Dreamcacher -- a spatial conversation interf
 
 ### What This Is
 
-Dreamcacher is an observatory. The user peers into a warm, living system through precision glass instruments. The aesthetic is **futuristic mythic technology** -- discovered artifacts from an advanced civilization, not flat UI circles. Concentric ring systems, circuit-board precision, material elevation through luminance and glow.
+Dreamcatcher is an observatory. The user peers into a warm, living system through precision glass instruments. The aesthetic is **futuristic mythic technology** -- discovered artifacts from an advanced civilization, not flat UI circles. Concentric ring systems, circuit-board precision, material elevation through luminance and glow.
 
 ### Design Principles
 
@@ -1568,7 +1568,7 @@ Desktop-first canvas application. No mobile layout.
 |----------|----------|
 | > 1280px | Full layout. All panels at specified widths. |
 | 1024-1280px | Timeline 340px. Inspector 280px. |
-| < 1024px | Not supported. Centered message: "Dreamcacher requires a desktop viewport." |
+| < 1024px | Not supported. Centered message: "Dreamcatcher requires a desktop viewport." |
 
 ### Hit Target Minimum
 

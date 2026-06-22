@@ -1,6 +1,6 @@
 # Dark UI Patterns for Spatial Graph Interfaces
 
-Technical pattern reference for premium dark-mode interface design. Each pattern includes what it solves, how to implement it, who does it well, how it applies to Dreamcacher's spatial graph canvas, and where the gotchas hide.
+Technical pattern reference for premium dark-mode interface design. Each pattern includes what it solves, how to implement it, who does it well, how it applies to Dreamcatcher's spatial graph canvas, and where the gotchas hide.
 
 Organized into six categories: Surface, Typography, Color, Depth, Motion, Interaction.
 
@@ -25,7 +25,7 @@ The trick is in the undertone. Shift the blue channel 2-5 points below the red c
 
 **Who does this well.** Warp terminal, Arc Browser dark theme, Linear's sidebar. Figma uses `#1E1E1E` (neutral), YouTube uses `#181818` (neutral), Slack uses `#1D1D1D` (neutral) -- all functional but none warm. The warmth is a differentiator.
 
-**Dreamcacher application.** The eight-stop warm elevation stack (E[0] #080706 through E[7] #3D3A35) is the substrate the entire canvas lives on. Every node, edge, and panel inherits this warmth. The canvas ground plane at E[1] #0C0B09 should feel like looking into a warm dark room, not at a cold screen.
+**Dreamcatcher application.** The eight-stop warm elevation stack (E[0] #080706 through E[7] #3D3A35) is the substrate the entire canvas lives on. Every node, edge, and panel inherits this warmth. The canvas ground plane at E[1] #0C0B09 should feel like looking into a warm dark room, not at a cold screen.
 
 **Gotchas.** Warm undertone is subtle in isolation but compounds across large surfaces. Test on multiple monitors -- some displays shift warm further toward yellow. IPS panels and OLED render warm blacks differently; OLED's true black pixels will create a visible boundary at E[0] that LCD panels smooth over.
 
@@ -54,7 +54,7 @@ Each elevation step adds ~6-8 lightness points in the 0-15% luminance range wher
 
 **Who does this well.** Material Design 3 defines six elevation levels (level0 through level5) with increasing primary-color tint overlays. Linear achieves perceived lift on issue cards through a two-step luminance jump between sidebar and card surface.
 
-**Dreamcacher application.** Canvas (E[1]) is the ground. Nodes float at E[3]-E[4]. Panels float at E[3]-E[6]. The inspector sits at E[0] -- the deepest level -- because it's a permanent fixture anchored to the frame, not a floating object. This inversion (permanent UI = darker, transient UI = lighter) is deliberate and rare.
+**Dreamcatcher application.** Canvas (E[1]) is the ground. Nodes float at E[3]-E[4]. Panels float at E[3]-E[6]. The inspector sits at E[0] -- the deepest level -- because it's a permanent fixture anchored to the frame, not a floating object. This inversion (permanent UI = darker, transient UI = lighter) is deliberate and rare.
 
 **Gotchas.** Keep to 4-6 meaningfully distinct elevation layers in practice. More than 8 and the differences become imperceptible. The eye can distinguish ~3% luminance differences in the dark range, so steps smaller than that are wasted.
 
@@ -89,7 +89,7 @@ Key attributes: `baseFrequency` controls grain size (0.5-0.8 for fine film grain
 
 **Who does this well.** Vercel's landing page uses an extremely subtle noise layer on their dark hero sections. Stripe's dark gradients use noise to prevent banding. Apple's macOS wallpapers layer noise to maintain quality at any resolution.
 
-**Dreamcacher application.** Apply at 0.03 opacity to the canvas ground plane (E[1]) and at 0.02 to floating panels. This creates the "petri dish under glass" organic substrate described in the design direction. The grain should be invisible at a glance but felt as warmth and texture on prolonged viewing.
+**Dreamcatcher application.** Apply at 0.03 opacity to the canvas ground plane (E[1]) and at 0.02 to floating panels. This creates the "petri dish under glass" organic substrate described in the design direction. The grain should be invisible at a glance but felt as warmth and texture on prolonged viewing.
 
 **Gotchas.** The SVG filter is computed per-pixel. On a 4K display, a full-viewport noise layer hits millions of pixels. Pre-render the noise to a static PNG tile (256x256 or 512x512) and use `background-repeat: repeat` for production. The SVG filter approach is great for prototyping but costs 2-5ms per frame on mid-range GPUs if animated. Also: `mix-blend-mode: overlay` on dark backgrounds brightens the noise; `multiply` would darken it (wrong). Test both.
 
@@ -117,7 +117,7 @@ Control intensity through the transparent stop position (40% = tight spotlight, 
 
 **Who does this well.** Figma's canvas has an extremely subtle vignette on their dark theme. Unity and Unreal editors use vignettes in their viewport previews. Most photography editing apps apply this to their workspace.
 
-**Dreamcacher application.** This is the "observing through a microscope" effect. The vignette should be subtle (0.3-0.4 end opacity) and should NOT follow the camera -- it's fixed to the viewport, so as the user pans the canvas, nodes appear to move through a pool of light. This creates the sense that the user is peering through an instrument at a living system.
+**Dreamcatcher application.** This is the "observing through a microscope" effect. The vignette should be subtle (0.3-0.4 end opacity) and should NOT follow the camera -- it's fixed to the viewport, so as the user pans the canvas, nodes appear to move through a pool of light. This creates the sense that the user is peering through an instrument at a living system.
 
 **Gotchas.** The vignette must be `pointer-events: none` or it will block all interaction. It must sit above the canvas but below all interactive UI. On ultra-wide monitors (3440px+), the vignette can feel exaggerated -- consider clamping the gradient's aspect ratio or reducing opacity at wider viewport widths using `clamp()` or a media query.
 
@@ -151,7 +151,7 @@ For zoom-responsive grids (dots appear/disappear at different zoom levels), use 
 
 **Who does this well.** React Flow / xyflow has a built-in dot grid background. Figma's canvas grid is the gold standard -- dots appear/disappear at different zoom levels with smooth opacity transitions. Obsidian Canvas uses a light crosshair grid.
 
-**Dreamcacher application.** Dot grid at E[5] color (#252320), r=0.75, 24px spacing. At low zoom, show major dots every 120px at slightly higher opacity. At extreme zoom-out, fade all dots to prevent visual noise. The grid dots should feel like the substrate of a petri dish -- not an engineering grid, but an organic matrix.
+**Dreamcatcher application.** Dot grid at E[5] color (#252320), r=0.75, 24px spacing. At low zoom, show major dots every 120px at slightly higher opacity. At extreme zoom-out, fade all dots to prevent visual noise. The grid dots should feel like the substrate of a petri dish -- not an engineering grid, but an organic matrix.
 
 **Gotchas.** The CSS `radial-gradient` approach is O(1) per frame regardless of viewport size -- highly performant. The SVG pattern approach requires the pattern to transform with the camera, and at extreme zoom levels, thousands of pattern tiles can stress the SVG renderer. React Flow handles this with dynamic pattern size recalculation. At zoom < 0.3, hide the grid entirely to avoid moire patterns.
 
@@ -191,7 +191,7 @@ For zoom-responsive grids (dots appear/disappear at different zoom levels), use 
 
 **Who does this well.** Raycast's floating panels have visibly brighter top edges. Arc Browser's tab bar uses directional borders to separate it from the content area. Linear's command palette has a subtle top-bright treatment.
 
-**Dreamcacher application.** Every floating panel (inspector, context menus, dialogs) should use directional borders. The top edge gets `rgba(255,255,255,0.06-0.08)`, the bottom gets `rgba(0,0,0,0.15-0.2)`. This matches the overhead light model implied by the node shadow direction (shadows fall downward). Consistency of light direction is critical -- if borders say "light from above" but shadows say "light from left," the illusion breaks.
+**Dreamcatcher application.** Every floating panel (inspector, context menus, dialogs) should use directional borders. The top edge gets `rgba(255,255,255,0.06-0.08)`, the bottom gets `rgba(0,0,0,0.15-0.2)`. This matches the overhead light model implied by the node shadow direction (shadows fall downward). Consistency of light direction is critical -- if borders say "light from above" but shadows say "light from left," the illusion breaks.
 
 **Gotchas.** The gradient border technique using `background-clip` is elegant but doesn't work with `border-radius` in all browsers unless you also set `background-origin: border-box`. Test in Safari, which has historically been inconsistent with gradient borders. An alternative is using `box-shadow: inset 0 1px 0 rgba(255,255,255,0.08)` for the top highlight, which is universally supported.
 
@@ -232,7 +232,7 @@ For zoom-responsive grids (dots appear/disappear at different zoom levels), use 
 
 **Who does this well.** Linear's settings panels use gradient dividers between sections. Apple Music's sidebar uses them between grouped items. Notion's dark mode uses extremely subtle gradient separators between blocks.
 
-**Dreamcacher application.** Use in the inspector panel between sections (metadata, context, tool calls), in the session sidebar between session groups, and in dropdown menus between option groups. The fade-out creates breathing room that matches the observatory aesthetic -- precision instruments don't have visible seams.
+**Dreamcatcher application.** Use in the inspector panel between sections (metadata, context, tool calls), in the session sidebar between session groups, and in dropdown menus between option groups. The fade-out creates breathing room that matches the observatory aesthetic -- precision instruments don't have visible seams.
 
 **Gotchas.** Gradient dividers rendered at 1px on non-retina displays can appear to flicker or alias. Use `min-height: 1px` and consider a 0.5px shadow approach for sub-pixel rendering on retina: `box-shadow: 0 0.5px 0 rgba(255,255,255,0.06)`.
 
@@ -256,7 +256,7 @@ This disables subpixel rendering on macOS. The result: light text renders at its
 
 **Who does this well.** Every premium dark-mode product uses this: Linear, Raycast, Vercel, Arc, Warp, Figma. It's table stakes for dark mode but still commonly omitted.
 
-**Dreamcacher application.** Apply globally. Dreamcacher uses Inconsolata, a monospace font with thin strokes at regular weight. Without antialiased rendering on macOS, the 400-weight body text will appear ~500 weight, losing the precision-instrument lightness the design requires.
+**Dreamcatcher application.** Apply globally. Dreamcatcher uses Inconsolata, a monospace font with thin strokes at regular weight. Without antialiased rendering on macOS, the 400-weight body text will appear ~500 weight, losing the precision-instrument lightness the design requires.
 
 **Gotchas.** This is macOS only. `-webkit-font-smoothing` has no effect on Windows, Linux, iOS, or Android. Firefox 128+ supports it natively (previously required `-moz-osx-font-smoothing`). Do not use `subpixel-antialiased` on dark backgrounds -- it will exaggerate the boldness problem. On Windows, font rendering is controlled by ClearType, which has its own quirks but doesn't suffer from the same bold shift.
 
@@ -281,7 +281,7 @@ Six levels. Each step reduces luminance by 10-13 percentage points. The jump fro
 
 **Who does this well.** Linear is the gold standard: three luminance levels, no decorative color in body text. Raycast uses four levels. Both prove that monochrome text hierarchy feels more premium than chromatic hierarchy.
 
-**Dreamcacher application.** Node labels use T.primary when selected, T.secondary at rest. Edge labels use T.subtle. Panel section headers use T.ghost (uppercased, letter-spaced). Timestamps and metadata use T.dim. Color enters the text layer only for the single-accent red (#DD0000) on active/attention states -- and nowhere else.
+**Dreamcatcher application.** Node labels use T.primary when selected, T.secondary at rest. Edge labels use T.subtle. Panel section headers use T.ghost (uppercased, letter-spaced). Timestamps and metadata use T.dim. Color enters the text layer only for the single-accent red (#DD0000) on active/attention states -- and nowhere else.
 
 **Gotchas.** WCAG 2.1 requires 4.5:1 contrast ratio for normal text. Against E[1] #0C0B09 (canvas background, ~3% luminance): T.primary #E1E1E1 achieves ~14:1 (passes AAA), T.secondary #C8C8C8 achieves ~11:1 (passes AAA), T.tertiary #A8A8A8 achieves ~7.5:1 (passes AAA), T.subtle #808080 achieves ~4:1 (fails AA for small text). T.ghost and T.dim are intended for decorative/supplementary text only and should never carry essential meaning alone. If essential, pair with an icon or structural cue.
 
@@ -306,7 +306,7 @@ APCA uses the OKLCH color space internally, which maintains perceptual uniformit
 
 **Who does this well.** Chrome DevTools has experimental APCA support. Adobe is adopting APCA for Spectrum 2. The W3C Silver task force is developing APCA as the contrast model for WCAG 3.0.
 
-**Dreamcacher application.** Validate every text/background pair against APCA, not just WCAG. Specifically: T.ghost (#606060) on E[1] (#0C0B09) likely falls below Lc 45 and should be restricted to uppercase section headers at 600+ weight and 9px+ where the heavier weight compensates for low contrast. T.dim (#404040) on E[1] fails even Lc 30 -- acceptable only for non-essential decorative elements with structural alternatives.
+**Dreamcatcher application.** Validate every text/background pair against APCA, not just WCAG. Specifically: T.ghost (#606060) on E[1] (#0C0B09) likely falls below Lc 45 and should be restricted to uppercase section headers at 600+ weight and 9px+ where the heavier weight compensates for low contrast. T.dim (#404040) on E[1] fails even Lc 30 -- acceptable only for non-essential decorative elements with structural alternatives.
 
 **Gotchas.** APCA is not yet an official WCAG standard. It's the leading candidate for WCAG 3.0 but hasn't been finalized. For compliance, you still need to meet WCAG 2.1 AA. Use APCA as a design quality check on top of WCAG 2.x compliance, not as a replacement.
 
@@ -318,7 +318,7 @@ APCA uses the OKLCH color space internally, which maintains perceptual uniformit
 
 **Implementation.**
 ```css
-/* Dreamcacher's 7-step tight scale */
+/* Dreamcatcher's 7-step tight scale */
 --type-display:    14px;  /* hero text, input focused */
 --type-body:       13px;  /* body text */
 --type-body-small: 12px;  /* inspector body, menus */
@@ -331,7 +331,7 @@ All line-heights land on 4px increments (20px, 16px, 12px). This creates vertica
 
 **Who does this well.** Raycast spans 11px to 15px across its entire UI. Linear keeps most text between 12px and 14px. Both prove that tight scales can feel premium when spacing and weight do the hierarchy work.
 
-**Dreamcacher application.** The 14px display text is the maximum -- nothing in the canvas UI should be larger. Nodes, panels, and menus all live within this 8-14px range. Hierarchy comes from weight (400 vs 600), opacity (T.primary vs T.subtle), and letter-spacing (0 vs 0.8px) rather than large size jumps. The monospace font (Inconsolata) reinforces this: every size is legible because the characters are designed for terminal-density reading.
+**Dreamcatcher application.** The 14px display text is the maximum -- nothing in the canvas UI should be larger. Nodes, panels, and menus all live within this 8-14px range. Hierarchy comes from weight (400 vs 600), opacity (T.primary vs T.subtle), and letter-spacing (0 vs 0.8px) rather than large size jumps. The monospace font (Inconsolata) reinforces this: every size is legible because the characters are designed for terminal-density reading.
 
 **Gotchas.** At 8-9px, font rendering quality varies wildly across platforms. Windows ClearType handles 9px monospace well; macOS antialiasing can make 8px text slightly blurry. Test T.micro and T.nano on both platforms. If 8px is illegible on macOS, bump T.nano to 9px and differentiate through weight alone.
 
@@ -359,7 +359,7 @@ All line-heights land on 4px increments (20px, 16px, 12px). This creates vertica
 
 **Who does this well.** Vercel achieves extreme brand recognition with a single white accent on dark gray. Linear uses their purple (#5E6AD2) at well under 10% -- just the sidebar icon and selected state. Both prove that restraint amplifies impact.
 
-**Dreamcacher application.** The single accent is DD0000 (active red). It appears only on: active recording pulse, unread indicators, error states, and the primary CTA in confirmation dialogs. Everything else is achromatic. If a new feature needs "color," it gets a luminance change (brighter/dimmer) rather than a hue.
+**Dreamcatcher application.** The single accent is DD0000 (active red). It appears only on: active recording pulse, unread indicators, error states, and the primary CTA in confirmation dialogs. Everything else is achromatic. If a new feature needs "color," it gets a luminance change (brighter/dimmer) rather than a hue.
 
 **Gotchas.** The 10% feels like less than you think when designing -- it's roughly one accent-colored element per viewport. The temptation is to add "just one more" accent color for a new state. Resist. Each additional accent color halves the visual weight of every existing one.
 
@@ -387,7 +387,7 @@ Material Design recommends approximately 20 points lower saturation on dark mode
 
 **Who does this well.** Material Design 3 systematically desaturates all semantic colors for dark mode. GitHub uses distinctly pastel syntax highlighting colors in dark mode. Figma shifts their brand purple lighter and less saturated for dark surfaces.
 
-**Dreamcacher application.** The DD0000 accent red should be validated for optical vibration against E[1] #0C0B09. In OKLCH, DD0000 is approximately `oklch(0.54 0.24 27)`. For comfortable dark-mode use, consider shifting to `oklch(0.58 0.18 27)` (lighter, less saturated) -- this would be approximately #E44545. Test both at 14px and 9px on the canvas background.
+**Dreamcatcher application.** The DD0000 accent red should be validated for optical vibration against E[1] #0C0B09. In OKLCH, DD0000 is approximately `oklch(0.54 0.24 27)`. For comfortable dark-mode use, consider shifting to `oklch(0.58 0.18 27)` (lighter, less saturated) -- this would be approximately #E44545. Test both at 14px and 9px on the canvas background.
 
 **Gotchas.** `color-mix()` in OKLCH has ~95% browser support (2025+). Older Safari versions need fallback hex values. Always define both: `color: #E44545; color: color-mix(in oklch, #DD0000 60%, gray);` The second declaration overrides the first where supported.
 
@@ -424,7 +424,7 @@ The key insight: in OKLCH, reducing L linearly produces linearly darker shades. 
 
 **Who does this well.** Radix Colors and Tailwind v4 both generate scales in OKLCH. Dopely Colors' dark mode generator uses perceptual luminosity shifts.
 
-**Dreamcacher application.** If Dreamcacher ever needs a semantic palette (branching colors, agent type indicators, confidence levels), generate it in OKLCH with chroma capped at 0.12 for dark mode usage. This keeps any future color additions harmonious with the warm achromatic base.
+**Dreamcatcher application.** If Dreamcatcher ever needs a semantic palette (branching colors, agent type indicators, confidence levels), generate it in OKLCH with chroma capped at 0.12 for dark mode usage. This keeps any future color additions harmonious with the warm achromatic base.
 
 **Gotchas.** OKLCH can produce out-of-gamut colors (displayable by P3 wide-gamut screens but not sRGB). Always clamp to sRGB for web: `oklch(0.7 0.2 27)` is in gamut, but `oklch(0.7 0.3 27)` might not be. Use `color(display-p3 ...)` with `@supports` for wide-gamut displays and provide sRGB fallbacks.
 
@@ -453,7 +453,7 @@ The key insight: in OKLCH, reducing L linearly produces linearly darker shades. 
 
 **Who does this well.** Vercel uses white as their only accent on black. Raycast uses a single teal. Linear uses a single purple. All three are immediately recognizable from a screenshot because the accent is so rare it becomes a fingerprint.
 
-**Dreamcacher application.** DD0000 red. Used for: recording state, unread indicators, error states, primary CTAs. That's the complete list. If a new feature "needs color," first ask: can this be solved with luminance (brighter hover state), weight (bold label), or iconography instead?
+**Dreamcatcher application.** DD0000 red. Used for: recording state, unread indicators, error states, primary CTAs. That's the complete list. If a new feature "needs color," first ask: can this be solved with luminance (brighter hover state), weight (bold label), or iconography instead?
 
 **Gotchas.** The hardest part of single-accent discipline is maintaining it over time. Every new feature wants its own color. Document the accent budget in the design system and require explicit approval to add any new colored element. The moment you have two accent colors, you have a color system to maintain. The moment you have five, nobody remembers what any of them mean.
 
@@ -495,7 +495,7 @@ Pattern: first shadow is the key (tight offset, small blur, higher opacity), sec
 
 **Who does this well.** Josh W. Comeau's shadow layering technique: each layer doubles the offset and blur while reducing opacity. The result mimics real light falloff. Linear's command palette uses a three-layer shadow stack. Raycast's result cards use key + ambient with a subtle light ring.
 
-**Dreamcacher application.** Nodes on the canvas need shadows tuned to SVG, not CSS. Use `filter: drop-shadow()` stacked on the node group element rather than `box-shadow`:
+**Dreamcatcher application.** Nodes on the canvas need shadows tuned to SVG, not CSS. Use `filter: drop-shadow()` stacked on the node group element rather than `box-shadow`:
 ```html
 <g filter="url(#node-shadow)">
   <filter id="node-shadow">
@@ -533,7 +533,7 @@ The inset ring at 0.06-0.08 white opacity is barely visible in isolation but cre
 
 **Who does this well.** Apple's macOS window chrome uses an inset light ring on every window in dark mode. Linear's cards use it. Raycast's search bar has a pronounced inner glow that makes it feel like a glass tube.
 
-**Dreamcacher application.** Apply to: node circles (0.5px white stroke at 0.06 opacity), floating panels (inset shadow), and the floating input bar. Do NOT apply to the inspector panel (it's anchored to the frame, not floating) or the canvas itself.
+**Dreamcatcher application.** Apply to: node circles (0.5px white stroke at 0.06 opacity), floating panels (inset shadow), and the floating input bar. Do NOT apply to the inspector panel (it's anchored to the frame, not floating) or the canvas itself.
 
 **Gotchas.** Sub-pixel strokes (0.5px) render differently across displays. On 1x screens they become invisible; on 2x retina they're crisp; on 3x they're barely there. For SVG strokes, use 0.75px as a safer minimum. The inset shadow technique is purely CSS and doesn't work on SVG elements -- use SVG stroke for those.
 
@@ -557,7 +557,7 @@ Key values: background opacity between 0.65-0.85 (below 0.65, text becomes hard 
 
 **Who does this well.** Apple's entire design language since Big Sur. Arc Browser's sidebar. Raycast's floating panels. The "dark glassmorphism" trend in 2025-2026 specifically pairs frosted glass with deep dark gradients underneath.
 
-**Dreamcacher application.** Use for: the floating input bar (so the user can see nodes behind it), context menus (transient, should not fully block the canvas), and the command palette. Do NOT use for the inspector panel (it's a permanent fixture; translucency would be distracting for reading). The glass should use E[3] (#1A1816) as the base tint to maintain the warm palette through the blur.
+**Dreamcatcher application.** Use for: the floating input bar (so the user can see nodes behind it), context menus (transient, should not fully block the canvas), and the command palette. Do NOT use for the inspector panel (it's a permanent fixture; translucency would be distracting for reading). The glass should use E[3] (#1A1816) as the base tint to maintain the warm palette through the blur.
 
 **Gotchas.** `backdrop-filter` has ~95% global support but requires `-webkit-` prefix for Safari. Performance: 3-5 glass elements are negligible; 10+ cause measurable frame drops on mid-range phones. Keep blur values under 16px -- larger values cost more GPU cycles with imperceptible visual improvement. The glass won't be visible if the background behind it is too dark or too uniform. The canvas needs visual content (nodes, edges, grid dots) behind the glass panel for the effect to register. An empty canvas with glass panels just looks like transparent panels.
 
@@ -584,7 +584,7 @@ The key differentiator from regular shadows: ambient occlusion has zero or near-
 
 **Who does this well.** 3D rendering engines (Unity, Unreal) compute SSAO as a post-process. In 2D UI, Figma applies subtle ambient occlusion to their node containers. Linear's cards have a nearly invisible 1px shadow at zero offset that serves this purpose.
 
-**Dreamcacher application.** Apply to node groups as a zero-offset, 2-3px stdDeviation drop shadow in addition to the directional shadow. This creates the effect of nodes "sitting on" the canvas substrate rather than hovering above it in a void. The combination of directional shadow (node height above canvas) and ambient occlusion (contact with canvas) produces the most convincing depth.
+**Dreamcatcher application.** Apply to node groups as a zero-offset, 2-3px stdDeviation drop shadow in addition to the directional shadow. This creates the effect of nodes "sitting on" the canvas substrate rather than hovering above it in a void. The combination of directional shadow (node height above canvas) and ambient occlusion (contact with canvas) produces the most convincing depth.
 
 **Gotchas.** Keep ambient occlusion shadows darker (0.2-0.4 opacity) and tighter (1-3px blur) than directional shadows. If the ambient occlusion shadow is too large, it merges with the directional shadow and the distinction is lost. On very dark backgrounds (< 5% luminance), even a black ambient occlusion shadow can be invisible -- consider using a very slightly lighter-than-background color instead.
 
@@ -624,7 +624,7 @@ The specular highlight sits at 40% x, 30% y -- offset from center toward the top
 
 **Who does this well.** RPG skill tree UIs in games like Path of Exile and Final Fantasy use multi-layer gradient nodes. Figma's component icons use radial gradients for dimensionality. D3.js data visualizations by Nadieh Bremer (Visual Cinnamon) use SVG gradients for organic, precious-feeling data points.
 
-**Dreamcacher application.** This is the primary node material. Every user node gets the five-layer stack. AI nodes get a different treatment: hollow glass vessel (ring stroke with no fill, or very low-opacity fill with high specular). Decision nodes get a harder, more crystalline gradient with a sharper specular highlight. The material differences between node types communicate function through visual physics.
+**Dreamcatcher application.** This is the primary node material. Every user node gets the five-layer stack. AI nodes get a different treatment: hollow glass vessel (ring stroke with no fill, or very low-opacity fill with high specular). Decision nodes get a harder, more crystalline gradient with a sharper specular highlight. The material differences between node types communicate function through visual physics.
 
 **Gotchas.** SVG radial gradients are reusable via `<defs>` -- define once, reference many times. Do not create a new gradient per node or you'll balloon the DOM. On canvases with 100+ nodes, SVG filter stacks (especially feGaussianBlur in drop-shadow) are the primary performance bottleneck. Profile with Chrome DevTools Paint Profiler. If shadows are too expensive, consider baking node shadows into a single shared `<use>` shadow element or switching to Canvas2D rendering for the shadow layer.
 
@@ -672,7 +672,7 @@ The luminance shift from E[2] to E[3] (a ~5% brightness change) creates a subtle
 
 **Who does this well.** Twitter/X's dark mode skeleton is the reference implementation. Discord uses synchronized dark skeletons in their message loading. Linear uses a very subtle pulse (opacity animation rather than gradient) for their loading states.
 
-**Dreamcacher application.** Use for: node content loading (when a node is placed but its content hasn't streamed in yet), panel section loading (when inspector data is being fetched), and AI response streaming placeholders. The skeleton should use E[2] as base and E[3] as highlight, maintaining the warm palette.
+**Dreamcatcher application.** Use for: node content loading (when a node is placed but its content hasn't streamed in yet), panel section loading (when inspector data is being fetched), and AI response streaming placeholders. The skeleton should use E[2] as base and E[3] as highlight, maintaining the warm palette.
 
 **Gotchas.** CSS animations on `background-position` are GPU-composited and very cheap. But the `background-attachment: fixed` trick can cause issues with `transform: translate()` parents -- fixed attachment is relative to the viewport, and transforms create a new stacking context that can break this. Test in the context of your actual canvas transform hierarchy.
 
@@ -715,7 +715,7 @@ Timing: hover = 150ms (fast enough to feel instant, slow enough to perceive), pr
 
 **Who does this well.** Raycast's list items scale and brighten on hover. Linear's cards lift with a shadow transition. Arc Browser's tabs have a 100ms brightness pulse on hover. Vercel's buttons have a satisfying press animation.
 
-**Dreamcacher application.** Nodes on the canvas: hover = brightness(1.15) + subtle shadow expansion. Selection = accent-colored glow ring. Dragging = shadow deepens (node "lifts" higher). Edge hover = stroke-width animates from 1 to 2px. Panel buttons: hover = background lightens one elevation step. These micro-interactions should feel like touching physical objects under glass -- slight movement, slight gleam.
+**Dreamcatcher application.** Nodes on the canvas: hover = brightness(1.15) + subtle shadow expansion. Selection = accent-colored glow ring. Dragging = shadow deepens (node "lifts" higher). Edge hover = stroke-width animates from 1 to 2px. Panel buttons: hover = background lightens one elevation step. These micro-interactions should feel like touching physical objects under glass -- slight movement, slight gleam.
 
 **Gotchas.** `filter: brightness()` applies to the entire element including text, which can make text too bright on hover. Consider applying brightness to the background only via a pseudo-element. `prefers-reduced-motion: reduce` should disable scale animations but keep color/opacity changes (those aren't "motion" in the vestibular sense).
 
@@ -758,7 +758,7 @@ Three levels of edge animation: (1) static with dashes (the edge exists), (2) an
 
 **Who does this well.** Unreal Engine's Blueprint editor uses particle-flow edges. React Flow supports animated edges with configurable dash patterns. Rive's state machine editor uses pulsing edges to show active transitions.
 
-**Dreamcacher application.** Default edges: solid, E[7] stroke, no animation. Active conversation edges (current branch): animated dash flow. AI streaming edges (assistant is generating): accent-colored particle traveling the path toward the response node. Completed edges: solid, E[5] stroke (dimmer). This creates a living graph where the user can see conversation flow at a glance.
+**Dreamcatcher application.** Default edges: solid, E[7] stroke, no animation. Active conversation edges (current branch): animated dash flow. AI streaming edges (assistant is generating): accent-colored particle traveling the path toward the response node. Completed edges: solid, E[5] stroke (dimmer). This creates a living graph where the user can see conversation flow at a glance.
 
 **Gotchas.** SVG `animateMotion` is CPU-rendered and can't be hardware-accelerated. For canvases with 50+ visible edges, use CSS `stroke-dashoffset` animation instead (it's compositor-friendly). Particle-on-path effects should be limited to 1-3 active edges at a time, or the canvas becomes a Christmas tree. `prefers-reduced-motion` should reduce animated edges to static dashes.
 
@@ -806,7 +806,7 @@ CSS `animation-timeline: view()` ties the animation to the element's visibility 
 
 **Who does this well.** Apple.com uses scroll-driven reveals extensively. Stripe's product pages. Linear's changelog. All prove that subtle scroll-driven animations make content feel curated rather than dumped.
 
-**Dreamcacher application.** Use in the inspector panel's scrollable content: context items, tool call details, and metadata sections reveal as the user scrolls. Use in the session sidebar: session list items reveal on scroll. Do NOT use on the canvas -- the canvas has its own spatial navigation model (pan/zoom) that conflicts with scroll-driven animations.
+**Dreamcatcher application.** Use in the inspector panel's scrollable content: context items, tool call details, and metadata sections reveal as the user scrolls. Use in the session sidebar: session list items reveal on scroll. Do NOT use on the canvas -- the canvas has its own spatial navigation model (pan/zoom) that conflicts with scroll-driven animations.
 
 **Gotchas.** `animation-timeline: view()` is supported in Chrome 115+ and Firefox 110+ but NOT in Safari as of early 2026. Provide the `@supports` fallback. The scroll-driven API runs entirely on the compositor thread (not the main thread), making it more performant than IntersectionObserver-based alternatives. Keep reveal transforms small (8-12px translateY, no scale) to maintain the "precision instrument" feel -- large swooping reveals feel like a marketing page, not a tool.
 
@@ -843,7 +843,7 @@ The spotlight opacity is critical: 0.015-0.03 white opacity is barely perceptibl
 
 **Who does this well.** Stripe's documentation sidebar uses a cursor-following gradient. Many portfolio sites use this effect on dark hero sections. The technique is described as "ambient light that follows interaction."
 
-**Dreamcacher application.** Apply to the canvas layer. The spotlight should be large (600-800px diameter) and extremely subtle (0.02 white opacity). As the user moves their cursor across the canvas, nodes near the cursor get a barely perceptible luminance lift. This reinforces the "peering through an instrument" metaphor -- the user's attention is literally a light source illuminating the specimens.
+**Dreamcatcher application.** Apply to the canvas layer. The spotlight should be large (600-800px diameter) and extremely subtle (0.02 white opacity). As the user moves their cursor across the canvas, nodes near the cursor get a barely perceptible luminance lift. This reinforces the "peering through an instrument" metaphor -- the user's attention is literally a light source illuminating the specimens.
 
 **Gotchas.** The `mousemove` event fires at 60Hz+ and updating a CSS custom property each time is cheap but not free. Use `requestAnimationFrame` to throttle updates. The spotlight should disappear entirely on touch devices (no cursor). `pointer-events: none` is critical or you'll block all canvas interaction. On high-DPI displays, the radial gradient renders smoothly, but on 1x displays, large gradients can show stepping artifacts -- test at 1x.
 
@@ -886,7 +886,7 @@ WCAG 2.4.7 requires focus indicators to be visible. WCAG 2.4.13 (AAA) requires t
 
 **Who does this well.** GitHub's dark mode uses a clear white ring with dark gap. Radix UI's primitives default to a visible double ring. Chakra UI's focus ring system provides dark-mode-aware defaults.
 
-**Dreamcacher application.** All interactive elements (nodes, buttons, inputs, links, tabs) need `:focus-visible` treatment. On the canvas, focused nodes should get the accent glow ring (not white) to distinguish keyboard focus from mouse selection. In panels, use the white double-ring. Critical: test full keyboard navigation flow through the app in dark mode. Every focusable element must be discoverable.
+**Dreamcatcher application.** All interactive elements (nodes, buttons, inputs, links, tabs) need `:focus-visible` treatment. On the canvas, focused nodes should get the accent glow ring (not white) to distinguish keyboard focus from mouse selection. In panels, use the white double-ring. Critical: test full keyboard navigation flow through the app in dark mode. Every focusable element must be discoverable.
 
 **Gotchas.** `:focus-visible` has universal support. The older `:focus` catch-all should only be used as a fallback for ancient browsers. `outline-offset: 2px` can cause the outline to overlap adjacent elements in tight layouts -- use `box-shadow` instead for pixel-precise control. SVG elements don't support `outline` -- use an additional SVG `<circle>` or `<rect>` with stroke for focused SVG nodes.
 
@@ -924,7 +924,7 @@ As the cursor approaches within 150px, the node brightens up to 20% and gains a 
 
 **Who does this well.** Stripe's pricing cards have a proximity glow. Many creative agency sites use this for portfolio grids. Path of Exile's passive skill tree lights up nodes near the cursor.
 
-**Dreamcacher application.** This is the "specimens under glass responding to the microscope light" effect. As the user moves their cursor across the canvas, nearby nodes glow gently -- not selected, not hovered, just illuminated by proximity. This creates the sense of exploring a living system. Limit the proximity check to visible nodes (frustum culling) and throttle to 30fps to avoid performance issues on large graphs.
+**Dreamcatcher application.** This is the "specimens under glass responding to the microscope light" effect. As the user moves their cursor across the canvas, nearby nodes glow gently -- not selected, not hovered, just illuminated by proximity. This creates the sense of exploring a living system. Limit the proximity check to visible nodes (frustum culling) and throttle to 30fps to avoid performance issues on large graphs.
 
 **Gotchas.** Running distance calculations for 200+ nodes at 60fps is expensive. Use spatial indexing (quadtree, grid hash) to limit proximity checks to nodes in the cursor's vicinity. The `filter` property forces a new GPU layer per element, which is fine for 50 nodes but problematic for 500. Consider applying the glow only to nodes within the proximity radius and removing it immediately when they fall outside, rather than transitioning to 0 (which keeps the filter active).
 
@@ -979,7 +979,7 @@ The "breathing" gradient is an 8-second opacity pulse on a centered warm glow --
 
 **Who does this well.** Linear's empty project state has a subtle atmospheric gradient. Notion's empty pages use centered, calm illustrations. Discord's empty channels use a muted illustration with gentle animation.
 
-**Dreamcacher application.** When the canvas has no nodes, show: the dot grid (always), the vignette (always), a centered warm radial glow (breathing), and 5-8 drifting micro-particles. Plus a single line of centered text: "Start a conversation" in T.subtle at type-body. The effect should feel like a warm dark room with dust motes catching faint light -- dormant but alive, waiting to be populated.
+**Dreamcatcher application.** When the canvas has no nodes, show: the dot grid (always), the vignette (always), a centered warm radial glow (breathing), and 5-8 drifting micro-particles. Plus a single line of centered text: "Start a conversation" in T.subtle at type-body. The effect should feel like a warm dark room with dust motes catching faint light -- dormant but alive, waiting to be populated.
 
 **Gotchas.** The breathing animation must respect `prefers-reduced-motion`. CSS particles (positioned `absolute` divs) are lightweight but don't respond to camera transforms -- they live in screen space, which is actually correct for an empty state (it's an atmospheric effect, not canvas content). When the first node is created, the empty state should fade out over 300ms, not snap off.
 
@@ -1021,9 +1021,9 @@ The `color-scheme: dark` declaration is critical -- it tells the browser to rend
 
 **Who does this well.** GitHub handles the full cascade: system preference, user override, per-repo override. Tailwind CSS v4's dark mode integrates `prefers-color-scheme` with a `.dark` class override. Apple's Human Interface Guidelines define the three-level preference hierarchy.
 
-**Dreamcacher application.** Dreamcacher is dark-only (not dual-theme), so set `color-scheme: dark` unconditionally. This ensures native scrollbars in the inspector panel render dark, any `<input>` or `<textarea>` elements use dark UA styles, and autofill suggestions don't flash white backgrounds. Add `<meta name="color-scheme" content="dark">` to `<head>` for earliest possible rendering hint.
+**Dreamcatcher application.** Dreamcatcher is dark-only (not dual-theme), so set `color-scheme: dark` unconditionally. This ensures native scrollbars in the inspector panel render dark, any `<input>` or `<textarea>` elements use dark UA styles, and autofill suggestions don't flash white backgrounds. Add `<meta name="color-scheme" content="dark">` to `<head>` for earliest possible rendering hint.
 
-**Gotchas.** Without `color-scheme: dark`, the browser will render the default white scrollbar in the inspector panel -- a jarring break in an otherwise dark interface. The `light-dark()` function has ~90% support (as of 2025) but is unnecessary for Dreamcacher since it's dark-only. If dual-theme is ever added, `light-dark()` reduces token duplication significantly.
+**Gotchas.** Without `color-scheme: dark`, the browser will render the default white scrollbar in the inspector panel -- a jarring break in an otherwise dark interface. The `light-dark()` function has ~90% support (as of 2025) but is unnecessary for Dreamcatcher since it's dark-only. If dual-theme is ever added, `light-dark()` reduces token duplication significantly.
 
 ---
 
@@ -1067,7 +1067,7 @@ This is a cinematic technique. The active element stays fully visible; everythin
 
 **Who does this well.** Framer uses spotlight overlays during onboarding to highlight specific UI regions. Many design tools use this for guided tours. Game UIs use spotlight effects to draw attention to new abilities or items.
 
-**Dreamcacher application.** Use sparingly: command palette opening (spotlight the palette, dim the canvas), first-use onboarding (spotlight the input bar), and error states (spotlight the error source on the canvas). This is a strong effect -- overuse would feel theatrical. Reserve it for moments where the user's attention absolutely must be redirected.
+**Dreamcatcher application.** Use sparingly: command palette opening (spotlight the palette, dim the canvas), first-use onboarding (spotlight the input bar), and error states (spotlight the error source on the canvas). This is a strong effect -- overuse would feel theatrical. Reserve it for moments where the user's attention absolutely must be redirected.
 
 **Gotchas.** The spotlight overlay must be `pointer-events: none` or it blocks interaction with the spotlighted element. The radial gradient approach can cause aliasing at the spotlight edge on low-DPI displays -- use a larger fade region (100-200px) between transparent and the dimmed area. If the spotlighted element is near the viewport edge, the gradient can look asymmetric -- clamp the spotlight center to avoid this.
 
@@ -1075,7 +1075,7 @@ This is a cinematic technique. The active element stays fully visible; everythin
 
 ## Summary Matrix
 
-| # | Pattern | Category | Implementation | Performance Cost | Priority for Dreamcacher |
+| # | Pattern | Category | Implementation | Performance Cost | Priority for Dreamcatcher |
 |---|---------|----------|---------------|-----------------|-------------------------|
 | 1 | Warm Black Foundation | Surface | CSS custom properties | Zero | P0 -- already implemented |
 | 2 | Elevation Through Luminance | Surface | CSS custom properties | Zero | P0 -- already implemented |
@@ -1114,7 +1114,7 @@ This is a cinematic technique. The active element stays fully visible; everythin
 
 **Phase 1 (Foundation)**: Patterns 1, 2, 5, 8, 9, 11, 12, 15, 29. These are the bones. Most are already in DESIGN-SPEC.md; validate and lock.
 
-**Phase 2 (Material)**: Patterns 3, 4, 16, 17, 20, 22, 26. These transform flat shapes into dimensional objects. This is where Dreamcacher stops looking like a developer tool and starts feeling like a precision instrument.
+**Phase 2 (Material)**: Patterns 3, 4, 16, 17, 20, 22, 26. These transform flat shapes into dimensional objects. This is where Dreamcatcher stops looking like a developer tool and starts feeling like a precision instrument.
 
 **Phase 3 (Atmosphere)**: Patterns 6, 7, 18, 19, 21, 25, 28. These add the living, breathing quality. The canvas becomes a warm dark room you peer into, not a screen you stare at.
 

@@ -2,7 +2,7 @@
 
 Research into how premium productivity tools create moments of joy without becoming games. Every technique here is evaluated through the **desk worker test**: would someone opening this tool between spreadsheets and Slack threads appreciate it, or would they want to turn it off?
 
-Dreamcacher is a spatial conversation interface with warm-black observatory aesthetics, force-directed node graphs, and a physics-first interaction model. The existing DELIGHT-SPEC.md establishes the philosophy: peripheral not central, physics over graphics, earned escalation, chromatic restraint, reducible to zero. This research supplements that spec with external evidence, competitive analysis, and new techniques discovered through systematic search.
+Dreamcatcher is a spatial conversation interface with warm-black observatory aesthetics, force-directed node graphs, and a physics-first interaction model. The existing DELIGHT-SPEC.md establishes the philosophy: peripheral not central, physics over graphics, earned escalation, chromatic restraint, reducible to zero. This research supplements that spec with external evidence, competitive analysis, and new techniques discovered through systematic search.
 
 ---
 
@@ -14,7 +14,7 @@ Dreamcacher is a spatial conversation interface with warm-black observatory aest
 
 The critical finding from multiple sources: **over-juicing backfires**. The line between "this feels alive" and "this is exhausting" is thin. Every source that catalogs juice techniques includes a warning about restraint. The best implementations are ones where removing the effect makes things feel worse, but the user cannot articulate what was added.
 
-**Relevance to Dreamcacher**: The DELIGHT-SPEC's "3-second test" (if they can describe it, it's too loud) and "absence test" (if removing it doesn't hurt, cut it) are industry best practice. The research confirms these are the right filters.
+**Relevance to Dreamcatcher**: The DELIGHT-SPEC's "3-second test" (if they can describe it, it's too loud) and "absence test" (if removing it doesn't hurt, cut it) are industry best practice. The research confirms these are the right filters.
 
 ### Stripe's Animation Philosophy
 
@@ -25,7 +25,7 @@ Stripe's specific techniques:
 - **Button state morphing**: Pay button transforms from text to spinner to checkmark in a continuous animation. The user never leaves the button context.
 - **Perceived speed**: Animations during API calls make waits feel shorter. This is well-documented in psychology research -- perceived duration decreases when visual change is present.
 
-**Relevance to Dreamcacher**: The streaming pulse on AI nodes already does this. The edge pulse proposed in DELIGHT-SPEC #9 extends it to the connection between question and answer. Stripe validates the approach.
+**Relevance to Dreamcatcher**: The streaming pulse on AI nodes already does this. The edge pulse proposed in DELIGHT-SPEC #9 extends it to the connection between question and answer. Stripe validates the approach.
 
 ### Linear's Invisible Craft
 
@@ -34,9 +34,9 @@ Linear's design team describes their approach: "much of what makes software feel
 Linear's specific contributions to the premium feel:
 - **Keyboard-first with motion acknowledgment**: Every keyboard shortcut triggers a subtle transition. The interface never teleports.
 - **Modular component system (Orbiter)**: Each component presents its content format optimally, without being constrained by a grid. This creates visual variety within consistency.
-- **Monochrome with accent restraint**: A single brand color used surgically. Everything else is luminance hierarchy. This is exactly Dreamcacher's approach.
+- **Monochrome with accent restraint**: A single brand color used surgically. Everything else is luminance hierarchy. This is exactly Dreamcatcher's approach.
 
-**Relevance to Dreamcacher**: Linear proves that monochrome + single accent + invisible motion = premium. Dreamcacher's palette strategy (warm blacks + DD0000 red) is validated by Linear's commercial success.
+**Relevance to Dreamcatcher**: Linear proves that monochrome + single accent + invisible motion = premium. Dreamcatcher's palette strategy (warm blacks + DD0000 red) is validated by Linear's commercial success.
 
 ### Vercel's Interface Guidelines
 
@@ -49,7 +49,7 @@ Vercel's public Web Interface Guidelines (100 rules, 17 categories) include spec
 - **Optimistic UI**: update immediately when success is likely, reconcile on server response.
 - **Favicon as status indicator**: Vercel updates the browser favicon dynamically (spinner for building, checkmark for ready, X for error).
 
-**Relevance to Dreamcacher**: The show-delay for loading indicators directly applies to the streaming placeholder. If the AI responds in under 300ms, the "..." placeholder should not flash. The favicon-as-status pattern could extend to the session pill or tab title.
+**Relevance to Dreamcatcher**: The show-delay for loading indicators directly applies to the streaming placeholder. If the AI responds in under 300ms, the "..." placeholder should not flash. The favicon-as-status pattern could extend to the session pill or tab title.
 
 ### Ambient Animation Principles (Smashing Magazine, 2025)
 
@@ -60,7 +60,7 @@ Andy Clarke's two-part series on ambient animations in web design establishes th
 - Use **ease-in-out or custom cubic-bezier** for organic feel.
 - Performance: animate only transform and opacity. Everything else triggers layout or paint.
 
-**Relevance to Dreamcacher**: The existing dot grid, vignette, and node auras are three ambient layers. The DELIGHT-SPEC's "ambient hum" (21+ nodes) adds a fourth. The research suggests this layering approach is exactly right -- the sum of imperceptible parts creates a perceptible atmosphere.
+**Relevance to Dreamcatcher**: The existing dot grid, vignette, and node auras are three ambient layers. The DELIGHT-SPEC's "ambient hum" (21+ nodes) adds a fourth. The research suggests this layering approach is exactly right -- the sum of imperceptible parts creates a perceptible atmosphere.
 
 ### Game Feedback Loops Applied to Productivity
 
@@ -72,7 +72,7 @@ The key insight for productivity tools: **celebrate the action, not the result**
 
 Progressive disclosure from game UX: introduce functionality in manageable stages. Complex games offer information bit by bit. The best game UX designers use visual hierarchy, color coding, spatial organization, and progressive disclosure to surface the right information at the right time.
 
-**Relevance to Dreamcacher**: The earned escalation system (0.7x at 1-3 nodes, 1.0x at 4-10, 1.1x at 11-20, 1.2x at 21+) is a positive feedback loop without gamification. The progressive revelation of effects teaches the user that deeper engagement produces a warmer environment. This is the correct translation of game juice into productivity context.
+**Relevance to Dreamcatcher**: The earned escalation system (0.7x at 1-3 nodes, 1.0x at 4-10, 1.1x at 11-20, 1.2x at 21+) is a positive feedback loop without gamification. The progressive revelation of effects teaches the user that deeper engagement produces a warmer environment. This is the correct translation of game juice into productivity context.
 
 ### The Gamification Trap
 
@@ -80,7 +80,7 @@ Progressive disclosure from game UX: introduce functionality in manageable stage
 
 The 2026 trend: gamification is moving toward subtle integration rather than game-like overlays. AI-driven personalization allows dynamic adjustment of challenge and reward based on actual usage patterns.
 
-**Relevance to Dreamcacher**: The DELIGHT-SPEC explicitly rejects achievement badges, XP bars, and progress indicators. This is the right call. The earned escalation system is micro-gamification done correctly -- the reward is ambient warmth, not a badge.
+**Relevance to Dreamcatcher**: The DELIGHT-SPEC explicitly rejects achievement badges, XP bars, and progress indicators. This is the right call. The earned escalation system is micro-gamification done correctly -- the reward is ambient warmth, not a badge.
 
 ---
 
@@ -91,7 +91,7 @@ Each technique is rated on five dimensions:
 | Dimension | Scale |
 |-----------|-------|
 | **Implementation complexity** | Low / Medium / High |
-| **Appropriateness for Dreamcacher** | Strong / Moderate / Weak / Reject |
+| **Appropriateness for Dreamcatcher** | Strong / Moderate / Weak / Reject |
 | **Desk worker test** | Pass / Neutral / Fail |
 | **Emotional effect** | What the user feels |
 | **Frequency tolerance** | How often it can fire without becoming annoying |
@@ -106,9 +106,9 @@ Each technique is rated on five dimensions:
 
 **Emotional effect**: Objects feel like they have mass. The overshoot-and-settle communicates "I arrived" with physicality. Without springs, elements feel teleported -- digital and weightless.
 
-**Implementation complexity**: Low. Already implemented in Dreamcacher's node entrances (0.7s spring with ~1.15 scale peak).
+**Implementation complexity**: Low. Already implemented in Dreamcatcher's node entrances (0.7s spring with ~1.15 scale peak).
 
-**Appropriateness for Dreamcacher**: Strong. Already in use. The existing spring is well-calibrated.
+**Appropriateness for Dreamcatcher**: Strong. Already in use. The existing spring is well-calibrated.
 
 **Desk worker test**: Pass. Spring entrances are imperceptible to someone not looking for them. They contribute to an ambient sense that the tool is "well-made" without demanding attention.
 
@@ -126,7 +126,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Low. CSS `transition` with different durations for enter/leave, or tick-based interpolation with asymmetric rates.
 
-**Appropriateness for Dreamcacher**: Strong. Already partially implemented in DELIGHT-SPEC #8 (aura expand 100ms, contract 150ms). Should be applied consistently to all hover states -- toolbar buttons, panel items, context menu entries.
+**Appropriateness for Dreamcatcher**: Strong. Already partially implemented in DELIGHT-SPEC #8 (aura expand 100ms, contract 150ms). Should be applied consistently to all hover states -- toolbar buttons, panel items, context menu entries.
 
 **Desk worker test**: Pass. Nobody has ever complained about a hover state being well-timed. The opposite (jerky or delayed hovers) is actively irritating.
 
@@ -144,7 +144,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Low. DELIGHT-SPEC #7 specifies this as a 6px radius contraction over 150ms.
 
-**Appropriateness for Dreamcacher**: Strong. Selection is the most frequent interaction. The snap ring adds physical weight to what would otherwise be an instant state change. Critically, it must remain below conscious perception -- the DELIGHT-SPEC correctly identifies this.
+**Appropriateness for Dreamcatcher**: Strong. Selection is the most frequent interaction. The snap ring adds physical weight to what would otherwise be an instant state change. Critically, it must remain below conscious perception -- the DELIGHT-SPEC correctly identifies this.
 
 **Desk worker test**: Pass. The user will never think about it. They will think selections feel "crisp."
 
@@ -162,7 +162,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Medium. SVG stroke-dasharray animation is straightforward but must be coordinated with the node spring entrance. The edge should begin drawing when the child node starts its entrance, not after it completes.
 
-**Appropriateness for Dreamcacher**: Strong. The MOTION-SPEC identifies the lack of edge draw-on as a significant gap. "This single addition will dramatically change how the graph feels -- it will feel like it is being constructed rather than just appearing."
+**Appropriateness for Dreamcatcher**: Strong. The MOTION-SPEC identifies the lack of edge draw-on as a significant gap. "This single addition will dramatically change how the graph feels -- it will feel like it is being constructed rather than just appearing."
 
 **Desk worker test**: Pass. Edge animation is brief and informational. It makes the spatial relationship between nodes legible.
 
@@ -180,7 +180,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Low. DELIGHT-SPEC #2 specifies this: aura contracts from r*2.5 to r*2 and opacity drops from 8% to 3% over 400ms.
 
-**Appropriateness for Dreamcacher**: Strong. AI response completion is the second most frequent event (after selection). The settle treats it with the gravity it deserves -- not as a celebration, but as an arrival.
+**Appropriateness for Dreamcatcher**: Strong. AI response completion is the second most frequent event (after selection). The settle treats it with the gravity it deserves -- not as a celebration, but as an arrival.
 
 **Desk worker test**: Pass. The user will perceive that responses "land" rather than "pop in."
 
@@ -194,11 +194,11 @@ Each technique is rated on five dimensions:
 
 **Who does it well**: YouTube Ambient Mode (samples video colors and projects soft glow behind the player). Obsidian 3D graph (nodes drift gently when not interacted with). Dark Souls bonfires (ambient particle float, ember glow). Slack (the loading screen breathing dots, though these are explicit loading indicators, not ambient).
 
-**Emotional effect**: The canvas feels inhabited rather than dead. This is especially important for Dreamcacher's empty state, which currently reads as "a black screen with a tiny input at the bottom" (per MOTION-SPEC analysis). The breathing says "this space is ready for you."
+**Emotional effect**: The canvas feels inhabited rather than dead. This is especially important for Dreamcatcher's empty state, which currently reads as "a black screen with a tiny input at the bottom" (per MOTION-SPEC analysis). The breathing says "this space is ready for you."
 
 **Implementation complexity**: Low for individual effects (sine-wave modulation on opacity/scale), Medium for the layered system (coordinating multiple ambient loops without visual interference).
 
-**Appropriateness for Dreamcacher**: Strong. The DELIGHT-SPEC prescribes this at 21+ nodes (ambient hum), and the MOTION-SPEC prescribes it for the empty state (breathing vignette + grid pulse + input border glow). Both are correct applications.
+**Appropriateness for Dreamcatcher**: Strong. The DELIGHT-SPEC prescribes this at 21+ nodes (ambient hum), and the MOTION-SPEC prescribes it for the empty state (breathing vignette + grid pulse + input border glow). Both are correct applications.
 
 **Desk worker test**: Pass -- with a critical caveat. The breathing must be slow enough (4s+ cycle) that it reads as stillness-with-depth, not as motion. If someone glances at the screen and thinks "is something moving?", the cycle is too fast. They should think "this looks nice" without identifying what's alive.
 
@@ -216,7 +216,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Low. CSS stagger with `transition-delay: calc(var(--i) * 30ms)` or GSAP `stagger` parameter. GSAP is cleaner for dynamic lists where item count varies.
 
-**Appropriateness for Dreamcacher**: Strong. The MOTION-SPEC prescribes this for the timeline panel (0.02s stagger per message, capped at 0.4s total). Should also apply to context menu items (0.03s stagger per item), inspector sections, and memory shelf entries.
+**Appropriateness for Dreamcatcher**: Strong. The MOTION-SPEC prescribes this for the timeline panel (0.02s stagger per message, capped at 0.4s total). Should also apply to context menu items (0.03s stagger per item), inspector sections, and memory shelf entries.
 
 **Desk worker test**: Pass. A 400ms cascade is imperceptible as "animation" -- it reads as "the panel loaded." The alternative (instant appear of 20+ items) is actually more jarring.
 
@@ -234,7 +234,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Medium. Requires managing optimistic state alongside server state, and graceful rollback UI for error cases.
 
-**Appropriateness for Dreamcacher**: Moderate. The AI response itself cannot be optimistic (you don't know what the AI will say). But the act of sending a message can be: the user node should appear on the canvas instantly, the edge should begin drawing, and the AI placeholder node should materialize -- all before the API call returns. This is partially implemented (the user node appears immediately).
+**Appropriateness for Dreamcatcher**: Moderate. The AI response itself cannot be optimistic (you don't know what the AI will say). But the act of sending a message can be: the user node should appear on the canvas instantly, the edge should begin drawing, and the AI placeholder node should materialize -- all before the API call returns. This is partially implemented (the user node appears immediately).
 
 **Desk worker test**: Pass. Nobody has ever complained that a tool was too responsive.
 
@@ -252,7 +252,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Low. CSS keyframes or GSAP shake tween. 6-8 keyframes of alternating translateX.
 
-**Appropriateness for Dreamcacher**: Moderate. Dreamcacher has few form inputs, but the technique applies to: invalid session names, failed API calls (the input bar could shake briefly), and edge cases in node operations. Use sparingly -- in a canvas-first tool, the input bar is the only element where a shake wouldn't feel foreign.
+**Appropriateness for Dreamcatcher**: Moderate. Dreamcatcher has few form inputs, but the technique applies to: invalid session names, failed API calls (the input bar could shake briefly), and edge cases in node operations. Use sparingly -- in a canvas-first tool, the input bar is the only element where a shake wouldn't feel foreign.
 
 **Desk worker test**: Pass when used for genuine errors. Fail if overused for minor validation.
 
@@ -270,7 +270,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Medium. Requires coordinating text opacity, spinner opacity, icon transitions, and color changes in sequence. GSAP timeline is the natural tool.
 
-**Appropriateness for Dreamcacher**: Moderate. Applies to: the Send button (if one exists beyond Enter), the session creation flow, and any future action buttons in toolbar or context menu. The canvas nodes already do a version of this (streaming pulse -> settle), which is the spatial equivalent.
+**Appropriateness for Dreamcatcher**: Moderate. Applies to: the Send button (if one exists beyond Enter), the session creation flow, and any future action buttons in toolbar or context menu. The canvas nodes already do a version of this (streaming pulse -> settle), which is the spatial equivalent.
 
 **Desk worker test**: Pass. Button morphing is expected in modern tools. Its absence (a button that just says "Loading..." in text) feels dated.
 
@@ -288,7 +288,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Low. Each node's base opacity = `max(0.75, 1 - (distanceFromNewest * 0.05))`. Applied to all node layers uniformly.
 
-**Appropriateness for Dreamcacher**: Strong. The MOTION-SPEC identifies this gap: "No visual differentiation between the first exchange and the latest. Older nodes and newer nodes look identical. There is no temporal gradient -- no sense of recency." The technique directly solves this.
+**Appropriateness for Dreamcatcher**: Strong. The MOTION-SPEC identifies this gap: "No visual differentiation between the first exchange and the latest. Older nodes and newer nodes look identical. There is no temporal gradient -- no sense of recency." The technique directly solves this.
 
 **Desk worker test**: Pass. The user will never consciously notice the gradient. They will find it easier to locate where they left off.
 
@@ -306,7 +306,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Low. A timer that delays setting a `showLoading` flag, with a minimum-duration gate on hiding it.
 
-**Appropriateness for Dreamcacher**: Strong. The streaming placeholder ("...") should not appear if the AI responds within 200ms. Currently, fast responses might flash the placeholder for a single frame. The show-delay eliminates this.
+**Appropriateness for Dreamcatcher**: Strong. The streaming placeholder ("...") should not appear if the AI responds within 200ms. Currently, fast responses might flash the placeholder for a single frame. The show-delay eliminates this.
 
 **Desk worker test**: Pass. Nobody notices what didn't appear. They notice what flickered.
 
@@ -320,11 +320,11 @@ Each technique is rated on five dimensions:
 
 **Who does it well**: Vercel (favicon changes: spinner for building, green checkmark for ready, red X for error). Gmail (unread count in tab title). Figma (document name in tab title updates on rename).
 
-**Emotional effect**: Peripheral awareness. The user can switch to another tab (the spreadsheet they were working on) and glance at the Dreamcacher tab to see if the AI responded. This is desktop-worker-grade functionality.
+**Emotional effect**: Peripheral awareness. The user can switch to another tab (the spreadsheet they were working on) and glance at the Dreamcatcher tab to see if the AI responded. This is desktop-worker-grade functionality.
 
 **Implementation complexity**: Low. Dynamic favicon via canvas-generated data URL. Tab title via `document.title`.
 
-**Appropriateness for Dreamcacher**: Strong. When the AI is streaming, the tab title could show a subtle indicator. When streaming completes, the title could briefly flash or the favicon could update. This serves the exact desk-worker use case: "I asked a question, switched to email, want to know when the answer is ready."
+**Appropriateness for Dreamcatcher**: Strong. When the AI is streaming, the tab title could show a subtle indicator. When streaming completes, the title could briefly flash or the favicon could update. This serves the exact desk-worker use case: "I asked a question, switched to email, want to know when the answer is ready."
 
 **Desk worker test**: Pass. This is the most desk-worker-appropriate delight technique in the catalog. It respects the user's multi-tasking reality.
 
@@ -342,7 +342,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Medium. Requires computing screen-space coordinates from the canvas node to the panel edge, rendering a brief SVG/CSS line, and coordinating with panel open animation.
 
-**Appropriateness for Dreamcacher**: Strong. The MOTION-SPEC identifies this gap: "There is no visual connection between the selected node and the panel." The connection trace solves it with minimal visual footprint.
+**Appropriateness for Dreamcatcher**: Strong. The MOTION-SPEC identifies this gap: "There is no visual connection between the selected node and the panel." The connection trace solves it with minimal visual footprint.
 
 **Desk worker test**: Pass. The trace is brief (300ms) and informational. It teaches spatial relationships on first use and reinforces them thereafter.
 
@@ -360,7 +360,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Low. The DELIGHT-SPEC already specifies this: a `sessionDepth` counter with multipliers (0.7x at 1-3 nodes, 1.0x at 4-10, 1.1x at 11-20, 1.2x at 21+).
 
-**Appropriateness for Dreamcacher**: Strong. This is the DELIGHT-SPEC's signature innovation. The research validates it -- micro-gamification research shows that progressive reward works when it mirrors natural progression rather than imposing artificial milestones.
+**Appropriateness for Dreamcatcher**: Strong. This is the DELIGHT-SPEC's signature innovation. The research validates it -- micro-gamification research shows that progressive reward works when it mirrors natural progression rather than imposing artificial milestones.
 
 **Desk worker test**: Pass. The user will never notice the multiplier change. They will feel that deep sessions are "richer" -- and they'll be right, because more nodes produce more visual complexity, and the escalation multiplier gently amplifies that truth.
 
@@ -378,7 +378,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Low. DELIGHT-SPEC #4 (Impression Mark) specifies this for memory saves: a ring that contracts from r*1.8 to r*1.0 over 300ms.
 
-**Appropriateness for Dreamcacher**: Strong. Memory save, clip creation, and any future "capture" actions should use inward contraction. The directional consistency (out = create, in = save) builds unconscious fluency.
+**Appropriateness for Dreamcatcher**: Strong. Memory save, clip creation, and any future "capture" actions should use inward contraction. The directional consistency (out = create, in = save) builds unconscious fluency.
 
 **Desk worker test**: Pass. The contraction is 300ms and subtle. It teaches the interaction model without words.
 
@@ -396,7 +396,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Medium. DELIGHT-SPEC #6 specifies this: 40ms stagger between edges, with an arrival pulse at the terminal node. GSAP's `stagger` API is purpose-built for this.
 
-**Appropriateness for Dreamcacher**: Strong. Path trace is an analytical feature. The sweep makes it more legible, not more decorative.
+**Appropriateness for Dreamcatcher**: Strong. Path trace is an analytical feature. The sweep makes it more legible, not more decorative.
 
 **Desk worker test**: Pass. The sweep duration scales with path length (180ms for 3 nodes, 460ms for 10). It is fast enough to feel like information, not performance.
 
@@ -414,7 +414,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Low. A transient `gridScale` multiplier: 1.0 -> 0.6 -> 1.0 over 400ms, applied to grid dot radius in the draw loop.
 
-**Appropriateness for Dreamcacher**: Strong. Session switching currently replaces the graph with no spatial transition. The DELIGHT-SPEC #10 prescribes this combined with staggered node entrance. The grid shift alone would be a significant improvement.
+**Appropriateness for Dreamcatcher**: Strong. Session switching currently replaces the graph with no spatial transition. The DELIGHT-SPEC #10 prescribes this combined with staggered node entrance. The grid shift alone would be a significant improvement.
 
 **Desk worker test**: Pass. The shift is 400ms and happens only on session switch -- an infrequent, intentional action. The alternative (instant teleportation to a new graph) is more disorienting.
 
@@ -432,7 +432,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Low. Already encoded in the DELIGHT-SPEC through intensity ratings per effect (Subtle / Moderate) and earned escalation multipliers.
 
-**Appropriateness for Dreamcacher**: Strong. The existing spec's intensity hierarchy (hover = minimal, selection = subtle, branch = moderate, path trace = moderate, session switch = moderate) is proportional celebration in practice.
+**Appropriateness for Dreamcatcher**: Strong. The existing spec's intensity hierarchy (hover = minimal, selection = subtle, branch = moderate, path trace = moderate, session switch = moderate) is proportional celebration in practice.
 
 **Desk worker test**: Pass. Proportional celebration is what separates a productivity tool from a toy. The desk worker appreciates acknowledgment; they despise fanfare.
 
@@ -450,7 +450,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Medium. Every animation needs a reduced-motion variant. The DELIGHT-SPEC specifies these per-effect, which is the correct approach.
 
-**Appropriateness for Dreamcacher**: Strong. The DELIGHT-SPEC's principle "Reducible to zero: every effect respects prefers-reduced-motion" is the gold standard. The spec goes further: "The reduced version is not 'no animation' -- it is instant state changes with opacity fades."
+**Appropriateness for Dreamcatcher**: Strong. The DELIGHT-SPEC's principle "Reducible to zero: every effect respects prefers-reduced-motion" is the gold standard. The spec goes further: "The reduced version is not 'no animation' -- it is instant state changes with opacity fades."
 
 **Desk worker test**: Pass. Some desk workers have reduced motion enabled because they get migraines. The tool should be just as pleasant for them.
 
@@ -464,11 +464,11 @@ Each technique is rated on five dimensions:
 
 **Who does it well**: Slay the Spire (path selection illuminates the chosen path and dims alternatives). Git visualization tools (GitKraken, Tower -- branch creation shows the fork point with a visual indicator). Miro (creating a branch from a sticky note shows a brief connection-creation animation).
 
-**Emotional effect**: Comprehension + mild excitement. Branching is the most structurally significant action in Dreamcacher. The fork visualization says "something important just happened to the shape of your conversation." It teaches through motion.
+**Emotional effect**: Comprehension + mild excitement. Branching is the most structurally significant action in Dreamcatcher. The fork visualization says "something important just happened to the shape of your conversation." It teaches through motion.
 
 **Implementation complexity**: Medium. DELIGHT-SPEC #3 specifies a fork line (extending 80px in both directions over 300ms) plus hex highlight on the branch point.
 
-**Appropriateness for Dreamcacher**: Strong. Branching is Dreamcacher's core differentiator versus linear chat. The fork visualization reinforces this differentiator through every branch action.
+**Appropriateness for Dreamcatcher**: Strong. Branching is Dreamcatcher's core differentiator versus linear chat. The fork visualization reinforces this differentiator through every branch action.
 
 **Desk worker test**: Pass. The fork line is 500ms total and informational. It makes branching feel like a deliberate, meaningful action rather than "I typed in a different place."
 
@@ -486,7 +486,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Low for basic implementation. `navigator.vibrate(10)` for a simple pulse. Pattern arrays for structured feedback.
 
-**Appropriateness for Dreamcacher**: Moderate. Dreamcacher is primarily a desktop web application, and the Vibration API is not supported on desktop browsers. However, if a PWA or mobile viewport is ever supported, haptic feedback would significantly enhance node dragging (haptic at force-simulation snap points), branch creation, and memory saves.
+**Appropriateness for Dreamcatcher**: Moderate. Dreamcatcher is primarily a desktop web application, and the Vibration API is not supported on desktop browsers. However, if a PWA or mobile viewport is ever supported, haptic feedback would significantly enhance node dragging (haptic at force-simulation snap points), branch creation, and memory saves.
 
 **Desk worker test**: N/A for desktop. Pass for mobile (haptic is expected on mobile for key interactions).
 
@@ -502,9 +502,9 @@ Each technique is rated on five dimensions:
 
 **Emotional effect**: Physicality and momentum. The trail turns a digital drag into a gesture with weight. The decay rate communicates the medium -- fast decay = light object, slow decay = heavy object.
 
-**Implementation complexity**: Low. Already implemented in Dreamcacher's effects system as `dragTrails`.
+**Implementation complexity**: Low. Already implemented in Dreamcatcher's effects system as `dragTrails`.
 
-**Appropriateness for Dreamcacher**: Strong. Already in use. The existing implementation records trail points and renders them with age-based opacity decay.
+**Appropriateness for Dreamcatcher**: Strong. Already in use. The existing implementation records trail points and renders them with age-based opacity decay.
 
 **Desk worker test**: Pass. Drag trails are imperceptible to someone not specifically watching for them. They contribute to the ambient sense that the canvas has physics.
 
@@ -522,7 +522,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Low. CSS `background: linear-gradient(90deg, ...)` with `background-position` animation. Or Lottie animation for more complex shapes.
 
-**Appropriateness for Dreamcacher**: Weak for canvas nodes (nodes use the streaming pulse instead, which is better suited to the spatial context). Moderate for panel content (inspector loading, memory shelf loading). If the inspector ever loads content asynchronously, skeleton shimmer is appropriate for the panel -- not the canvas.
+**Appropriateness for Dreamcatcher**: Weak for canvas nodes (nodes use the streaming pulse instead, which is better suited to the spatial context). Moderate for panel content (inspector loading, memory shelf loading). If the inspector ever loads content asynchronously, skeleton shimmer is appropriate for the panel -- not the canvas.
 
 **Desk worker test**: Pass for panels. Neutral for canvas (the streaming pulse already handles this better in the spatial context).
 
@@ -540,7 +540,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Low (Web Audio API for synthesis, or preloaded audio files for sampled sounds).
 
-**Appropriateness for Dreamcacher**: Weak for V1. The DELIGHT-SPEC explicitly excludes sound: "Not in this spec. Sound is a separate decision with its own accessibility and preference concerns. If added later, it should be opt-in, never default." This is the correct call. Sound should be a V2+ consideration, after the visual delight system is proven.
+**Appropriateness for Dreamcatcher**: Weak for V1. The DELIGHT-SPEC explicitly excludes sound: "Not in this spec. Sound is a separate decision with its own accessibility and preference concerns. If added later, it should be opt-in, never default." This is the correct call. Sound should be a V2+ consideration, after the visual delight system is proven.
 
 **Desk worker test**: Fail if default. Pass if opt-in with a mute that persists across sessions.
 
@@ -558,7 +558,7 @@ Each technique is rated on five dimensions:
 
 **Implementation complexity**: Medium. Requires creating or commissioning the Lottie animation, plus runtime integration (lottie-web or @lottiefiles/dotlottie-web).
 
-**Appropriateness for Dreamcacher**: Weak. Dreamcacher's aesthetic is observatory-dark, minimal, warm -- not illustrated. A Lottie character animation would clash with the design language. However, a subtle abstract Lottie animation (geometric breathing pattern, node-graph formation) could work for the empty state if it matched the warm-black palette. The existing MOTION-SPEC prescription (breathing vignette + ghost node + input border glow) is more appropriate than illustration.
+**Appropriateness for Dreamcatcher**: Weak. Dreamcatcher's aesthetic is observatory-dark, minimal, warm -- not illustrated. A Lottie character animation would clash with the design language. However, a subtle abstract Lottie animation (geometric breathing pattern, node-graph formation) could work for the empty state if it matched the warm-black palette. The existing MOTION-SPEC prescription (breathing vignette + ghost node + input border glow) is more appropriate than illustration.
 
 **Desk worker test**: Neutral. Empty state animations are seen once or twice per session. They neither help nor hinder the desk worker. The risk is that they make the tool feel "cute" rather than "professional."
 
@@ -568,23 +568,23 @@ Each technique is rated on five dimensions:
 
 ## Part 3: Techniques Explicitly Rejected
 
-These techniques appeared in the research but fail the desk worker test for Dreamcacher's context.
+These techniques appeared in the research but fail the desk worker test for Dreamcatcher's context.
 
 ### Confetti / Particle Celebrations
 
-Confetti is the most common celebration pattern in productivity tools (Asana, Monday.com, Jira). It fails Dreamcacher's test because: (a) confetti is graphics, not physics, (b) it demands full attention, violating the "peripheral not central" principle, (c) it communicates a disproportionate celebration for conversational actions. The DELIGHT-SPEC explicitly excludes particles.
+Confetti is the most common celebration pattern in productivity tools (Asana, Monday.com, Jira). It fails Dreamcatcher's test because: (a) confetti is graphics, not physics, (b) it demands full attention, violating the "peripheral not central" principle, (c) it communicates a disproportionate celebration for conversational actions. The DELIGHT-SPEC explicitly excludes particles.
 
 ### Achievement Badges / XP Systems
 
-Points, badges, and leaderboards work in Habitica (gamified task management) but would poison Dreamcacher. The earned escalation system provides the same psychological effect (progressive reward for sustained use) without the gamification chrome. Adding a "10 branches unlocked!" badge would instantly communicate "this is a game" rather than "this is a thinking tool."
+Points, badges, and leaderboards work in Habitica (gamified task management) but would poison Dreamcatcher. The earned escalation system provides the same psychological effect (progressive reward for sustained use) without the gamification chrome. Adding a "10 branches unlocked!" badge would instantly communicate "this is a game" rather than "this is a thinking tool."
 
 ### Color-Changing Celebrations
 
-Rainbow gradients, color explosions, or hue shifts on completion are common in consumer apps (Duolingo, Headspace). Dreamcacher's chromatic restraint (warm blacks + single red accent) is a core design principle. Any effect that introduces new colors would break the palette discipline that creates the premium feel.
+Rainbow gradients, color explosions, or hue shifts on completion are common in consumer apps (Duolingo, Headspace). Dreamcatcher's chromatic restraint (warm blacks + single red accent) is a core design principle. Any effect that introduces new colors would break the palette discipline that creates the premium feel.
 
 ### Mascot Characters
 
-Asana has celebration creatures (unicorn, yeti, narwhal). Duolingo has the owl. These work for their audiences but would be catastrophically wrong for Dreamcacher. The observatory-dark aesthetic communicates seriousness and precision. A mascot communicates playfulness. The two are incompatible.
+Asana has celebration creatures (unicorn, yeti, narwhal). Duolingo has the owl. These work for their audiences but would be catastrophically wrong for Dreamcatcher. The observatory-dark aesthetic communicates seriousness and precision. A mascot communicates playfulness. The two are incompatible.
 
 ### Auto-Playing Sound
 
@@ -592,7 +592,7 @@ Unexpected sounds in a shared office environment are hostile UX. Sound must alwa
 
 ### Progress Bars for Conversation Depth
 
-Showing "Session depth: 15/50 nodes" or a progress bar toward some goal would impose a destination on what should be an open-ended exploration. Dreamcacher's sessions do not have completion criteria. A progress bar would create anxiety about "finishing" rather than supporting organic exploration.
+Showing "Session depth: 15/50 nodes" or a progress bar toward some goal would impose a destination on what should be an open-ended exploration. Dreamcatcher's sessions do not have completion criteria. A progress bar would create anxiety about "finishing" rather than supporting organic exploration.
 
 ---
 

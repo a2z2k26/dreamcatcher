@@ -1,4 +1,4 @@
-# Dreamcacher Visual Critique
+# Dreamcatcher Visual Critique
 
 Senior visual design review. Brutal, specific, prescriptive.
 
@@ -316,7 +316,7 @@ The only chromatic color in the entire interface should be:
 
 ## 7. MISSING VISUAL ELEMENTS
 
-These are things that Linear, Raycast, Arc, Figma Canvas, and Obsidian Canvas all have that Dreamcacher does not:
+These are things that Linear, Raycast, Arc, Figma Canvas, and Obsidian Canvas all have that Dreamcatcher does not:
 
 ### 7a. No canvas depth / atmosphere
 
@@ -541,7 +541,7 @@ This frees the full-bleed bottom edge and eliminates the "code editor chrome" fe
 
 ## 10. THE TOP BAR SHOULD NOT EXIST
 
-**The problem.** TopBar.tsx renders a 36px opaque header bar with "DC Dreamcacher" on the left and a red dot with "Active" on the right. This component appears to be vestigial -- the SessionPill already displays "DC" with a phase dot, the model selector is in FloatingUI's TopControls, and the "Active" status is in the StatusBar.
+**The problem.** TopBar.tsx renders a 36px opaque header bar with "DC Dreamcatcher" on the left and a red dot with "Active" on the right. This component appears to be vestigial -- the SessionPill already displays "DC" with a phase dot, the model selector is in FloatingUI's TopControls, and the "Active" status is in the StatusBar.
 
 The TopBar adds nothing. It removes 36px from the canvas height and adds a horizontal divider that breaks the floating-on-canvas aesthetic that the rest of the UI pursues.
 

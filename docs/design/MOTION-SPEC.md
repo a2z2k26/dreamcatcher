@@ -1,4 +1,4 @@
-# Dreamcacher Motion Design Specification
+# Dreamcatcher Motion Design Specification
 
 **Auditor**: Interaction Designer (Forty Thieves)
 **Date**: 2025-03-25
@@ -248,7 +248,7 @@ import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(CustomEase);
 
-// Custom Dreamcacher eases — see Part 5 for curve definitions
+// Custom Dreamcatcher eases — see Part 5 for curve definitions
 CustomEase.create('dc-settle', 'M0,0 C0.14,0 0.27,0.55 0.34,0.85 0.38,1.01 0.44,1.08 0.5,1.08 0.58,1.08 0.62,1.02 0.68,0.99 0.78,0.96 0.88,1 1,1');
 CustomEase.create('dc-breathe', 'M0,0 C0.4,0 0.2,1 0.5,1 0.8,1 0.6,0.85 1,0.85');
 CustomEase.create('dc-snap', 'M0,0 C0.12,0 0.15,1.2 0.3,1.2 0.42,1.2 0.4,0.95 0.5,0.95 0.6,0.95 0.7,1 1,1');
@@ -466,7 +466,7 @@ New edge appears:
 
 ## Part 4: RPG-Inspired Motion Language
 
-The core metaphor: Dreamcacher is a **living specimen tray** where thoughts are **precious artifacts**. Every user action should carry the weight of intentionality, and every AI response should arrive with the ceremony of something being conjured.
+The core metaphor: Dreamcatcher is a **living specimen tray** where thoughts are **precious artifacts**. Every user action should carry the weight of intentionality, and every AI response should arrive with the ceremony of something being conjured.
 
 ### Moment Catalog
 
@@ -609,7 +609,7 @@ Sequence (0.5s):
 
 ## Part 5: Custom GSAP Eases
 
-Four eases that define Dreamcacher's motion vocabulary. Each serves a distinct emotional purpose.
+Four eases that define Dreamcatcher's motion vocabulary. Each serves a distinct emotional purpose.
 
 ### `dc-settle`
 **Purpose**: The default "things landing in place" ease. Node entrances, panel arrivals, elements reaching their final position. Has slight overshoot that communicates physicality — things have mass, they don't just appear.
@@ -744,20 +744,20 @@ actions are more damaging to perceived quality than the canvas animation refinem
 
 ## Files Referenced
 
-- `/Users/az/Desktop/Code  - Node Based Design System/dreamcacher/src/lib/effects.ts` — rAF effects system, springEase, ripples, entrances, shake
-- `/Users/az/Desktop/Code  - Node Based Design System/dreamcacher/src/lib/theme.ts` — elevation stack, colors, glass styles
-- `/Users/az/Desktop/Code  - Node Based Design System/dreamcacher/src/components/canvas/GraphCanvas.tsx` — main canvas, rAF loop, SVG render, mouse handlers
-- `/Users/az/Desktop/Code  - Node Based Design System/dreamcacher/src/components/ui/ContextMenu.tsx` — right-click menu, zero animation
-- `/Users/az/Desktop/Code  - Node Based Design System/dreamcacher/src/components/ui/SessionPill.tsx` — CSS transition state machine
-- `/Users/az/Desktop/Code  - Node Based Design System/dreamcacher/src/components/ui/FloatingUI.tsx` — floating input, model selector, canvas tools
-- `/Users/az/Desktop/Code  - Node Based Design System/dreamcacher/src/components/ui/Inspector.tsx` — CSS slide-in panel
-- `/Users/az/Desktop/Code  - Node Based Design System/dreamcacher/src/components/ui/TimelineView.tsx` — CSS slide-in panel
-- `/Users/az/Desktop/Code  - Node Based Design System/dreamcacher/src/components/ui/MemoryShelf.tsx` — CSS slide-in panel
-- `/Users/az/Desktop/Code  - Node Based Design System/dreamcacher/src/components/ui/LearnOverlay.tsx` — zero entrance/exit animation
-- `/Users/az/Desktop/Code  - Node Based Design System/dreamcacher/src/components/ui/ClipCreator.tsx` — CSS transition, no success state
-- `/Users/az/Desktop/Code  - Node Based Design System/dreamcacher/src/components/ui/PathTrace.tsx` — no step transition animation
-- `/Users/az/Desktop/Code  - Node Based Design System/dreamcacher/src/components/ui/BranchPreview.tsx` — no entrance animation
-- `/Users/az/Desktop/Code  - Node Based Design System/dreamcacher/src/components/ui/ToolCard.tsx` — chevron rotation only
-- `/Users/az/Desktop/Code  - Node Based Design System/dreamcacher/src/components/ui/StatusBar.tsx` — static, no animation
-- `/Users/az/Desktop/Code  - Node Based Design System/dreamcacher/src/components/ui/ShortcutsHelp.tsx` — no entrance/exit animation
-- `/Users/az/Desktop/Code  - Node Based Design System/dreamcacher/src/stores/ui-store.ts` — animTarget, state management
+- `/Users/az/Desktop/Code  - Node Based Design System/dreamcatcher/src/lib/effects.ts` — rAF effects system, springEase, ripples, entrances, shake
+- `/Users/az/Desktop/Code  - Node Based Design System/dreamcatcher/src/lib/theme.ts` — elevation stack, colors, glass styles
+- `/Users/az/Desktop/Code  - Node Based Design System/dreamcatcher/src/components/canvas/GraphCanvas.tsx` — main canvas, rAF loop, SVG render, mouse handlers
+- `/Users/az/Desktop/Code  - Node Based Design System/dreamcatcher/src/components/ui/ContextMenu.tsx` — right-click menu, zero animation
+- `/Users/az/Desktop/Code  - Node Based Design System/dreamcatcher/src/components/ui/SessionPill.tsx` — CSS transition state machine
+- `/Users/az/Desktop/Code  - Node Based Design System/dreamcatcher/src/components/ui/FloatingUI.tsx` — floating input, model selector, canvas tools
+- `/Users/az/Desktop/Code  - Node Based Design System/dreamcatcher/src/components/ui/Inspector.tsx` — CSS slide-in panel
+- `/Users/az/Desktop/Code  - Node Based Design System/dreamcatcher/src/components/ui/TimelineView.tsx` — CSS slide-in panel
+- `/Users/az/Desktop/Code  - Node Based Design System/dreamcatcher/src/components/ui/MemoryShelf.tsx` — CSS slide-in panel
+- `/Users/az/Desktop/Code  - Node Based Design System/dreamcatcher/src/components/ui/LearnOverlay.tsx` — zero entrance/exit animation
+- `/Users/az/Desktop/Code  - Node Based Design System/dreamcatcher/src/components/ui/ClipCreator.tsx` — CSS transition, no success state
+- `/Users/az/Desktop/Code  - Node Based Design System/dreamcatcher/src/components/ui/PathTrace.tsx` — no step transition animation
+- `/Users/az/Desktop/Code  - Node Based Design System/dreamcatcher/src/components/ui/BranchPreview.tsx` — no entrance animation
+- `/Users/az/Desktop/Code  - Node Based Design System/dreamcatcher/src/components/ui/ToolCard.tsx` — chevron rotation only
+- `/Users/az/Desktop/Code  - Node Based Design System/dreamcatcher/src/components/ui/StatusBar.tsx` — static, no animation
+- `/Users/az/Desktop/Code  - Node Based Design System/dreamcatcher/src/components/ui/ShortcutsHelp.tsx` — no entrance/exit animation
+- `/Users/az/Desktop/Code  - Node Based Design System/dreamcatcher/src/stores/ui-store.ts` — animTarget, state management

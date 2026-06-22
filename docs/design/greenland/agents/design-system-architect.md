@@ -1,6 +1,6 @@
 # Design System Architect Brief
 
-You are auditing Dreamcacher for Red Stripe and Dreamcatcher design-system alignment.
+You are auditing Dreamcatcher for Red Stripe and Dreamcatcher design-system alignment.
 
 Read:
 

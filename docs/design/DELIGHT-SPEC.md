@@ -1,4 +1,4 @@
-# Dreamcacher Delight System
+# Dreamcatcher Delight System
 
 Interaction design specification for celebration moments. Every effect in this document passes a single filter: would a desk worker opening this tool between spreadsheets smile, or cringe? If the answer is cringe, it does not ship.
 
@@ -88,7 +88,7 @@ The existing screen shake (0.35s, intensity 3) fires. This stays -- Andrew likes
 
 The parent node (the branch point) gains a brief hexagonal highlight. If it was already a hex (branch points render as hexagons), its stroke brightens from E[5] to T.tertiary over 150ms, then decays back over 400ms. If this is the first branch (node was circular, now becomes hex), the shape morph itself is the celebration -- the geometry changing is sufficient.
 
-**Intensity:** Moderate. The fork line is visible and intentional. This is the most structurally significant user action in Dreamcacher -- the moment the graph stops being a thread and becomes a graph. It deserves acknowledgment.
+**Intensity:** Moderate. The fork line is visible and intentional. This is the most structurally significant user action in Dreamcatcher -- the moment the graph stops being a thread and becomes a graph. It deserves acknowledgment.
 
 **Duration:** Fork line 500ms total (300ms extend + 200ms fade). Hex highlight 550ms (150ms brighten + 400ms decay). Screen shake 350ms (existing).
 

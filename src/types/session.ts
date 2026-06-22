@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Session Phase State Machine
+// Dreamcatcher — Session Phase State Machine
 // Explicit lifecycle phases with validated transitions.
 // Source pattern: Clui CC's tab state machine.
 // ═══════════════════════════════════════════════════════════════

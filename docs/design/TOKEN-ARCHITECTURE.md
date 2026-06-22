@@ -1,6 +1,6 @@
 # Token Architecture Recommendation
 
-Research synthesis and architectural recommendation for evolving Dreamcacher's `theme.ts` into a world-class design token system. Based on analysis of 14 production design systems and the current codebase state.
+Research synthesis and architectural recommendation for evolving Dreamcatcher's `theme.ts` into a world-class design token system. Based on analysis of 14 production design systems and the current codebase state.
 
 ---
 
@@ -110,7 +110,7 @@ Linear rebuilt their theme system on LCH color space with an algorithmic approac
 
 **Interactive States:** Generated algorithmically. Hover = surface + 3L. Active = surface + 5L. The offset is always a fixed lightness delta, which guarantees consistent perceptual feedback regardless of the base surface.
 
-**Unique Approach:** Three-variable theme generation. Base color + accent color + contrast percentage generates all 98 tokens. This is the most automated system studied. The contrast slider is particularly relevant for Dreamcacher -- it would let users tune how much separation exists between elevation levels, which directly affects the "petri dish under glass" metaphor (low contrast = atmospheric, high contrast = clinical).
+**Unique Approach:** Three-variable theme generation. Base color + accent color + contrast percentage generates all 98 tokens. This is the most automated system studied. The contrast slider is particularly relevant for Dreamcatcher -- it would let users tune how much separation exists between elevation levels, which directly affects the "petri dish under glass" metaphor (low contrast = atmospheric, high contrast = clinical).
 
 ---
 
@@ -212,7 +212,7 @@ Style Dictionary is the build tool that transforms token definitions into platfo
 
 **Interactive States:** No special handling. States are just additional token entries.
 
-**Unique Approach:** Multi-platform output from a single source. The same token definition generates CSS custom properties, iOS Swift constants, Android XML resources, and JSON for runtime consumption. This matters if Dreamcacher ever targets native platforms. Also: `outputReferences: true` preserves the alias chain in the output (`--surface-raised: var(--gray-800)` rather than `--surface-raised: #1f2937`), which makes debugging easier.
+**Unique Approach:** Multi-platform output from a single source. The same token definition generates CSS custom properties, iOS Swift constants, Android XML resources, and JSON for runtime consumption. This matters if Dreamcatcher ever targets native platforms. Also: `outputReferences: true` preserves the alias chain in the output (`--surface-raised: var(--gray-800)` rather than `--surface-raised: #1f2937`), which makes debugging easier.
 
 ---
 
@@ -233,7 +233,7 @@ These patterns appeared in three or more of the systems studied:
 
 ---
 
-## Part II: Where Dreamcacher's Current System Stands
+## Part II: Where Dreamcatcher's Current System Stands
 
 ### What theme.ts Gets Right
 
@@ -355,7 +355,7 @@ export const faction = {
 
 ### Tier 2 -- Semantic Tokens
 
-The "how things are used" layer. Named by role, not appearance. This is where dark mode lives. If Dreamcacher ever gains a light mode or high-contrast mode, only this tier changes.
+The "how things are used" layer. Named by role, not appearance. This is where dark mode lives. If Dreamcatcher ever gains a light mode or high-contrast mode, only this tier changes.
 
 ```typescript
 // ══════════════════════════════════════════════════════════════
@@ -478,7 +478,7 @@ export const shadow = {
 
 // ══════════════════════════════════════════════════════════════
 // GLASS MATERIALS
-// The defining visual of Dreamcacher's floating UI.
+// The defining visual of Dreamcatcher's floating UI.
 // Retained from current theme.ts with improved structure.
 // ══════════════════════════════════════════════════════════════
 
@@ -512,7 +512,7 @@ export const glass = {
 
 ### Tier 2.5 -- Canvas Tokens (Spatial Semantic Layer)
 
-This tier does not exist in any standard design system because standard design systems are not spatial. This is Dreamcacher-specific and covers the canvas substrate, node materials, edge treatments, and spatial effects.
+This tier does not exist in any standard design system because standard design systems are not spatial. This is Dreamcatcher-specific and covers the canvas substrate, node materials, edge treatments, and spatial effects.
 
 ```typescript
 // ══════════════════════════════════════════════════════════════
@@ -960,7 +960,7 @@ The hue angle `70` (amber) and chroma `0.004` (barely perceptible warmth) encode
 
 ## Part V: What Makes This Different
 
-Standard design systems solve for form-based UI: cards, lists, buttons, inputs. Dreamcacher is a spatial canvas application. The token architecture must account for:
+Standard design systems solve for form-based UI: cards, lists, buttons, inputs. Dreamcatcher is a spatial canvas application. The token architecture must account for:
 
 1. **Composable transparency.** Nodes overlap edges. Edges cross other edges. Glass panels float over nodes. The alpha scale and transparent surface variants make this work without visual artifacts.
 
@@ -972,7 +972,7 @@ Standard design systems solve for form-based UI: cards, lists, buttons, inputs. 
 
 5. **Per-object material systems.** User nodes and AI nodes have different physical metaphors (polished stone vs. glass vessel). The `nodeMaterial` structure allows each to be fully specified without polluting the general-purpose token system.
 
-The recommendation is to build Tiers 1, 2, and 2.5 as a single `tokens.ts` file, export backward-compatible aliases from the existing `theme.ts`, and migrate components incrementally. The canvas-specific layer (Tier 2.5) is what will make Dreamcacher's token system unlike anything published -- every other system stops at buttons and cards.
+The recommendation is to build Tiers 1, 2, and 2.5 as a single `tokens.ts` file, export backward-compatible aliases from the existing `theme.ts`, and migrate components incrementally. The canvas-specific layer (Tier 2.5) is what will make Dreamcatcher's token system unlike anything published -- every other system stops at buttons and cards.
 
 ---
 

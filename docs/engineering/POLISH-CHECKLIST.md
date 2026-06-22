@@ -1,4 +1,4 @@
-# Dreamcacher Polish Checklist
+# Dreamcatcher Polish Checklist
 
 Systematic audit of spacing, radius, color, typography, transition, and z-index inconsistencies across all UI components. Every item references the defined token system in `src/lib/theme.ts` (tokens: `S`, `R`, `FS`, `FF`, `Z`, `DURATION`, `EASE`, `transition()`).
 

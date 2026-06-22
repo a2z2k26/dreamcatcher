@@ -1,8 +1,8 @@
-# Dreamcacher — Pattern Integration Sprint Plan
+# Dreamcatcher — Pattern Integration Sprint Plan
 
 **Date:** 2026-03-24
 **Authors:** Andrew Zellinger & Bumba
-**Scope:** Adopt proven patterns from Understand Anything, Claude Island, and Clui CC to complete Dreamcacher's three-tier MVP
+**Scope:** Adopt proven patterns from Understand Anything, Claude Island, and Clui CC to complete Dreamcatcher's three-tier MVP
 **Prerequisite:** UI theme update (in progress) must land first
 
 ---
@@ -344,7 +344,7 @@ export class PhysicsBridge {
 - [ ] No visual difference from current behavior
 
 ### 2.2 — Edge Rendering by Type
-**Source:** Understand Anything's colored edge types + Dreamcacher's edge type expansion (Sprint 1.1)
+**Source:** Understand Anything's colored edge types + Dreamcatcher's edge type expansion (Sprint 1.1)
 **Files:** `src/components/canvas/GraphCanvas.tsx` (lines 121-136)
 
 **Current:** All edges render with the same dash pattern, differentiated only by `main` vs `branch`.
@@ -585,7 +585,7 @@ export class PhysicsBridge {
 - [ ] ClipCreator disappears after save or clear
 
 ### 4.2 — Clip → Spawn Session
-**Source:** Dreamcacher PRODUCT.md spec
+**Source:** Dreamcatcher PRODUCT.md spec
 **Files:** `src/stores/session-store.ts`, `src/stores/memory-store.ts`, `src/components/ui/MemoryShelf.tsx`
 
 **Interaction:** In MemoryShelf, click "Spawn" on a subgraph clip → new session is created with the clipped nodes pre-loaded as inherited nodes.

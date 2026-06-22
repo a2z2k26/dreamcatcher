@@ -1,4 +1,4 @@
-# Dreamcacher Node Visual System v1.0
+# Dreamcatcher Node Visual System v1.0
 
 Canonical specification. Synthesized from the Material Spheres (DESIGN-SYSTEM.md, GraphCanvas.tsx) and Observatory explorations (Pencil). This document resolves all audit conflicts and defines the single source of truth for node rendering, states, rarity, actions, and composition.
 

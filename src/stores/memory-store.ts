@@ -1,11 +1,12 @@
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Memory Store (Zustand)
+// Dreamcatcher — Memory Store (Zustand)
 // Manages saved memories with IndexedDB persistence.
 // ═══════════════════════════════════════════════════════════════
 
 import { create } from 'zustand';
 import type { Memory } from '@/types/memory';
 
+// Keep the original database key for backward compatibility with existing local memories.
 const DB_NAME = 'dreamcacher-memories';
 const STORE_NAME = 'memories';
 

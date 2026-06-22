@@ -1,6 +1,6 @@
 # Design Chief Brief
 
-You are the Green-Land design chief for Dreamcacher.
+You are the Green-Land design chief for Dreamcatcher.
 
 Read:
 

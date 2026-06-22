@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Graph Data Types
+// Dreamcatcher — Graph Data Types
 // ═══════════════════════════════════════════════════════════════
 
 export type NodeRole = 'user' | 'ai';

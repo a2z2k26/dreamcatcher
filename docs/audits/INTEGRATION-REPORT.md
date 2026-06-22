@@ -1,8 +1,8 @@
-# Dreamcacher — Codebase Integration Report
+# Dreamcatcher — Codebase Integration Report
 
 **Date:** 2026-03-25
 **Authors:** Andrew Zellinger & Bumba
-**Session scope:** Evaluate three external codebases, identify transferable patterns, integrate into Dreamcacher's three-tier MVP
+**Session scope:** Evaluate three external codebases, identify transferable patterns, integrate into Dreamcatcher's three-tier MVP
 
 ---
 
@@ -12,19 +12,19 @@
 - **What it is:** Claude Code plugin that analyzes codebases via a 7-phase multi-agent pipeline and renders an interactive knowledge graph
 - **Stack:** React 19, React Flow, Zustand 5, Dagre, Vite, TailwindCSS v4, web-tree-sitter
 - **Stars:** 5,882 | **License:** MIT
-- **Relevance to Dreamcacher:** Highest. Same domain (interactive node graphs), same stack (React + Zustand + TypeScript). Their graph schema, Web Worker layout pattern, topology/visual state separation, persona-adaptive views, diff overlay, and dark luxury aesthetic were all directly portable.
+- **Relevance to Dreamcatcher:** Highest. Same domain (interactive node graphs), same stack (React + Zustand + TypeScript). Their graph schema, Web Worker layout pattern, topology/visual state separation, persona-adaptive views, diff overlay, and dark luxury aesthetic were all directly portable.
 
 ### Claude Island (github.com/farouqaldori/claude-island)
 - **What it is:** Native macOS Dynamic Island overlay for monitoring Claude Code sessions from the MacBook notch
 - **Stack:** Swift, SwiftUI, AppKit, Unix domain socket IPC
 - **Stars:** 1,094 | **License:** Apache 2.0
-- **Relevance to Dreamcacher:** UI pattern library only. The notch three-state model (collapsed/popping/opened), session phase state machine, linear chat timeline, and multi-session monitoring patterns transferred as interaction primitives. No code was portable (different platform entirely).
+- **Relevance to Dreamcatcher:** UI pattern library only. The notch three-state model (collapsed/popping/opened), session phase state machine, linear chat timeline, and multi-session monitoring patterns transferred as interaction primitives. No code was portable (different platform entirely).
 
 ### Clui CC (github.com/lcoutodemos/clui-cc)
 - **What it is:** Electron desktop overlay wrapping Claude Code CLI in a floating transparent pill
 - **Stack:** Electron 35, React 19, Zustand 5, Framer Motion 12, Tailwind CSS 4
 - **Stars:** 1,062 | **License:** MIT
-- **Relevance to Dreamcacher:** Moderate. Their tab state machine, narrow Zustand selectors with custom equality, tool result views, floating input composability, permission card UX, and warm earthy color palette were transferable as patterns. Their Framer Motion usage should have informed our motion strategy but didn't (see Shortcomings).
+- **Relevance to Dreamcatcher:** Moderate. Their tab state machine, narrow Zustand selectors with custom equality, tool result views, floating input composability, permission card UX, and warm earthy color palette were transferable as patterns. Their Framer Motion usage should have informed our motion strategy but didn't (see Shortcomings).
 
 ---
 
@@ -47,7 +47,7 @@ Seven sprints executed over a single session, producing 12 new files and modifyi
 |---------|--------|----------------|
 | Web Worker for physics | UA's dagre Web Worker | `physics-worker.ts` (self-contained sim loop), `physics-bridge.ts` (factory with fallback) |
 | 4-level LOD with crossfade | UA's performance patterns | `getLOD()` function returning `{ level, fadeIn }` with 5% crossfade zones |
-| Dead-end branch dimming | Dreamcacher spec | 1Hz `setInterval` computing stale branches, 30% opacity on dead-end nodes |
+| Dead-end branch dimming | Dreamcatcher spec | 1Hz `setInterval` computing stale branches, 30% opacity on dead-end nodes |
 
 ### Sprint 3 — Tier 1: Backtrack (mixed sources)
 | Pattern | Source | Implementation |
@@ -57,12 +57,12 @@ Seven sprints executed over a single session, producing 12 new files and modifyi
 | Regeneration as branching | Clui CC's process spawning concept | Context menu "Regenerate" creates sibling AI node with `regeneration` edge, `temperature: 1.0` for diversity |
 | Canvas auto-pan | General UX pattern | `animateTo()` in ui-store, easeOutCubic interpolation in rAF loop |
 
-### Sprint 4 — Tier 2: Clip & Spawn (Dreamcacher-original + Clui CC patterns)
+### Sprint 4 — Tier 2: Clip & Spawn (Dreamcatcher-original + Clui CC patterns)
 | Pattern | Source | Implementation |
 |---------|--------|----------------|
 | Clip creator UI | Clui CC's attachment chips | `ClipCreator.tsx` — floating pill on multi-select with inline naming |
-| Subgraph memory snapshots | Dreamcacher spec | Extended `Memory` type with `graphSnapshot` containing full nodes + edges |
-| Spawn from clip | Dreamcacher spec | `spawnFromClip()` in session-store, inherited nodes with dashed stroke |
+| Subgraph memory snapshots | Dreamcatcher spec | Extended `Memory` type with `graphSnapshot` containing full nodes + edges |
+| Spawn from clip | Dreamcatcher spec | `spawnFromClip()` in session-store, inherited nodes with dashed stroke |
 | Memory shelf search | UA's Fuse.js search | Fuzzy search on name/content/tags, `fuse.js` dependency added |
 | Clip thumbnails | UA's graph visualization | `ClipThumbnail` mini SVG showing topology as dots and lines |
 
@@ -119,7 +119,7 @@ Nodes need multi-layer SVG rendering: base shadow for lift, radial gradient fill
 
 ### 4.2 — Motion Design Was Entirely Neglected
 
-**Neither GSAP nor Framer Motion was installed or used.** This is the most significant omission. Both Clui CC (Framer Motion) and Understand Anything (CSS animations + Web Worker patterns) demonstrated that spatial interfaces live or die on their motion quality. Dreamcacher's current animation system is:
+**Neither GSAP nor Framer Motion was installed or used.** This is the most significant omission. Both Clui CC (Framer Motion) and Understand Anything (CSS animations + Web Worker patterns) demonstrated that spatial interfaces live or die on their motion quality. Dreamcatcher's current animation system is:
 - CSS `transition: all 0.3s cubic-bezier(...)` on panels
 - A hand-rolled `effects.ts` tick system for ripples and entrances
 - Manual `stroke-dashoffset` animation in the rAF loop
@@ -129,7 +129,7 @@ What should exist:
 - GSAP timelines for the SessionPill three-state transition (not a single CSS transition on width/height)
 - GSAP staggered reveals for panel content (Inspector sections, memory cards, timeline messages)
 - GSAP MotionPathPlugin for energy particles flowing along edges
-- Custom eases branded to Dreamcacher's identity (warm settle, organic breathe, decisive snap)
+- Custom eases branded to Dreamcatcher's identity (warm settle, organic breathe, decisive snap)
 - A second SVG overlay layer for GSAP-targeted persistent effect elements (the current `innerHTML` approach destroys DOM references GSAP needs)
 
 The GSAP interaction audit produced 50+ specific `gsap.to()` / `gsap.timeline()` calls across all 12 components. None were implemented.
@@ -175,8 +175,8 @@ The five-agent audit produced detailed specifications for the visual transformat
 7. **UX foundations** — empty state design, first-run onboarding, error recovery, action confirmation feedback
 
 Audit specifications are at:
-- `dreamcacher/VISUAL-CRITIQUE.md` — 12 critiques with exact CSS/SVG prescriptions
-- `dreamcacher/UX-AUDIT.md` — 40+ recommendations across 8 dimensions
+- `dreamcatcher/VISUAL-CRITIQUE.md` — 12 critiques with exact CSS/SVG prescriptions
+- `dreamcatcher/UX-AUDIT.md` — 40+ recommendations across 8 dimensions
 - GSAP integration spec — 15 sections with exact `gsap.to()` calls per component (in project memory)
 
 The infrastructure is done. The visual transformation is the remaining work.

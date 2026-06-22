@@ -1,8 +1,8 @@
-# Dreamcacher -- Performance Playbook
+# Dreamcatcher -- Performance Playbook
 
 **Date:** 2026-03-25
 **Authors:** Andrew Zellinger & Bumba (Performance Engineer)
-**Scope:** Rendering performance optimization for Dreamcacher's spatial graph canvas
+**Scope:** Rendering performance optimization for Dreamcatcher's spatial graph canvas
 **Architecture:** Imperative SVG via innerHTML, rAF loop, force-directed physics (Web Worker), LOD system, React/Next.js shell
 
 ---
@@ -44,7 +44,7 @@ requestAnimationFrame(loop)
   +-- renderSVG()          <-- innerHTML string build, full replace
 ```
 
-### What Dreamcacher Does Right (Already)
+### What Dreamcatcher Does Right (Already)
 
 - **Imperative rAF loop** bypasses React reconciliation entirely for the hot path. This is the correct architectural choice for a canvas-based app. React never touches the SVG content.
 - **Physics offloaded to Web Worker** via `physics-bridge.ts` and `physics-worker.ts`. Main thread only receives position updates.
@@ -152,7 +152,7 @@ function updateSVG() {
 
 **When to avoid:** Only if the entire scene changes every frame (initial layout settling). During settling, fall back to innerHTML for the first ~60 frames, then switch to incremental updates.
 
-**Dreamcacher application:** The physics simulation converges quickly. Once stable, most nodes are stationary. A dirty-tracking system would make idle frames nearly free.
+**Dreamcatcher application:** The physics simulation converges quickly. Once stable, most nodes are stationary. A dirty-tracking system would make idle frames nearly free.
 
 **Implementation complexity:** Medium. Requires maintaining a Map of SVG DOM elements, adding/removing nodes incrementally, and handling the defs/markers as persistent elements that never rebuild.
 
@@ -196,7 +196,7 @@ for (const [id, g] of cache) {
 
 **When to use:** Quick win before implementing full dirty-tracking. Good for the current architecture where you already have data-id attributes on groups.
 
-**Dreamcacher application:** The `<g data-id="${n.id}">` wrappers are already in place. This is the lowest-friction path to significant improvement.
+**Dreamcatcher application:** The `<g data-id="${n.id}">` wrappers are already in place. This is the lowest-friction path to significant improvement.
 
 **Implementation complexity:** Low. Cache elements after innerHTML, update transforms directly.
 
@@ -243,7 +243,7 @@ function buildSpatialGrid(bodies: Record<string, WorkerBody>, ids: string[]) {
 
 **When to avoid:** Below 100 nodes, the overhead of grid construction exceeds the savings. The current O(n^2) loop is fine for the MVP.
 
-**Dreamcacher application:** The `MAX_REPULSION_D = 144px` is a natural cell size. Bodies outside this range already skip repulsion, so the spatial grid formalizes what the distance check already does.
+**Dreamcatcher application:** The `MAX_REPULSION_D = 144px` is a natural cell size. Bodies outside this range already skip repulsion, so the spatial grid formalizes what the distance check already does.
 
 **Implementation complexity:** Medium. Confined to `physics-worker.ts`. Build grid each tick (or incrementally update), iterate over 9-cell neighborhoods.
 
@@ -253,9 +253,9 @@ For graphs exceeding ~500 nodes, replace all-pairs repulsion with a quadtree-bas
 
 **Performance impact:** Reduces repulsion from O(n^2) to O(n log n). At 1,000 nodes, that's ~10,000 checks instead of 500,000.
 
-**When to use:** Only if Dreamcacher needs to handle 500+ node graphs. The spatial hash grid is sufficient up to that point.
+**When to use:** Only if Dreamcatcher needs to handle 500+ node graphs. The spatial hash grid is sufficient up to that point.
 
-**When to avoid:** The overhead of quadtree construction at theta=0.5 doesn't beat naive O(n^2) until ~6,000 nodes. For Dreamcacher's expected scale (50-300 nodes), the spatial hash grid is the better choice.
+**When to avoid:** The overhead of quadtree construction at theta=0.5 doesn't beat naive O(n^2) until ~6,000 nodes. For Dreamcatcher's expected scale (50-300 nodes), the spatial hash grid is the better choice.
 
 **Implementation complexity:** High. Quadtree construction, center-of-mass computation, theta-criterion traversal.
 
@@ -274,7 +274,7 @@ loopTimer = requestAnimationFrame(simulationLoop);
 
 **Performance impact:** Marginal but correct. Eliminates timer drift and ensures the worker doesn't run faster than the display can show. On 120Hz displays, this automatically ticks at 120Hz; on 60Hz, at 60Hz.
 
-**Dreamcacher application:** Direct drop-in replacement. The `cancelAnimationFrame` equivalent exists for cleanup.
+**Dreamcatcher application:** Direct drop-in replacement. The `cancelAnimationFrame` equivalent exists for cleanup.
 
 **Implementation complexity:** Trivial.
 
@@ -318,7 +318,7 @@ const filterAttr = lod >= 2 ? ' filter="url(#node-shadow)"' : '';
 
 **When to use:** Always. This is free performance with no visual cost.
 
-**Dreamcacher application:** The LOD system already exists. This is a one-line change in the node rendering section.
+**Dreamcatcher application:** The LOD system already exists. This is a one-line change in the node rendering section.
 
 **Implementation complexity:** Trivial.
 
@@ -343,9 +343,9 @@ s += `<circle cx="0" cy="1" r="${r + 1}" fill="black" opacity="0.10"/>`;  // inn
 
 **Performance impact:** Eliminates all SVG filter processing. Shadow becomes simple circle rendering, which the SVG rasterizer handles at near-zero cost. Expected savings: 2-4ms per frame at 100 nodes.
 
-**When to use:** If you don't need Gaussian-blurred shadows with pixel-perfect softness. The manual approach produces a "harder" shadow, but at the node sizes in Dreamcacher (r=20-30px), the difference is subtle.
+**When to use:** If you don't need Gaussian-blurred shadows with pixel-perfect softness. The manual approach produces a "harder" shadow, but at the node sizes in Dreamcatcher (r=20-30px), the difference is subtle.
 
-**Dreamcacher application:** The user node already has manual shadow layers. Unifying AI nodes to the same approach eliminates the filter entirely.
+**Dreamcatcher application:** The user node already has manual shadow layers. Unifying AI nodes to the same approach eliminates the filter entirely.
 
 **Implementation complexity:** Medium. Replace the filter-based shadow with 1-2 additional circles per node.
 
@@ -404,7 +404,7 @@ if (lod === 0) {
 
 **Performance impact:** Reduces SVG element count by 85% at overview zoom. For 200 nodes at LOD 0, that's ~200 elements instead of ~1,400.
 
-**Dreamcacher application:** The existing LOD levels control labels and badges but not the node material layers. Adding material LOD is the highest-value LOD improvement.
+**Dreamcatcher application:** The existing LOD levels control labels and badges but not the node material layers. Adding material LOD is the highest-value LOD improvement.
 
 **Implementation complexity:** Low. Add early-return paths in the node rendering loop per LOD level.
 
@@ -486,7 +486,7 @@ for (const e of edges) {
 
 **When to avoid:** Never. Even at full-view zoom (spacebar fit), the culling check is cheap (~0.01ms for 200 nodes) and still eliminates nodes outside the viewport edges.
 
-**Dreamcacher application:** The `containerRef` and transform values (panX, panY, scale) are already available in the render loop. This is a cheap bounds check before each node.
+**Dreamcatcher application:** The `containerRef` and transform values (panX, panY, scale) are already available in the render loop. This is a cheap bounds check before each node.
 
 **Implementation complexity:** Low. ~15 lines of code.
 
@@ -566,7 +566,7 @@ svg.innerHTML = parts.join('');
 
 **Performance impact:** The `<defs>` block is ~2KB of static content rebuilt identically every frame. Pre-computing it saves ~0.2ms per frame and reduces string length.
 
-**Dreamcacher application:** The defs block in `renderSVG()` (lines 168-233) is entirely static. It references theme constants that don't change during a session.
+**Dreamcatcher application:** The defs block in `renderSVG()` (lines 168-233) is entirely static. It references theme constants that don't change during a session.
 
 **Implementation complexity:** Low. Extract the defs string to a module-level constant or a `useMemo`.
 
@@ -617,7 +617,7 @@ Ensure the world container has `will-change: transform` to guarantee GPU layer c
 
 **Performance impact:** In most browsers, setting `style.transform` already triggers layer promotion. Explicit `will-change` ensures it happens before the first animation frame, avoiding a one-time layer creation cost.
 
-**Caveats:** Each GPU layer consumes VRAM. For Dreamcacher, there's only one world layer, so the cost is negligible. Do NOT add `will-change` to individual nodes -- that would create hundreds of GPU layers ("layer explosion").
+**Caveats:** Each GPU layer consumes VRAM. For Dreamcatcher, there's only one world layer, so the cost is negligible. Do NOT add `will-change` to individual nodes -- that would create hundreds of GPU layers ("layer explosion").
 
 **Implementation complexity:** Trivial. One CSS property.
 
@@ -762,7 +762,7 @@ Instead of sending positions every tick, accumulate 2-3 ticks and send once. Thi
 
 **When to use:** Only if postMessage frequency is causing main thread jank (unlikely with transferables).
 
-**When to avoid:** For Dreamcacher, visual responsiveness during drag and physics settling is important. Skip this.
+**When to avoid:** For Dreamcatcher, visual responsiveness during drag and physics settling is important. Skip this.
 
 ---
 
@@ -795,7 +795,7 @@ SVG `url(#id)` references work across SVG elements in the same document.
 
 **Performance impact:** Eliminates ~2KB of string construction and parsing per frame. The browser also avoids re-resolving gradient/filter definitions.
 
-**Dreamcacher application:** The defs in lines 168-233 of `GraphCanvas.tsx` are entirely static within a session. Factor them out to a one-time rendered SVG.
+**Dreamcatcher application:** The defs in lines 168-233 of `GraphCanvas.tsx` are entirely static within a session. Factor them out to a one-time rendered SVG.
 
 **Implementation complexity:** Low. Render defs once in a separate SVG element on mount.
 
@@ -854,7 +854,7 @@ fx.ripples.pop();
 
 ## 14. Rendering Tier Escalation Path
 
-This is the long-term architecture plan for when Dreamcacher outgrows SVG innerHTML.
+This is the long-term architecture plan for when Dreamcatcher outgrows SVG innerHTML.
 
 ### Tier 0: Current (SVG innerHTML) -- 0-50 nodes
 
@@ -897,7 +897,7 @@ For extreme scale, move to WebGL-based rendering via PixiJS v8.
 
 **Performance:** WebGL can render 10,000+ circles at 60fps without breaking a sweat. Sprites are batched into GPU draw calls, so the cost is nearly constant regardless of element count.
 
-**When to escalate:** Only if Dreamcacher needs to visualize entire conversation histories with 500+ nodes simultaneously. This is an architectural rewrite, not an optimization.
+**When to escalate:** Only if Dreamcatcher needs to visualize entire conversation histories with 500+ nodes simultaneously. This is an architectural rewrite, not an optimization.
 
 **Implementation complexity:** Very high. Different rendering paradigm, different event handling, different animation system.
 

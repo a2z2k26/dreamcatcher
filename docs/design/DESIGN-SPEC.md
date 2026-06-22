@@ -1,13 +1,13 @@
-# Dreamcacher Design Specification
+# Dreamcatcher Design Specification
 
-Concrete, implementation-ready design spec for every surface in Dreamcacher.
+Concrete, implementation-ready design spec for every surface in Dreamcatcher.
 Written for a world-class frontend engineer to build from without ambiguity.
 
 ---
 
 ## Design Philosophy
 
-Dreamcacher is a spatial conversation interface. The aesthetic is **observatory dark** -- the feeling of peering into a warm, living system through precision glass instruments. Not cold-blue developer dark mode. Not flat matte black. Warm, dimensional, alive.
+Dreamcatcher is a spatial conversation interface. The aesthetic is **observatory dark** -- the feeling of peering into a warm, living system through precision glass instruments. Not cold-blue developer dark mode. Not flat matte black. Warm, dimensional, alive.
 
 **Reference products and what we take from each:**
 - **Linear**: Their text hierarchy is peerless -- three luminance levels, no decorative color in body text, generous line-height. We adopt their approach to making monochrome feel premium through spacing alone.
@@ -146,7 +146,7 @@ Every margin, padding, gap, and dimension is a multiple of 4px.
 
 ### Glass Treatment (Standard)
 
-The defining visual of Dreamcacher's floating UI. Every panel that floats above the canvas uses this treatment.
+The defining visual of Dreamcatcher's floating UI. Every panel that floats above the canvas uses this treatment.
 
 ```css
 background: linear-gradient(180deg, rgba(26,24,22,0.92) 0%, rgba(19,18,15,0.88) 100%);
@@ -222,7 +222,7 @@ The canvas is the ground plane. Everything floats above it.
 
 ### 2. Nodes (SVG, rendered imperatively)
 
-Nodes are the most visually important elements in Dreamcacher. They must look like precious physical specimens under a microscope -- dimensional, material, alive.
+Nodes are the most visually important elements in Dreamcatcher. They must look like precious physical specimens under a microscope -- dimensional, material, alive.
 
 #### User Nodes (circles)
 
@@ -237,7 +237,7 @@ Nodes are the most visually important elements in Dreamcacher. They must look li
 | 5 | Core dot shadow | `circle(cx:0, cy:1, r:5.5)` fill `black` opacity `0.15` | Grounds the core dot on the node surface. |
 | 5 | Core dot | `circle(cx:0, cy:0, r:5)` fill `radialGradient(white -> #C8C8C8 at 60%)` | The "pupil" of the node. Bright white center fading to warm gray. This is the detail people notice first. |
 
-**WHY so many layers**: Each layer adds 1ms to render per 100 nodes. At Dreamcacher's typical scale (10-50 nodes), the cost is negligible. The visual payoff is that nodes look like real objects rather than colored circles. This is the single biggest differentiator from every other graph visualization tool, which renders flat circles with flat fills.
+**WHY so many layers**: Each layer adds 1ms to render per 100 nodes. At Dreamcatcher's typical scale (10-50 nodes), the cost is negligible. The visual payoff is that nodes look like real objects rather than colored circles. This is the single biggest differentiator from every other graph visualization tool, which renders flat circles with flat fills.
 
 #### User Branch-Point Nodes (hexagons)
 
@@ -1038,13 +1038,13 @@ Inputs use the ACCENT focus treatment described in the Floating Input section. W
 
 ## Responsive Behavior
 
-Dreamcacher is a desktop-first canvas application. No mobile layout.
+Dreamcatcher is a desktop-first canvas application. No mobile layout.
 
 | Viewport | Behavior |
 |----------|----------|
 | > 1280px | Full layout. All panels at specified widths. |
 | 1024-1280px | Timeline shrinks to 340px. Inspector shrinks to 240px. |
-| < 1024px | Not supported. Show a centered message: "Dreamcacher requires a desktop viewport." |
+| < 1024px | Not supported. Show a centered message: "Dreamcatcher requires a desktop viewport." |
 
 ---
 

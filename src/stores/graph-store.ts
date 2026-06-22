@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Graph Store (Zustand)
+// Dreamcatcher — Graph Store (Zustand)
 // Immutable state updates. Nodes and edges are the source of truth.
 // Physics bodies are mutable (performance) but derived from nodes.
 // ═══════════════════════════════════════════════════════════════

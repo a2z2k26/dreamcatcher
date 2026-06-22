@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — Session Store
+// Dreamcatcher — Session Store
 // Manages multiple sessions, each with its own graph.
 // Full IndexedDB persistence — sessions survive page reload.
 // ═══════════════════════════════════════════════════════════════
@@ -28,6 +28,7 @@ interface SessionSnapshot {
 }
 
 // ── IndexedDB ──
+// Keep the original database key for backward compatibility with existing local sessions.
 const DB_NAME = 'dreamcacher-sessions';
 const DB_VERSION = 1;
 const SESSION_STORE = 'sessions';

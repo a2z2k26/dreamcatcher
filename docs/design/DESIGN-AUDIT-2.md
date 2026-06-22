@@ -1,4 +1,4 @@
-# Dreamcacher Design Audit II — Synthesized Findings
+# Dreamcatcher Design Audit II — Synthesized Findings
 
 **Date**: 2026-03-25
 **Agents**: Design Chief, UI Designer, Visual Designer, Interaction Designer, System Architect, Frontend Design Specialist
@@ -153,13 +153,13 @@ Visual layering based on conversation depth/branching:
 
 | Document | Author | Location |
 |----------|--------|----------|
-| VISUAL-MANIFESTO.md | Visual Designer | `dreamcacher/VISUAL-MANIFESTO.md` |
-| MOTION-SPEC.md | Interaction Designer | `dreamcacher/MOTION-SPEC.md` |
-| This synthesis | All 6 agents | `dreamcacher/DESIGN-AUDIT-2.md` |
+| VISUAL-MANIFESTO.md | Visual Designer | `dreamcatcher/VISUAL-MANIFESTO.md` |
+| MOTION-SPEC.md | Interaction Designer | `dreamcatcher/MOTION-SPEC.md` |
+| This synthesis | All 6 agents | `dreamcatcher/DESIGN-AUDIT-2.md` |
 
 Previous audits (still valid for UX recommendations):
-- `dreamcacher/VISUAL-CRITIQUE.md` — 12 critiques with CSS/SVG prescriptions
-- `dreamcacher/UX-AUDIT.md` — 40+ recommendations across 8 dimensions
+- `dreamcatcher/VISUAL-CRITIQUE.md` — 12 critiques with CSS/SVG prescriptions
+- `dreamcatcher/UX-AUDIT.md` — 40+ recommendations across 8 dimensions
 
 ---
 

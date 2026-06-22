@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════
-// Dreamcacher — UI Store (Zustand)
+// Dreamcatcher — UI Store (Zustand)
 // Selection, zoom, panel states, hover, drag, context menu.
 // ═══════════════════════════════════════════════════════════════
 

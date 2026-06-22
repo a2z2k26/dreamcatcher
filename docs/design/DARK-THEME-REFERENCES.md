@@ -1,14 +1,14 @@
-# Dark Theme Reference Guide for Dreamcacher
+# Dark Theme Reference Guide for Dreamcatcher
 
-Benchmark analysis of 35+ dark-theme utility platforms, creative tools, and data-dense interfaces. Every reference evaluated for what Dreamcacher should absorb, adapt, or reject.
+Benchmark analysis of 35+ dark-theme utility platforms, creative tools, and data-dense interfaces. Every reference evaluated for what Dreamcatcher should absorb, adapt, or reject.
 
-Context: Dreamcacher's aesthetic is "observatory dark" -- warm blacks, luminance-based hierarchy, dimensional surfaces, precision glass instruments. This document maps real-world products against that vision.
+Context: Dreamcatcher's aesthetic is "observatory dark" -- warm blacks, luminance-based hierarchy, dimensional surfaces, precision glass instruments. This document maps real-world products against that vision.
 
 ---
 
 ## TIER 1: PRIMARY BENCHMARKS
 
-These are the products Dreamcacher should study obsessively. They share the same DNA: tool-dense, dark-first, premium, spatial or canvas-oriented.
+These are the products Dreamcatcher should study obsessively. They share the same DNA: tool-dense, dark-first, premium, spatial or canvas-oriented.
 
 ---
 
@@ -20,7 +20,7 @@ These are the products Dreamcacher should study obsessively. They share the same
 **What makes their dark theme work**:
 Linear rebuilt their entire theme generation system using the LCH color space instead of HSL. LCH has perceptually uniform lightness -- a red and a yellow at lightness 50 appear equally bright to the human eye. This lets them generate harmonious themes from just three inputs: base color, accent color, and contrast. Instead of defining 98 specific variables per theme, Linear distills it to three.
 
-Their recent design refresh shifted from a cool blue-ish palette toward a warmer gray that still feels crisp but less saturated -- a direction perfectly aligned with Dreamcacher's warm-black position.
+Their recent design refresh shifted from a cool blue-ish palette toward a warmer gray that still feels crisp but less saturated -- a direction perfectly aligned with Dreamcatcher's warm-black position.
 
 **Elevation**: LCH lightness values drive surface elevation directly. Higher surfaces = higher lightness in the same hue channel. This is mathematically elegant and avoids the "poster feel" of stepped gray scales.
 
@@ -34,7 +34,7 @@ Their recent design refresh shifted from a cool blue-ish palette toward a warmer
 
 **Standout elements**: The custom theme generator proves that a mathematically grounded color system can produce infinite variations that all feel premium. The glassmorphism effects and high-contrast elements create one-directional visual hierarchies.
 
-**What Dreamcacher should learn**: The LCH-based elevation model is the gold standard. Dreamcacher's 8-stop warm elevation stack (E[0]-E[7]) achieves similar results through manual curation -- but adopting LCH math for generating extended palettes or user-customizable themes would be powerful. Linear's restraint with color -- monochrome feels premium through spacing alone -- validates Dreamcacher's achromatic text hierarchy.
+**What Dreamcatcher should learn**: The LCH-based elevation model is the gold standard. Dreamcatcher's 8-stop warm elevation stack (E[0]-E[7]) achieves similar results through manual curation -- but adopting LCH math for generating extended palettes or user-customizable themes would be powerful. Linear's restraint with color -- monochrome feels premium through spacing alone -- validates Dreamcatcher's achromatic text hierarchy.
 
 ---
 
@@ -58,7 +58,7 @@ Vercel's aesthetic is deceptively simple: pure blacks at oklch(0 0 0), pure whit
 
 **Standout elements**: The confidence to ship an interface that's essentially monochrome. The Geist font family was designed specifically for this system. The gradient treatments feel like actual light rather than CSS decoration.
 
-**What Dreamcacher should learn**: Vercel proves that extreme restraint creates stronger brand recognition than a full palette. Their single-accent discipline is already referenced in Dreamcacher's design spec (DD0000 red for active/attention states). The oklch color space approach is technically superior to hex for maintaining perceptual consistency. Consider adopting oklch for Dreamcacher's design tokens.
+**What Dreamcatcher should learn**: Vercel proves that extreme restraint creates stronger brand recognition than a full palette. Their single-accent discipline is already referenced in Dreamcatcher's design spec (DD0000 red for active/attention states). The oklch color space approach is technically superior to hex for maintaining perceptual consistency. Consider adopting oklch for Dreamcatcher's design tokens.
 
 ---
 
@@ -74,7 +74,7 @@ Raycast renders its UI natively (not web-based), which gives it a physical quali
 
 **Text hierarchy**: Clean monochrome with Dynamic Color that adapts to achieve high contrast against the current background. The API provides List, Grid, Detail, and Form components that function as a design system, each with dark-adapted color palettes.
 
-**Borders**: Directional -- top edge is brighter than bottom edge on panels, mimicking top-down lighting. This is the technique Dreamcacher's glass treatment already references.
+**Borders**: Directional -- top edge is brighter than bottom edge on panels, mimicking top-down lighting. This is the technique Dreamcatcher's glass treatment already references.
 
 **Shadows**: Tight, focused drop shadows. Not diffuse box-shadows but precise shadows that reinforce the floating-panel metaphor.
 
@@ -82,7 +82,7 @@ Raycast renders its UI natively (not web-based), which gives it a physical quali
 
 **Standout elements**: The overall "physicality" of the interface. Panels feel like they have weight and position in space. Custom themes require Pro but the default dark is already exceptional.
 
-**What Dreamcacher should learn**: Dreamcacher already identifies Raycast's glass treatment as its panel baseline. The directional border technique (top brighter than bottom) should be applied consistently across all floating surfaces. Raycast proves that native-quality rendering in dark mode creates an emotional response that typical web dark modes miss -- Dreamcacher's SVG-based node rendering can achieve similar physicality.
+**What Dreamcatcher should learn**: Dreamcatcher already identifies Raycast's glass treatment as its panel baseline. The directional border technique (top brighter than bottom) should be applied consistently across all floating surfaces. Raycast proves that native-quality rendering in dark mode creates an emotional response that typical web dark modes miss -- Dreamcatcher's SVG-based node rendering can achieve similar physicality.
 
 ---
 
@@ -92,7 +92,7 @@ Raycast renders its UI natively (not web-based), which gives it a physical quali
 **Category**: Deployment platform / Infrastructure
 
 **What makes their dark theme work**:
-Railway's defining feature is its Canvas interface -- a visual graph where developers "draw" their infrastructure. Connecting a database to an app is as simple as dragging a line between two blocks. This is the closest analog to Dreamcacher's spatial conversation graph. The entire platform lives on a dark canvas with floating panels, connection lines, and interactive nodes.
+Railway's defining feature is its Canvas interface -- a visual graph where developers "draw" their infrastructure. Connecting a database to an app is as simple as dragging a line between two blocks. This is the closest analog to Dreamcatcher's spatial conversation graph. The entire platform lives on a dark canvas with floating panels, connection lines, and interactive nodes.
 
 **Elevation**: The canvas acts as the deepest layer. Service blocks float above it with subtle elevation. Panels and overlays sit above service blocks. Three clear depth planes.
 
@@ -104,7 +104,7 @@ Railway's defining feature is its Canvas interface -- a visual graph where devel
 
 **Standout elements**: The Canvas itself is the standout. It proves that spatial, node-based dark interfaces can be both beautiful and functional for complex systems. The visual graph metaphor makes infrastructure legible.
 
-**What Dreamcacher should learn**: Railway is the closest product-level validation of Dreamcacher's core interaction model. Study how they handle: zoom levels on the canvas, node selection states, connection line rendering, the transition between canvas overview and node detail, and how they maintain readability at different canvas scales. Railway's success proves the spatial-graph-on-dark-canvas pattern works for production tools.
+**What Dreamcatcher should learn**: Railway is the closest product-level validation of Dreamcatcher's core interaction model. Study how they handle: zoom levels on the canvas, node selection states, connection line rendering, the transition between canvas overview and node detail, and how they maintain readability at different canvas scales. Railway's success proves the spatial-graph-on-dark-canvas pattern works for production tools.
 
 ---
 
@@ -129,7 +129,7 @@ Figma constrained dark mode to non-user-editable objects, leaving canvas colors 
 
 **Standout elements**: The decision to NOT dark-mode the canvas content. This shows respect for the user's work while still providing a comfortable chrome. The enhanced contrast mode as an accessibility layer on top of dark mode is thoughtful.
 
-**What Dreamcacher should learn**: Dreamcacher's canvas IS the content (conversation nodes), so it can't take Figma's "leave the canvas alone" approach. But the principle is relevant: node content (text, avatars) should maintain their own contrast independent of canvas atmosphere. The petri-dish metaphor can coexist with readable content if the atmospheric effects (vignette, noise) don't compete with node text. Study Figma's panel shadow treatment for Dreamcacher's inspector and floating input.
+**What Dreamcatcher should learn**: Dreamcatcher's canvas IS the content (conversation nodes), so it can't take Figma's "leave the canvas alone" approach. But the principle is relevant: node content (text, avatars) should maintain their own contrast independent of canvas atmosphere. The petri-dish metaphor can coexist with readable content if the atmospheric effects (vignette, noise) don't compete with node text. Study Figma's panel shadow treatment for Dreamcatcher's inspector and floating input.
 
 ---
 
@@ -151,13 +151,13 @@ Obsidian's default dark mode is comfortable for extended reading/writing session
 
 **Standout elements**: The 11-step grayscale foundation. The Discordian theme (Discord-inspired) proves that dark-on-dark with minimal color can be unobtrusive and easy on the eyes. The VS Code Dark+ recreation shows how editor-comfortable dark palettes translate to reading interfaces.
 
-**What Dreamcacher should learn**: Obsidian proves that tools for extended use need softer dark palettes. The 11-step grayscale parallels Dreamcacher's 8-stop elevation stack. Consider whether Dreamcacher needs more steps in the mid-range (E[3]-E[5]) for subtle panel differentiation. The community theme ecosystem also proves that opinionated defaults with customization escape hatches is the right model.
+**What Dreamcatcher should learn**: Obsidian proves that tools for extended use need softer dark palettes. The 11-step grayscale parallels Dreamcatcher's 8-stop elevation stack. Consider whether Dreamcatcher needs more steps in the mid-range (E[3]-E[5]) for subtle panel differentiation. The community theme ecosystem also proves that opinionated defaults with customization escape hatches is the right model.
 
 ---
 
 ## TIER 2: STRONG REFERENCES
 
-Products with specific techniques worth adopting, even if the overall aesthetic differs from Dreamcacher's.
+Products with specific techniques worth adopting, even if the overall aesthetic differs from Dreamcatcher's.
 
 ---
 
@@ -180,7 +180,7 @@ Unlike traditional terminals where themes only control text display, Warp themes
 
 **Standout elements**: Photo backgrounds with auto-generated matching color themes. Gradient backgrounds that add depth to the terminal experience. The accent color attribute that cascades through the entire UI from a single definition.
 
-**What Dreamcacher should learn**: Warp's overlay-based elevation technique is worth testing against Dreamcacher's luminance-step approach. The white-overlay method naturally creates surfaces that "glow" slightly -- which aligns with the observatory/petri-dish metaphor. The accent color cascade (define once, propagate everywhere) is a model for Dreamcacher's DD0000 red accent.
+**What Dreamcatcher should learn**: Warp's overlay-based elevation technique is worth testing against Dreamcatcher's luminance-step approach. The white-overlay method naturally creates surfaces that "glow" slightly -- which aligns with the observatory/petri-dish metaphor. The accent color cascade (define once, propagate everywhere) is a model for Dreamcatcher's DD0000 red accent.
 
 ---
 
@@ -202,7 +202,7 @@ Supabase combines dark, code-editor-comfortable backgrounds with a distinctive e
 
 **Standout elements**: The emerald green accent is immediately recognizable. The SQL editor's dark surface feels like a natural extension of the terminal, not a bolted-on feature. Auth UI components support light/dark with variable token overrides.
 
-**What Dreamcacher should learn**: Single-accent-color discipline. Supabase's emerald green is as disciplined as Vercel's approach, but warm rather than cold. Dreamcacher's DD0000 red should have the same instant-recognition quality. Also study how Supabase transitions between data-dense views (tables) and comfortable views (documentation) within the same dark palette.
+**What Dreamcatcher should learn**: Single-accent-color discipline. Supabase's emerald green is as disciplined as Vercel's approach, but warm rather than cold. Dreamcatcher's DD0000 red should have the same instant-recognition quality. Also study how Supabase transitions between data-dense views (tables) and comfortable views (documentation) within the same dark palette.
 
 ---
 
@@ -226,7 +226,7 @@ GitHub offers four dark mode variants through the Primer design system: Dark, Da
 
 **Standout elements**: The Dark Dimmed sub-theme. A user selecting it is intentionally requesting less visual contrast -- this is an accessibility-driven design decision that most products don't make. The four-variant approach (default, dimmed, high-contrast, colorblind) is the most inclusive dark mode system in production.
 
-**What Dreamcacher should learn**: The multi-variant dark mode concept. Dreamcacher could offer a "dimmed" variant for extended conversation sessions and a "high contrast" variant for detailed node inspection. More immediately, the semantic token architecture (purpose-based naming like "border-muted" rather than "gray-300") is worth adopting. And the explicit separation of shadow tokens from color tokens prevents the common mistake of using the same system for both.
+**What Dreamcatcher should learn**: The multi-variant dark mode concept. Dreamcatcher could offer a "dimmed" variant for extended conversation sessions and a "high contrast" variant for detailed node inspection. More immediately, the semantic token architecture (purpose-based naming like "border-muted" rather than "gray-300") is worth adopting. And the explicit separation of shadow tokens from color tokens prevents the common mistake of using the same system for both.
 
 ---
 
@@ -238,7 +238,7 @@ GitHub offers four dark mode variants through the Primer design system: Dark, Da
 **What makes their dark theme work**:
 Stripe's dark mode uses specific, intentional values: background #14171D, text #C9CED8, secondary background #1B1E25, secondary text #8C99AD, borders #2B3039, buttons #2B3039, accent #0085FF, danger #F23154. They developed a system to automatically generate color tokens based on the WCAG color contrast algorithm, ensuring accessibility regardless of color mode.
 
-**Elevation**: Background (#14171D) to offset background (#1B1E25) to button backgrounds (#2B3039). Three clear surface levels with approximately 5-7% lightness increments. Cool-toned, unlike Dreamcacher's warm palette.
+**Elevation**: Background (#14171D) to offset background (#1B1E25) to button backgrounds (#2B3039). Three clear surface levels with approximately 5-7% lightness increments. Cool-toned, unlike Dreamcatcher's warm palette.
 
 **Text hierarchy**: Primary text #C9CED8 (slightly cool, desaturated), secondary text #8C99AD (noticeably dimmer, blue-tinted). The cool tint in secondary text creates natural recession.
 
@@ -248,7 +248,7 @@ Stripe's dark mode uses specific, intentional values: background #14171D, text #
 
 **Standout elements**: The Appearance API itself -- Stripe built all components to be fully themable, serving as the backbone for Stripe Embedded Components that merchants embed in their own apps. The WCAG-based automatic token generation ensures every generated theme is accessible.
 
-**What Dreamcacher should learn**: Stripe's specific dark values (#14171D base, #1B1E25 offset, #2B3039 borders) are worth comparing against Dreamcacher's elevation stack. The auto-generated WCAG-compliant tokens approach could inform a Dreamcacher theme API if custom themes are ever exposed. The border-equals-surface-color technique reduces the number of distinct values needed.
+**What Dreamcatcher should learn**: Stripe's specific dark values (#14171D base, #1B1E25 offset, #2B3039 borders) are worth comparing against Dreamcatcher's elevation stack. The auto-generated WCAG-compliant tokens approach could inform a Dreamcatcher theme API if custom themes are ever exposed. The border-equals-surface-color technique reduces the number of distinct values needed.
 
 ---
 
@@ -272,7 +272,7 @@ Spotify introduced the signature dark experience that became culturally iconic. 
 
 **Standout elements**: The cultural proof that #121212 as a base color is comfortable for millions of daily users. The green-only accent discipline. The way album art provides the color -- the app chrome stays monochrome so the content brings the vibrancy.
 
-**What Dreamcacher should learn**: Spotify's approach of letting content provide color while the chrome stays neutral is directly applicable. Dreamcacher's nodes carry the visual richness (gradients, specular highlights, tier effects) while the canvas, panels, and controls should stay in the warm-black elevation stack. The #121212 base is cooler than Dreamcacher's #0C0B09, but the principle is identical: not pure black, slightly lifted.
+**What Dreamcatcher should learn**: Spotify's approach of letting content provide color while the chrome stays neutral is directly applicable. Dreamcatcher's nodes carry the visual richness (gradients, specular highlights, tier effects) while the canvas, panels, and controls should stay in the warm-black elevation stack. The #121212 base is cooler than Dreamcatcher's #0C0B09, but the principle is identical: not pure black, slightly lifted.
 
 ---
 
@@ -296,7 +296,7 @@ Discord's dark mode (#36393E base) is warmer and lighter than most developer too
 
 **Standout elements**: The blurple accent creates instant brand recognition without being overused. The fact that millions of users spend 4+ hours daily in this dark interface validates its comfort. The message area handles text, embeds, images, code blocks, and reactions in a cohesive dark surface.
 
-**What Dreamcacher should learn**: Discord proves dark interfaces can handle extreme content variety -- text, images, embeds, reactions -- without visual chaos. Dreamcacher's conversation nodes will contain varied content (user messages, AI responses, tool calls, clips). Study how Discord differentiates content types within a single dark surface. The warm-gray base (#36393E is quite warm) validates Dreamcacher's warm-black direction.
+**What Dreamcatcher should learn**: Discord proves dark interfaces can handle extreme content variety -- text, images, embeds, reactions -- without visual chaos. Dreamcatcher's conversation nodes will contain varied content (user messages, AI responses, tool calls, clips). Study how Discord differentiates content types within a single dark surface. The warm-gray base (#36393E is quite warm) validates Dreamcatcher's warm-black direction.
 
 ---
 
@@ -316,7 +316,7 @@ Material 3 replaced dark mode shadow-based elevation with tonal color overlays. 
 
 Surface color is not static in M3: it takes a tonal tint from the primary color depending on the elevation of the surface. Background color remains consistent; surface colors shift.
 
-**What Dreamcacher should learn**: Dreamcacher's warm-black elevation stack already achieves tonal elevation through the warm undertone increasing with lightness. But M3's insight that elevation should carry a hint of the primary/accent color is worth considering. What if Dreamcacher's higher elevation surfaces (#2C2A26, #3D3A35) carried a barely perceptible warm tint from the accent palette? This would tie the elevation system to the brand color without being visible at a conscious level.
+**What Dreamcatcher should learn**: Dreamcatcher's warm-black elevation stack already achieves tonal elevation through the warm undertone increasing with lightness. But M3's insight that elevation should carry a hint of the primary/accent color is worth considering. What if Dreamcatcher's higher elevation surfaces (#2C2A26, #3D3A35) carried a barely perceptible warm tint from the accent palette? This would tie the elevation system to the brand color without being visible at a conscious level.
 
 ---
 
@@ -330,7 +330,7 @@ Apple's Dark Mode uses two sets of background colors -- base and elevated. Base 
 
 Materials are more than colors -- they include blur effects that create translucent layers, plus vibrancy that cuts through blur. The recommendation: use lighter, translucent materials to elevate content. Darker materials hide shadows and reduce depth.
 
-**What Dreamcacher should learn**: The base/elevated dichotomy maps to Dreamcacher's canvas (base) vs. panels (elevated). Apple's dynamic elevation -- auto-shifting when a surface comes to the foreground -- should inform how Dreamcacher's inspector panel, floating input, and modal overlays behave. When the inspector opens, it should feel like it rose to a higher elevation, not like it was placed on top. The translucent material approach validates Dreamcacher's glass panel treatment.
+**What Dreamcatcher should learn**: The base/elevated dichotomy maps to Dreamcatcher's canvas (base) vs. panels (elevated). Apple's dynamic elevation -- auto-shifting when a surface comes to the foreground -- should inform how Dreamcatcher's inspector panel, floating input, and modal overlays behave. When the inspector opens, it should feel like it rose to a higher elevation, not like it was placed on top. The translucent material approach validates Dreamcatcher's glass panel treatment.
 
 ---
 
@@ -342,7 +342,7 @@ Materials are more than colors -- they include blur effects that create transluc
 **Key technique -- 12-step color scales with purpose**:
 Radix provides 12-step scales where each step has a defined purpose: Step 1-2 for backgrounds, Step 3-5 for component backgrounds, Step 6-8 for borders, Step 9-11 for solid colors, Step 12 for text. Dark scales use the Dark suffix and apply via .dark class. Six gray variants: pure gray, mauve (purple), slate (blue), sage (green), olive (lime), sand (yellow).
 
-**What Dreamcacher should learn**: Radix's tinted grays are relevant. Dreamcacher uses warm blacks with what reads as a sand/olive undertone. Radix's Sand scale (yellow-based gray) or Olive scale (lime-based gray) might serve as useful reference palettes for extending Dreamcacher's system. The 12-step purpose-mapped approach (backgrounds, components, borders, solids, text) is more structured than Dreamcacher's 8-stop elevation + 7-step text hierarchy, and the explicit purpose assignment per step prevents misuse.
+**What Dreamcatcher should learn**: Radix's tinted grays are relevant. Dreamcatcher uses warm blacks with what reads as a sand/olive undertone. Radix's Sand scale (yellow-based gray) or Olive scale (lime-based gray) might serve as useful reference palettes for extending Dreamcatcher's system. The 12-step purpose-mapped approach (backgrounds, components, borders, solids, text) is more structured than Dreamcatcher's 8-stop elevation + 7-step text hierarchy, and the explicit purpose assignment per step prevents misuse.
 
 ---
 
@@ -354,7 +354,7 @@ Radix provides 12-step scales where each step has a defined purpose: Step 1-2 fo
 **Key technique -- CSS variable theming with oklch**:
 shadcn/ui uses CSS variables with oklch format for all color definitions. Dark mode is a separate variable set under `.dark`. Semantic variables: `--primary`, `--secondary`, `--destructive`, `--muted`, each with corresponding `--foreground` variants. Base colors include Neutral, Stone, Zinc, Mauve, Olive, Mist, and Taupe.
 
-**What Dreamcacher should learn**: The Stone and Neutral base colors align with Dreamcacher's warm-black aesthetic. The oklch format is worth adopting -- it provides perceptually uniform color manipulation, letting you shift lightness without hue drift. The semantic variable naming (`--muted`, `--destructive`) with paired foreground variants is a clean pattern for Dreamcacher's component tokens.
+**What Dreamcatcher should learn**: The Stone and Neutral base colors align with Dreamcatcher's warm-black aesthetic. The oklch format is worth adopting -- it provides perceptually uniform color manipulation, letting you shift lightness without hue drift. The semantic variable naming (`--muted`, `--destructive`) with paired foreground variants is a clean pattern for Dreamcatcher's component tokens.
 
 ---
 
@@ -366,7 +366,7 @@ shadcn/ui uses CSS variables with oklch format for all color definitions. Dark m
 **Key technique -- @theme design tokens**:
 Tailwind v4 (released January 2025) collapses design token sprawl into a single CSS-first source of truth with `@theme`. Define tokens once, Tailwind generates utilities with browser-exposed CSS variables. Three dark mode approaches: media query (prefers-color-scheme), class-based (.dark), and design token abstraction for cross-platform sharing.
 
-**What Dreamcacher should learn**: Since Dreamcacher uses Tailwind, the v4 `@theme` approach should be the foundation for all design token definitions. Define the warm-black elevation stack, text hierarchy, and accent colors as `@theme` tokens. This makes the design system a single source of truth that generates both utility classes and CSS variables, eliminating the drift between design tokens and implementation.
+**What Dreamcatcher should learn**: Since Dreamcatcher uses Tailwind, the v4 `@theme` approach should be the foundation for all design token definitions. Define the warm-black elevation stack, text hierarchy, and accent colors as `@theme` tokens. This makes the design system a single source of truth that generates both utility classes and CSS variables, eliminating the drift between design tokens and implementation.
 
 ---
 
@@ -380,7 +380,7 @@ TradingView handles extraordinary data density in dark mode. Each color comes wi
 
 Users can customize every visual element: candlestick colors, grid lines, crosshairs, backgrounds. The dark theme resets all visual settings to standard dark values when activated.
 
-**What Dreamcacher should learn**: TradingView is the gold standard for dark-mode data density. Study their 19-shade system for handling the gradient from toolbar (UI) through chart (content) to tooltip (overlay). The crosshair and grid line colors on dark backgrounds are directly relevant to Dreamcacher's canvas grid and connection lines. How they handle grid opacity (visible enough to aid alignment, dim enough not to compete with data) is a solved problem worth adopting.
+**What Dreamcatcher should learn**: TradingView is the gold standard for dark-mode data density. Study their 19-shade system for handling the gradient from toolbar (UI) through chart (content) to tooltip (overlay). The crosshair and grid line colors on dark backgrounds are directly relevant to Dreamcatcher's canvas grid and connection lines. How they handle grid opacity (visible enough to aid alignment, dim enough not to compete with data) is a solved problem worth adopting.
 
 ---
 
@@ -394,7 +394,7 @@ Ableton Push uses a hierarchical color system where luminance variations convey 
 
 The "Appearance: Follow System" setting adjusts the interface based on ambient light -- going dark at night. The "Twenty-Four Carat" dark theme adds an orange/amber glow to white elements, creating warmth.
 
-**What Dreamcacher should learn**: The luminance-as-state pattern is directly applicable to Dreamcacher's node system. Selected nodes should be brighter. Collapsed branches should be dimmer. Active conversations should have higher luminance than archived ones. The Ableton grid pad metaphor (same base hue, different luminance = different state) is a model for Dreamcacher's node rarity tiers. And the "Twenty-Four Carat" warm-glow approach validates Dreamcacher's warm-black preference over cool-blue.
+**What Dreamcatcher should learn**: The luminance-as-state pattern is directly applicable to Dreamcatcher's node system. Selected nodes should be brighter. Collapsed branches should be dimmer. Active conversations should have higher luminance than archived ones. The Ableton grid pad metaphor (same base hue, different luminance = different state) is a model for Dreamcatcher's node rarity tiers. And the "Twenty-Four Carat" warm-glow approach validates Dreamcatcher's warm-black preference over cool-blue.
 
 ---
 
@@ -408,7 +408,7 @@ Blender's dark theme is the default, designed to "let you focus on your artwork 
 
 The Extensions library offers Dark Minimal Neon, Deep Grey, and High Contrast themes. Modern themes by community creators push toward sleeker, more contemporary palettes.
 
-**What Dreamcacher should learn**: Blender's "dark center, lighter periphery" layout creates a natural focus well that draws the eye to the 3D content. Dreamcacher should consider the same: canvas (darkest, E[1]) with panels (slightly lighter, E[3]-E[4]) framing it. The canvas becomes a stage. The panels become the wings. This is the opposite of many apps that make sidebars darker -- Blender's approach keeps the creative workspace recessed and immersive.
+**What Dreamcatcher should learn**: Blender's "dark center, lighter periphery" layout creates a natural focus well that draws the eye to the 3D content. Dreamcatcher should consider the same: canvas (darkest, E[1]) with panels (slightly lighter, E[3]-E[4]) framing it. The canvas becomes a stage. The panels become the wings. This is the opposite of many apps that make sidebars darker -- Blender's approach keeps the creative workspace recessed and immersive.
 
 ---
 
@@ -420,7 +420,7 @@ The Extensions library offers Dark Minimal Neon, Deep Grey, and High Contrast th
 **Key technique -- Panel-heavy dark interface for complex tooling**:
 Cinema 4D's default is lighter than Blender's, but its layout (top menu, attribute manager, object manager, material editor, timeline) demonstrates how complex creative tools organize many panels in dark space. The interface prioritizes discoverability through organized panel groups rather than minimal hiding.
 
-**What Dreamcacher should learn**: Cinema 4D's approach to panel organization in dark mode is relevant if Dreamcacher's inspector, timeline, session manager, and floating input ever need to coexist on screen simultaneously. The principle: each panel group should have a clear spatial position, and the luminance hierarchy should make it obvious which panel is "primary" at any given moment.
+**What Dreamcatcher should learn**: Cinema 4D's approach to panel organization in dark mode is relevant if Dreamcatcher's inspector, timeline, session manager, and floating input ever need to coexist on screen simultaneously. The principle: each panel group should have a clear spatial position, and the luminance hierarchy should make it obvious which panel is "primary" at any given moment.
 
 ---
 
@@ -435,7 +435,7 @@ Coda's design team explicitly called out that "achieving noticeable elevation pr
 
 They created a 90-palette color set for cell backgrounds and text, ensuring that whatever was legible in light mode remains legible in dark mode.
 
-**What Dreamcacher should learn**: Coda's explicit acknowledgment that elevation is the hardest dark-mode problem validates Dreamcacher's investment in the 8-stop elevation stack. The insight about "too dark strains the eye and limits overlay use" is important -- Dreamcacher's E[0] (#080706) should be used sparingly (title bar, status bar only), not as a general background. The canvas at E[1] (#0C0B09) is the right call for the primary surface.
+**What Dreamcatcher should learn**: Coda's explicit acknowledgment that elevation is the hardest dark-mode problem validates Dreamcatcher's investment in the 8-stop elevation stack. The insight about "too dark strains the eye and limits overlay use" is important -- Dreamcatcher's E[0] (#080706) should be used sparingly (title bar, status bar only), not as a general background. The canvas at E[1] (#0C0B09) is the right call for the primary surface.
 
 ---
 
@@ -447,7 +447,7 @@ They created a 90-palette color set for cell backgrounds and text, ensuring that
 **Key technique -- Space-based color theming**:
 Arc injects CSS variables for each Space's color theme into every tab: `--arc-palette-background`, `--arc-palette-title`, `--arc-palette-foregroundPrimary`. The sidebar is the personality carrier -- each Space can have a different hue, but the content area stays neutral. The "Invert lightness" feature toggles dark mode for individual web pages.
 
-**What Dreamcacher should learn**: Arc's per-Space color approach is analogous to a per-session or per-conversation theme in Dreamcacher. If Dreamcacher ever supports multiple conversation contexts, Arc's model of "sidebar carries the personality, canvas stays neutral" is the right pattern. The CSS variable injection approach (`--arc-palette-*`) is technically elegant for theming.
+**What Dreamcatcher should learn**: Arc's per-Space color approach is analogous to a per-session or per-conversation theme in Dreamcatcher. If Dreamcatcher ever supports multiple conversation contexts, Arc's model of "sidebar carries the personality, canvas stays neutral" is the right pattern. The CSS variable injection approach (`--arc-palette-*`) is technically elegant for theming.
 
 ---
 
@@ -459,13 +459,13 @@ Arc injects CSS variables for each Space's color theme into every tab: `--arc-pa
 **Key technique -- Cross-platform dark mode consistency**:
 Notion maintains the same colors, transitions, and readability across mobile and web. The dark mode is comfortable for extended document work. The simplicity of Notion's dark mode (gray background, white text, minimal accent color) proves that sometimes restraint is the entire design.
 
-**What Dreamcacher should learn**: Notion's lesson is about endurance. Dreamcacher sessions will be long -- users thinking through complex problems. The atmospheric effects (vignette, noise, node particles) must not create fatigue over time. Notion's plain dark mode can be used for hours without discomfort. Dreamcacher's more ambitious visual system needs to pass the same endurance test. Consider a "focus mode" that dials back atmospheric effects for extended sessions.
+**What Dreamcatcher should learn**: Notion's lesson is about endurance. Dreamcatcher sessions will be long -- users thinking through complex problems. The atmospheric effects (vignette, noise, node particles) must not create fatigue over time. Notion's plain dark mode can be used for hours without discomfort. Dreamcatcher's more ambitious visual system needs to pass the same endurance test. Consider a "focus mode" that dials back atmospheric effects for extended sessions.
 
 ---
 
 ## TIER 4: DATA-DENSE AND SPECIALIZED INTERFACES
 
-Products with extreme information density or specialized rendering that inform specific Dreamcacher challenges.
+Products with extreme information density or specialized rendering that inform specific Dreamcatcher challenges.
 
 ---
 
@@ -477,7 +477,7 @@ Products with extreme information density or specialized rendering that inform s
 **What makes their dark theme work**:
 Binance UI Refined uses a "Midnight Black" color theme with adjusted spacing for consistency, reduced screen glare, and enhanced fonts/icons for clarity. The design system covers both Light and Dark modes for all cross-platform components. The interface manages extreme data density: order books, price charts, trade history, portfolio views, and real-time streaming data -- all simultaneously visible.
 
-**What Dreamcacher should learn**: Crypto platforms prove that dark mode can handle real-time data updates without visual chaos. The key: consistent grid systems, clear data hierarchy (price = large, volume = smaller, time = smallest), and color coding only for meaningful states (green/red for up/down). Dreamcacher's timeline and conversation flow should study how trading platforms handle temporal data streams in dark mode. The principle of "bigger = more important" is universal.
+**What Dreamcatcher should learn**: Crypto platforms prove that dark mode can handle real-time data updates without visual chaos. The key: consistent grid systems, clear data hierarchy (price = large, volume = smaller, time = smallest), and color coding only for meaningful states (green/red for up/down). Dreamcatcher's timeline and conversation flow should study how trading platforms handle temporal data streams in dark mode. The principle of "bigger = more important" is universal.
 
 ---
 
@@ -489,7 +489,7 @@ Binance UI Refined uses a "Midnight Black" color theme with adjusted spacing for
 **Key technique -- Automatic dark mode for embedded visualizations**:
 Datawrapper offers automatic dark mode for embedded charts that respects the host page's theme. Don't simply invert colors -- create a dedicated dark mode palette. Use softer text colors (#E0E0E0 or #CCCCCC). Use slightly lighter backgrounds (#0A0A0A or #1C1C1C) for charts to provide subtle contrast from the system background.
 
-**What Dreamcacher should learn**: Embedded visualization dark mode is relevant for Dreamcacher's node previews and potential data visualization within conversations. The specific values (#E0E0E0 text, #1C1C1C chart background) are useful calibration points. The principle of making chart backgrounds slightly lighter than the app background (so charts "float" subtly) applies to how node content areas should relate to the canvas.
+**What Dreamcatcher should learn**: Embedded visualization dark mode is relevant for Dreamcatcher's node previews and potential data visualization within conversations. The specific values (#E0E0E0 text, #1C1C1C chart background) are useful calibration points. The principle of making chart backgrounds slightly lighter than the app background (so charts "float" subtly) applies to how node content areas should relate to the canvas.
 
 ---
 
@@ -501,7 +501,7 @@ Datawrapper offers automatic dark mode for embedded charts that respects the hos
 **Key technique -- Dark dashboards for data focus**:
 Dark mode dashboards encourage viewers to scan through visualizations without getting fixated on secondary textual information. B2B dashboard and reporting software are often designed in dark-themed UI because dark backgrounds make colored data points pop.
 
-**What Dreamcacher should learn**: The "data pops on dark backgrounds" principle. Dreamcacher's node materials (radial gradients, specular highlights) will be more vivid against the warm-black canvas than they would be on a light background. This validates the dark-first aesthetic choice from a data visualization perspective, not just an aesthetic one.
+**What Dreamcatcher should learn**: The "data pops on dark backgrounds" principle. Dreamcatcher's node materials (radial gradients, specular highlights) will be more vivid against the warm-black canvas than they would be on a light background. This validates the dark-first aesthetic choice from a data visualization perspective, not just an aesthetic one.
 
 ---
 
@@ -513,13 +513,13 @@ Dark mode dashboards encourage viewers to scan through visualizations without ge
 **Key technique -- Color Styles with light/dark values**:
 Framer lets designers define Color Styles with both a light and dark value, then use them throughout layouts, text styles, components, and effects. The color styles with themes work within interactions and animations. The canvas has a theme toggle in the bottom toolbar (Ctrl+Cmd+N).
 
-**What Dreamcacher should learn**: Framer's "Color Styles with dual values" pattern is exactly what Dreamcacher should implement if it ever supports a light mode. Define every color as a pair, switch with a single class. More immediately, Framer's approach of making color styles work inside animations is relevant -- Dreamcacher's node animations (orbit rings, particle fields) should respond to theme values, not hardcoded colors.
+**What Dreamcatcher should learn**: Framer's "Color Styles with dual values" pattern is exactly what Dreamcatcher should implement if it ever supports a light mode. Define every color as a pair, switch with a single class. More immediately, Framer's approach of making color styles work inside animations is relevant -- Dreamcatcher's node animations (orbit rings, particle fields) should respond to theme values, not hardcoded colors.
 
 ---
 
 ## TIER 5: DESIGN SYSTEM THEORY AND TECHNIQUES
 
-Not products, but frameworks and principles that should inform Dreamcacher's implementation.
+Not products, but frameworks and principles that should inform Dreamcatcher's implementation.
 
 ---
 
@@ -531,9 +531,9 @@ Not products, but frameworks and principles that should inform Dreamcacher's imp
 
 **Why shadows fail in dark mode**: Dark shadows blend into dark backgrounds. White shadows appear out of place. The solution: combine subtle lightness shifts with very soft, diffuse shadows. The shadows provide the "float" feeling; the lightness provides the "hierarchy" signal.
 
-**Combining both**: Some products (like Linear) use only lightness. Others (like Raycast) use lightness + tight shadows. The best approach for canvas tools like Dreamcacher is likely both: lightness for panel hierarchy (E[0]-E[7]) and tight, warm-tinted shadows for floating elements (input bar, tooltips, context menus).
+**Combining both**: Some products (like Linear) use only lightness. Others (like Raycast) use lightness + tight shadows. The best approach for canvas tools like Dreamcatcher is likely both: lightness for panel hierarchy (E[0]-E[7]) and tight, warm-tinted shadows for floating elements (input bar, tooltips, context menus).
 
-**What Dreamcacher should implement**: The elevation stack is defined. Now ensure every floating element uses BOTH elevation (background from the stack) AND a subtle shadow. The shadow should be warm-tinted (not pure black rgba(0,0,0,x) but slightly warm rgba(12,11,9,x) matching the palette) and tight (2-4px blur, 1-2px offset). This creates the "physical object on the observatory desk" feeling.
+**What Dreamcatcher should implement**: The elevation stack is defined. Now ensure every floating element uses BOTH elevation (background from the stack) AND a subtle shadow. The shadow should be warm-tinted (not pure black rgba(0,0,0,x) but slightly warm rgba(12,11,9,x) matching the palette) and tight (2-4px blur, 1-2px offset). This creates the "physical object on the observatory desk" feeling.
 
 ---
 
@@ -548,7 +548,7 @@ Not products, but frameworks and principles that should inform Dreamcacher's imp
 
 Dark mode swaps happen at Tier 2: `surface-panel` maps to `gray-100` in light mode and `gray-900` in dark mode. Tier 1 values don't change. Tier 3 references don't change.
 
-**What Dreamcacher should implement**: Currently, Dreamcacher's DESIGN-SPEC defines colors as flat values (E[0]: #080706, T.primary: #E1E1E1). Refactoring into three tiers would make the system extensible for themes, light mode, and accessibility variants:
+**What Dreamcatcher should implement**: Currently, Dreamcatcher's DESIGN-SPEC defines colors as flat values (E[0]: #080706, T.primary: #E1E1E1). Refactoring into three tiers would make the system extensible for themes, light mode, and accessibility variants:
 
 ```
 Tier 1: --dc-gray-900: #080706; --dc-gray-800: #0C0B09; ...
@@ -566,7 +566,7 @@ Tier 3: --dc-inspector-bg: var(--dc-surface-panel); --dc-node-stroke: var(--dc-b
 
 Headings should be clearly larger and heavier than body text. Avoid relying on color alone to distinguish headings from paragraphs. On dark backgrounds, letter-spacing may need slight increase for small text to maintain legibility.
 
-**What Dreamcacher should implement**: Dreamcacher's type scale (DESIGN-SPEC) already handles this well with its 7-level hierarchy from type-display (14px/600) to type-nano (8px/600). The weight bumps at small sizes (nano uses 600 weight) and the letter-spacing increases (0.8px for micro, 0.5px for nano) are correct dark-mode typography practices. No changes needed -- this is validation.
+**What Dreamcatcher should implement**: Dreamcatcher's type scale (DESIGN-SPEC) already handles this well with its 7-level hierarchy from type-display (14px/600) to type-nano (8px/600). The weight bumps at small sizes (nano uses 600 weight) and the letter-spacing increases (0.8px for micro, 0.5px for nano) are correct dark-mode typography practices. No changes needed -- this is validation.
 
 ---
 
@@ -582,7 +582,7 @@ Headings should be clearly larger and heavier than body text. Avoid relying on c
 - Test with actual OLED displays where pure black pixels are OFF and bright text creates a harsher edge
 - Check contrast for ALL text levels, not just primary
 
-**Dreamcacher contrast audit** (approximate, against E[1] #0C0B09):
+**Dreamcatcher contrast audit** (approximate, against E[1] #0C0B09):
 - T.primary #E1E1E1 vs E[1]: ~14.5:1 -- passes AAA
 - T.secondary #C8C8C8 vs E[1]: ~10.8:1 -- passes AAA
 - T.tertiary #A8A8A8 vs E[1]: ~7.2:1 -- passes AA
@@ -590,7 +590,7 @@ Headings should be clearly larger and heavier than body text. Avoid relying on c
 - T.ghost #606060 vs E[1]: ~2.5:1 -- fails AA for text (acceptable for decorative/non-essential)
 - T.dim #404040 vs E[1]: ~1.5:1 -- fails (decorative only)
 
-**What Dreamcacher should implement**: T.ghost and T.dim should never be used for text that conveys essential information. They're correctly designated for section headers (decorative context) and badge counts (supplementary info). Ensure T.subtle (#808080) is only used at 13px+ sizes where 4.2:1 passes AA for large text. Add a contrast validation check to the design system documentation.
+**What Dreamcatcher should implement**: T.ghost and T.dim should never be used for text that conveys essential information. They're correctly designated for section headers (decorative context) and badge counts (supplementary info). Ensure T.subtle (#808080) is only used at 13px+ sizes where 4.2:1 passes AA for large text. Add a contrast validation check to the design system documentation.
 
 ---
 
@@ -606,7 +606,7 @@ Headings should be clearly larger and heavier than body text. Avoid relying on c
 - Data colors should be desaturated slightly compared to light mode -- full saturation on dark backgrounds creates visual vibration
 - Avoid relying solely on color to distinguish data series (add patterns, labels, or shapes)
 
-**What Dreamcacher should implement**: Connection lines between nodes are Dreamcacher's primary "chart" element. They should follow the grid-line principle: very low opacity, just visible enough to trace the path. Node colors (the radial gradients) should be rich but not fully saturated -- the current specular/gradient approach naturally achieves this. If Dreamcacher adds data visualization features in future (conversation statistics, token usage graphs), these charting principles apply directly.
+**What Dreamcatcher should implement**: Connection lines between nodes are Dreamcatcher's primary "chart" element. They should follow the grid-line principle: very low opacity, just visible enough to trace the path. Node colors (the radial gradients) should be rich but not fully saturated -- the current specular/gradient approach naturally achieves this. If Dreamcatcher adds data visualization features in future (conversation statistics, token usage graphs), these charting principles apply directly.
 
 ---
 
@@ -622,7 +622,7 @@ Headings should be clearly larger and heavier than body text. Avoid relying on c
 - Use subtle luminance differences to communicate hierarchy without relying on borders everywhere
 - Typography font weight may need adjustment -- thin fonts can appear to "glow" on dark backgrounds
 
-**What Dreamcacher should implement**: Consider offering two dark variants from the start: "Observatory" (default, atmospheric, full visual effects) and "Focus" (dimmed, reduced effects, higher contrast for extended sessions). This acknowledges that the visual richness that makes first impressions stunning might cause fatigue at hour three of a deep conversation.
+**What Dreamcatcher should implement**: Consider offering two dark variants from the start: "Observatory" (default, atmospheric, full visual effects) and "Focus" (dimmed, reduced effects, higher contrast for extended sessions). This acknowledges that the visual richness that makes first impressions stunning might cause fatigue at hour three of a deep conversation.
 
 ---
 
@@ -646,7 +646,7 @@ Define all design tokens as CSS custom properties. Map them to Tailwind's `@them
 
 This becomes the single source of truth. Tailwind generates utilities. Components consume variables. Theme switching swaps the variable set.
 
-**What Dreamcacher should implement**: Move the DESIGN-SPEC color values into `@theme` declarations in the Tailwind config. This is the first concrete implementation step from all of this research.
+**What Dreamcatcher should implement**: Move the DESIGN-SPEC color values into `@theme` declarations in the Tailwind config. This is the first concrete implementation step from all of this research.
 
 ---
 
@@ -656,20 +656,20 @@ This becomes the single source of truth. Tailwind generates utilities. Component
 1. **Warm blacks over cool grays** -- validated by Linear's shift toward warmer grays, Discord's warm base, Ableton's amber glow, Coda's palette reconstruction
 2. **8-stop elevation stack** -- validated by the universal principle that dark mode needs 4-8 surface levels, Coda's "elevation is the hardest problem" confirmation
 3. **Achromatic text hierarchy** -- validated by Linear's monochrome text, Vercel's black-and-white purity, Spotify's binary text system
-4. **Monospace typography** -- validated by Warp's luxurious monospace input, Dreamcacher's own rationale about character-width predictability
+4. **Monospace typography** -- validated by Warp's luxurious monospace input, Dreamcatcher's own rationale about character-width predictability
 5. **Single accent color discipline** -- validated by Vercel, Supabase, Spotify, all using one accent with extreme restraint
 
 ### New techniques to adopt:
-1. **oklch/LCH color space** -- Linear and shadcn/ui use perceptually uniform color spaces. Dreamcacher should define tokens in oklch for mathematically correct lightness relationships
+1. **oklch/LCH color space** -- Linear and shadcn/ui use perceptually uniform color spaces. Dreamcatcher should define tokens in oklch for mathematically correct lightness relationships
 2. **Warm-tinted shadows** -- Shadows should use rgba(12,11,9,x) not rgba(0,0,0,x) to match the warm palette. Tight blur (2-4px), minimal offset
 3. **Three-tier token architecture** -- Global, Semantic, Component token layers for extensibility toward themes, light mode, accessibility variants
 4. **Tonal elevation hint** -- Higher surfaces should carry a barely perceptible warm tint from the accent palette (Material Design 3 principle applied to warm palette)
 5. **Multi-variant dark mode** -- "Observatory" (default, atmospheric) and "Focus" (dimmed, reduced effects) variants, following GitHub's pioneering multi-dark approach
 
 ### Techniques to reject:
-1. **Cool-blue palettes** -- Stripe (#14171D), GitHub default, VS Code default. Wrong temperature for Dreamcacher
+1. **Cool-blue palettes** -- Stripe (#14171D), GitHub default, VS Code default. Wrong temperature for Dreamcatcher
 2. **Pure black backgrounds** -- Causes OLED halation. E[1] (#0C0B09) is the right call, not #000000
-3. **Heavy shadows** -- Most benchmarks confirm shadows are ineffective in dark mode. Dreamcacher should use lightness-based elevation as primary, shadows as supplementary
+3. **Heavy shadows** -- Most benchmarks confirm shadows are ineffective in dark mode. Dreamcatcher should use lightness-based elevation as primary, shadows as supplementary
 4. **Color inversion** -- Every benchmark confirms: dark mode requires a redesigned palette, not inverted values
 5. **Border-heavy containment** -- Linear, Spotify, Discord all prove spacing and luminance shifts are superior to borders for panel separation
 
